@@ -42,7 +42,7 @@ scripts/checks.sh         # 格式 → 语法检查 → 构建 → 测试
 scripts/checks.sh --fix   # 自动修复格式和语法问题
 ```
 
-![](/Users/lei.fu/LLM/claude_code/huxy/img/ScreenShot_2026-05-07_091552_145.png)
+![](img/ScreenShot_2026-05-07_091552_145.png)
 
 ## Features
 
