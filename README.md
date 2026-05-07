@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/github/license/muxy-app/muxy" />
   <img src="https://img.shields.io/github/commit-activity/m/muxy-app/muxy" />
 </div>
+
 ## Screenshots
 
 这个项目来自 https://github.com/jasonkneen/huxy 的修改版本基础上进行了一些修改。
