@@ -13,10 +13,36 @@
   <img src="https://img.shields.io/github/license/muxy-app/muxy" />
   <img src="https://img.shields.io/github/commit-activity/m/muxy-app/muxy" />
 </div>
-
 ## Screenshots
 
-<img width="3004" alt="image" src="https://github.com/user-attachments/assets/721c6b4a-bd9c-4e4e-ade0-cd2597399801" />
+这个项目来自 https://github.com/jasonkneen/huxy 的修改版本基础上进行了一些修改。
+
+其实也没做什么！
+
+最早就是觉得Muxy的工作流，还是比较喜欢，想尝试。后来看到X上，很多人都在推荐 jasonkneen 的这个修改版本。
+
+就自己打包安装了一下。不过，我还是想要毛玻璃效果。就开始自己尝试修改swift的代码实现效果。原分支有一个配置，不过，后来再拉新的就没有了。
+
+还是搞了几天，还是搞出来了。后边再做什么？我没想好。目前要先体验这里边的这些功能把。
+
+### 📋 构建与运行
+
+注意看一下 scripts 文件夹下边的脚本。
+
+```bash
+# 安装依赖（首次）
+scripts/setup.sh          # 下载 GhosttyKit.xcframework
+
+# 开发构建
+swift build               # 验证构建
+swift run Muxy            # 运行应用
+
+# 检查与测试
+scripts/checks.sh         # 格式 → 语法检查 → 构建 → 测试
+scripts/checks.sh --fix   # 自动修复格式和语法问题
+```
+
+![](/Users/lei.fu/LLM/claude_code/huxy/img/ScreenShot_2026-05-07_091552_145.png)
 
 ## Features
 
