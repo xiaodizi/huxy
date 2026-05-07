@@ -21,3 +21,13 @@ appcast*.xml
 .plans/
 .muxy/
 /muxy-markdown-remote-image-urlcache
+CLAUDE.md
+debug.log
+debug_script.sh
+muxy_output.log
+Muxy-Fork-Changes.md
+GhosttyKit.xcframework
+功能区域统计.md
+dist/
+
+
