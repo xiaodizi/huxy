@@ -40,17 +40,21 @@ struct NotificationPanel: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            let currentItems = items
-            if currentItems.isEmpty {
-                emptyState
-            } else {
-                header
-                Divider().overlay(MuxyTheme.border)
-                notificationList(currentItems)
+        ZStack {
+            NotificationPanelBlurView()
+
+            VStack(spacing: 0) {
+                let currentItems = items
+                if currentItems.isEmpty {
+                    emptyState
+                } else {
+                    header
+                    Divider().overlay(MuxyTheme.border)
+                    notificationList(currentItems)
+                }
             }
+            .frame(width: 320, height: 400)
         }
-        .frame(width: 320, height: 400)
     }
 
     private var header: some View {
@@ -88,7 +92,6 @@ struct NotificationPanel: View {
             }
             .padding(.vertical, 4)
         }
-        .background(MuxyTheme.bg)
     }
 
     private var emptyState: some View {
@@ -116,7 +119,6 @@ struct NotificationPanel: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .background(MuxyTheme.bg)
     }
 
     private func notificationAccessibilityLabel(for item: NotificationPanelItem) -> String {
@@ -197,4 +199,16 @@ private struct NotificationRow: View {
         .buttonStyle(.plain)
         .accessibilityLabel("Dismiss Notification")
     }
+}
+
+struct NotificationPanelBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

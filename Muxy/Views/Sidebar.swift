@@ -62,6 +62,7 @@ struct Sidebar: View {
         .frame(maxHeight: .infinity, alignment: .bottom)
         .frame(width: isHidden ? 0 : (isWide ? SidebarLayout.expandedWidth : SidebarLayout.collapsedWidth))
         .opacity(isHidden ? 0 : 1)
+        .background(SidebarBlurView())
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Sidebar")
         .onReceive(NotificationCenter.default.publisher(for: .toggleSidebar)) { _ in
@@ -373,7 +374,7 @@ struct SidebarFooter: View {
                 snapshots: usageService.snapshots,
                 isRefreshing: usageService.isRefreshing,
                 lastRefreshDate: usageService.lastRefreshDate,
-                onRefresh: refreshUsage
+                onRefresh: { Task { await usageService.refreshIfNeeded() } }
             )
         }
         .help("AI Usage (\(KeyBindingStore.shared.combo(for: .toggleAIUsage).displayString))")
@@ -420,10 +421,25 @@ struct SidebarFooter: View {
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
     }
+}
 
-    private func refreshUsage() {
-        Task {
-            await usageService.refresh(force: true)
+struct SidebarBlurView: View {
+    var body: some View {
+        ZStack {
+            SidebarBlurViewBase()
+            Color.black.opacity(0.20)
         }
     }
+}
+
+struct SidebarBlurViewBase: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .sidebar
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

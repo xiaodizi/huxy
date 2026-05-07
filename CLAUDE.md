@@ -1,83 +1,50 @@
-# Muxy
+# Muxy 开发指南
 
-Requires macOS 14+ and Swift 6.0+. No external dependency managers needed — everything is SPM-based.
+## 环境要求
 
-## Linting & Formatting
+- macOS 14+ / Swift 6.0+
+- 工具版本（见 `.tool-versions`）：swiftformat 0.60.1, swiftlint 0.57.1
+- `gh` CLI（用于下载 GhosttyKit）
 
-Requires `swiftlint` and `swiftformat` (`brew install swiftlint swiftformat`).
+## 开发命令
 
 ```bash
-scripts/checks.sh        # Run all checks (formatting, linting, build)
-scripts/checks.sh --fix  # Auto-fix formatting and linting issues
-swiftformat --lint .      # Check formatting only
-swiftlint lint --strict   # Check linting only
+scripts/setup.sh          # 首次下载 GhosttyKit.xcframework 和资源
+swift build               # 调试构建
+swift run Muxy            # 运行应用
+scripts/checks.sh         # 运行所有检查（format → lint → build → test）
+scripts/checks.sh --fix   # 自动修复格式化和 lint 问题
 ```
 
-Run `scripts/checks.sh --fix` after every task.
+## 项目结构
 
-## Architecture
+| 目录 | 用途 |
+|------|------|
+| `Muxy/` | 主应用（SwiftUI + AppKit） |
+| `MuxyShared/` | 共享代码（状态、工具类） |
+| `MuxyServer/` | 本地网络 WebSocket API（iOS/Android 客户端） |
+| `GhosttyKit/` | C 模块包装 libghostty API |
+| `GhosttyKit.xcframework/` | 预编译静态库（gitignored，通过 setup.sh 下载） |
 
-- Muxy is a macOS terminal multiplexer built with SwiftUI that uses [libghostty](https://github.com/ghostty-org/ghostty) for terminal emulation and rendering via Metal.
-- The architecture of the app is documented under `./docs/developer/architecture/` and must always be up to date.
+## 数据持久化
 
-### Core Components
+- 项目：`~/Library/Application Support/Muxy/projects.json`
+- Ghostty 配置：`~/.config/ghostty/config`
+- 终端状态（tabs、splits）：仅内存，关闭后丢失
 
-- **GhosttyService** (singleton) — Manages the single `ghostty_app_t` instance per process. Loads config from `~/.config/ghostty/config`, runs a 120fps tick timer, and handles clipboard callbacks.
+## NSViewRepresentable 陷阱
 
-- **GhosttyTerminalNSView** — AppKit `NSView` that hosts a ghostty surface (`ghostty_surface_t`). Handles all keyboard/mouse input routing to libghostty and manages the Metal rendering layer. This is bridged into SwiftUI via `GhosttyTerminalRepresentable`.
+- 禁止在 `makeNSView` 中返回缓存/复用的 NSView（会导致空白视图）
+- 跨 tab 保持 NSView 存活：使用 ZStack + `opacity(0)` + `allowsHitTesting(false)` 而非条件移除
 
-- **AppState** (@Observable) — Manages the mapping of projects → tabs → split pane trees. Tracks active project, active tab per project, and provides tab lifecycle operations (create, close, select).
+## 代码规范
 
-- **ProjectStore** (@Observable) — Persists projects as JSON to `~/Library/Application Support/Muxy/projects.json`. Projects are directories the user adds via NSOpenPanel.
+- 禁止注释，代码必须自解释
+- 使用 early returns，避免嵌套条件
+- 修复根因，不修补症状
+- 可测试的功能必须写测试
+- PR 描述不超过 3 行，需包含截图或录屏
 
-## GhosttyKit Integration
+## 架构文档
 
-`GhosttyKit/` is a C module wrapping `ghostty.h` — the libghostty API. The precompiled static library lives in `GhosttyKit.xcframework/` (gitignored, downloaded via `scripts/setup.sh`).
-
-Key libghostty types: `ghostty_app_t` (app), `ghostty_surface_t` (terminal surface), `ghostty_config_t` (configuration). Surfaces are created when terminal views move to a window and destroyed on removal.
-
-The xcframework is built via GitHub Actions on the [muxy-app/ghostty](https://github.com/muxy-app/ghostty) fork. See [docs/developer/building-ghostty.md](docs/developer/building-ghostty.md) for details.
-
-## Data Persistence
-
-- **Projects:** `~/Library/Application Support/Muxy/projects.json`
-- **Ghostty config:** `~/.config/ghostty/config`
-- **Terminal state (tabs, splits):** in-memory only, lost on app close
-
-## NSViewRepresentable Pitfalls
-
-- Never return a cached/reused NSView from `makeNSView`. SwiftUI assumes it gets a fresh view and breaks silently when it doesn't (blank views, lost input).
-- To keep an NSView alive across tab switches, keep the `NSViewRepresentable` mounted in the view tree (e.g. all tabs in a ZStack with `opacity(0)` + `allowsHitTesting(false)` for inactive ones) rather than conditionally removing it and relying on a registry cache.
-- When debugging blank/empty NSView issues, first check whether the NSView is being re-mounted from a detached state — that's the most common cause.
-
-## Top Level Rules
-
-- Security first
-- Native Only
-- Maintainability
-- Scalability
-- Clean Code
-- Clean Architecture
-- Best Practices
-- No Hacky Solutions
-
-## Main Rules
-
-- No commenting allowed in the codebase
-- All code must be self-explanatory and cleanly structured
-- Use early returns instead of nested conditionals
-- Don't patch symptoms, fix root causes
-- For every task, Consider how it will impact the architecture and code quality, not just the immediate problem
-- Follow the existing code's pattern but offer refactors if they improve code quality and maintainability.
-- Use logs for debugging.
-- If the feature is testable, then you must write tests.
-- Avoid long PR descriptions. It is for humans and keep it in 3 lines maximum.
-- Upload screenshots or recordings for the PRs.
-- Never answer any question without a proper investigation and exploring the codebase.
-- Prioritize problem comprehension over premature implementation. Validate the approach before execution to avoid rework
-- Plan properly before executing to not double work
-
-## Code Review
-
-- Review the PRs/Code against the purpose of the PR/Issue/Asked. If you find unrelated issues to the PR during the review, Report them in a separate section.
-- Apply review recommendations only after user's confirmation.
+详细架构说明见 `./docs/developer/architecture/README.md`

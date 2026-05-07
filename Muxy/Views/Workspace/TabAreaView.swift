@@ -151,6 +151,7 @@ struct TabAreaView: View {
                 }
             }
         }
+        .background(TabAreaBlurView())
     }
 
     private func handleExternalDragHover(note: Notification) {
@@ -212,4 +213,25 @@ private struct TabContentView: View {
             DiffViewerPane(state: diffState, focused: focused, onFocus: onFocus)
         }
     }
+}
+
+struct TabAreaBlurView: View {
+    var body: some View {
+        ZStack {
+            TabAreaBlurViewBase()
+            Color.black.opacity(0.15)
+        }
+    }
+}
+
+struct TabAreaBlurViewBase: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .contentBackground
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

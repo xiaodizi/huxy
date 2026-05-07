@@ -32,7 +32,7 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
                 resultsList
             }
             .frame(width: 500, height: 380)
-            .background(MuxyTheme.bg)
+            .background(PaletteBlurView())
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(MuxyTheme.border, lineWidth: 1))
             .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
@@ -224,4 +224,16 @@ private final class PaletteNSTextField: NSTextField {
         }
         return super.performKeyEquivalent(with: event)
     }
+}
+
+struct PaletteBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

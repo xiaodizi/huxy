@@ -17,7 +17,6 @@ struct DiffSectionDivider: View {
         }
         .frame(height: 28)
         .frame(maxWidth: .infinity)
-        .background(MuxyTheme.bg)
         .overlay(alignment: .top) {
             if showsTopBorder {
                 Rectangle().fill(MuxyTheme.border).frame(height: 1)

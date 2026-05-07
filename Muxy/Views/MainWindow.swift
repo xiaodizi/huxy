@@ -83,7 +83,7 @@ struct MainWindow: View {
             }
             .frame(height: 32)
             .background(WindowDragRepresentable())
-            .background(MuxyTheme.bg)
+            .background(TopBarBlurView())
 
             Rectangle().fill(MuxyTheme.border).frame(height: 1)
                 .background(MuxyTheme.bg)
@@ -136,6 +136,7 @@ struct MainWindow: View {
                         }
                         VCSTabView(state: state, focused: false, onFocus: {})
                             .frame(width: vcsPanelWidth)
+                            .background(AttachedPanelBlurView())
                     }
                 } else if fileTreePanelVisible, let treeState = activeFileTreeState {
                     HStack(spacing: 0) {
@@ -166,6 +167,7 @@ struct MainWindow: View {
                         )
                         .id(treeState.rootPath)
                         .frame(width: CGFloat(fileTreePanelWidth))
+                        .background(AttachedPanelBlurView())
                     }
                 }
             }
@@ -1201,4 +1203,28 @@ private struct OverlayExitTracker: ViewModifier {
             onAnimatingOut(false)
         }
     }
+}
+
+struct TopBarBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+struct AttachedPanelBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

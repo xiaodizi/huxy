@@ -47,10 +47,21 @@ struct HelpView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(MuxyTheme.bg)
+            .background(HelpBlurView())
         }
-        .preferredColorScheme(MuxyTheme.colorScheme)
     }
+}
+
+struct HelpBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 private struct HelpWelcomeView: View {

@@ -73,6 +73,28 @@ struct TerminalArea: View {
                 guard isActiveProject, dragCoordinator.activeDrag != nil else { return }
                 dragCoordinator.setAreaFrames(frames, forProject: project.id)
             }
+            .background(WorkspaceBlurView())
         }
     }
+}
+
+struct WorkspaceBlurView: View {
+    var body: some View {
+        ZStack {
+            WorkspaceBlurViewBase()
+            Color.black.opacity(0.15)
+        }
+    }
+}
+
+struct WorkspaceBlurViewBase: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .contentBackground
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

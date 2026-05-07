@@ -2,16 +2,17 @@ import AppKit
 import SwiftUI
 
 enum SettingsMetrics {
-    static let horizontalPadding: CGFloat = 12
+    static let horizontalPadding: CGFloat = 16
     static let verticalPadding: CGFloat = 12
-    static let rowVerticalPadding: CGFloat = 6
-    static let sectionHeaderTopPadding: CGFloat = 10
-    static let sectionHeaderBottomPadding: CGFloat = 4
+    static let rowVerticalPadding: CGFloat = 8
+    static let sectionHeaderTopPadding: CGFloat = 14
+    static let sectionHeaderBottomPadding: CGFloat = 8
     static let sectionFooterTopPadding: CGFloat = 6
-    static let sectionFooterBottomPadding: CGFloat = 10
-    static let labelFontSize: CGFloat = 12
+    static let sectionFooterBottomPadding: CGFloat = 14
+    static let labelFontSize: CGFloat = 13
     static let footnoteFontSize: CGFloat = 11
     static let controlWidth: CGFloat = 210
+    static let cardCornerRadius: CGFloat = 10
 }
 
 struct SettingsContainer<Content: View>: View {
@@ -70,6 +71,12 @@ struct SettingsSection<Content: View>: View {
                 Divider().padding(.horizontal, SettingsMetrics.horizontalPadding)
             }
         }
+        .background(cardBackground)
+    }
+
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: SettingsMetrics.cardCornerRadius)
+        .fill(Color(nsColor: .controlBackgroundColor).opacity(0.5))
     }
 }
 
@@ -85,12 +92,18 @@ struct SettingsRow<Content: View>: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: SettingsMetrics.labelFontSize))
+                .font(.system(size: SettingsMetrics.labelFontSize, weight: .medium))
             Spacer()
             content
         }
         .padding(.horizontal, SettingsMetrics.horizontalPadding)
         .padding(.vertical, SettingsMetrics.rowVerticalPadding)
+        .background(rowBackground)
+    }
+
+    private var rowBackground: some View {
+        RoundedRectangle(cornerRadius: 6)
+            .fill(Color.clear)
     }
 }
 

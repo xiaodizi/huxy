@@ -23,7 +23,7 @@ struct FindInFilesOverlay: View {
                 resultsList
             }
             .frame(width: 640, height: 460)
-            .background(MuxyTheme.bg)
+            .background(PaletteBlurView())
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(MuxyTheme.border, lineWidth: 1))
             .shadow(color: .black.opacity(0.4), radius: 20, y: 8)

@@ -111,7 +111,6 @@ struct CreatePRForm: View {
             }
         }
         .padding(10)
-        .background(MuxyTheme.bg)
         .onAppear(perform: applyDefaults)
         .onChange(of: availableBaseBranches) { _, newList in
             if !baseBranch.isEmpty, !newList.contains(baseBranch) {

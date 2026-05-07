@@ -56,7 +56,6 @@ private struct DebugInfoPopover: View {
         }
         .padding(12)
         .frame(width: 220)
-        .background(MuxyTheme.bg)
         .onReceive(timer) { _ in
             snapshot = DebugMetrics.current()
         }

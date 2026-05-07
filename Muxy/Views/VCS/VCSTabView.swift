@@ -37,7 +37,7 @@ struct VCSTabView: View {
             Rectangle().fill(MuxyTheme.border).frame(height: 1)
             content
         }
-        .background(MuxyTheme.bg)
+        .background(VCSBlurView())
         .contentShape(Rectangle())
         .onTapGesture(perform: onFocus)
         .onAppear {
@@ -141,7 +141,6 @@ struct VCSTabView: View {
             }
         }
         .frame(height: 32)
-        .background(MuxyTheme.bg)
         .sheet(isPresented: $showCreateWorktreeSheet) {
             if let project = owningProject {
                 CreateWorktreeSheet(project: project) { result in
@@ -467,7 +466,6 @@ struct VCSTabView: View {
             }
         }
         .padding(10)
-        .background(MuxyTheme.bg)
     }
 
     private var commitButton: some View {
@@ -1256,6 +1254,7 @@ private struct SectionSplitLayout: View {
                 Rectangle().fill(MuxyTheme.border).frame(height: 1)
             }
         }
+        .background(VCSBlurView())
     }
 
     private func distributedRatios(
@@ -1427,7 +1426,6 @@ private struct SectionSplitLayout: View {
             }
         }
         .frame(height: Self.sectionHeaderHeight)
-        .background(MuxyTheme.bg)
     }
 
     private func sectionCount(for section: SectionKind) -> Int {
@@ -1723,7 +1721,6 @@ private struct FileRow: View {
         .padding(.leading, 10 + CGFloat(depth) * 14)
         .padding(.trailing, 10)
         .frame(height: 34)
-        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .onHover { hovered = $0 }
         .onTapGesture(perform: onToggle)
@@ -1783,8 +1780,28 @@ private struct FolderRow: View {
         .padding(.leading, 10 + CGFloat(depth) * 14)
         .padding(.trailing, 10)
         .frame(height: 30)
-        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .onTapGesture(perform: onToggle)
     }
+}
+
+struct VCSBlurView: View {
+    var body: some View {
+        ZStack {
+            VCSBlurViewBase()
+            Color.black.opacity(0.25)
+        }
+    }
+}
+
+struct VCSBlurViewBase: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

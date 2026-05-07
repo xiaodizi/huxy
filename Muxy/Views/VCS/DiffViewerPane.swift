@@ -6,26 +6,41 @@ struct DiffViewerPane: View {
     let onFocus: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            DiffViewerBreadcrumb(state: state)
-            Rectangle().fill(MuxyTheme.border).frame(height: 1)
-            ScrollView([.vertical]) {
-                DiffBodyView(
-                    isLoading: state.vcs.diffCache.isLoading(state.filePath),
-                    error: state.vcs.diffCache.error(for: state.filePath),
-                    diff: state.vcs.diffCache.diff(for: state.filePath),
-                    filePath: state.filePath,
-                    mode: state.mode,
-                    onLoadFull: { state.refresh(forceFull: true) },
-                    suppressLeadingTopBorder: true
-                )
+        ZStack {
+            DiffViewerBlurView()
+
+            VStack(spacing: 0) {
+                DiffViewerBreadcrumb(state: state)
+                Rectangle().fill(MuxyTheme.border).frame(height: 1)
+                ScrollView([.vertical]) {
+                    DiffBodyView(
+                        isLoading: state.vcs.diffCache.isLoading(state.filePath),
+                        error: state.vcs.diffCache.error(for: state.filePath),
+                        diff: state.vcs.diffCache.diff(for: state.filePath),
+                        filePath: state.filePath,
+                        mode: state.mode,
+                        onLoadFull: { state.refresh(forceFull: true) },
+                        suppressLeadingTopBorder: true
+                    )
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .simultaneousGesture(TapGesture().onEnded { onFocus() })
     }
+}
+
+struct DiffViewerBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 private struct DiffViewerBreadcrumb: View {
@@ -81,7 +96,6 @@ private struct DiffViewerBreadcrumb: View {
         }
         .padding(.horizontal, 10)
         .frame(height: 32)
-        .background(MuxyTheme.bg)
     }
 
     private var modeToggle: some View {

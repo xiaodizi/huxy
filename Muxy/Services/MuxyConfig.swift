@@ -71,16 +71,47 @@ final class MuxyConfig {
     }
 
     private func seedFromSystemGhosttyIfNeeded() {
-        guard !FileManager.default.fileExists(atPath: ghosttyConfigURL.path) else { return }
+        guard !FileManager.default.fileExists(atPath: ghosttyConfigURL.path) else {
+            if readGhosttyConfig().isEmpty {
+                ensureDefaultGhosttyConfig()
+            }
+            return
+        }
 
         guard FileManager.default.fileExists(atPath: Self.systemGhosttyConfigPath),
               let systemContent = try? String(contentsOfFile: Self.systemGhosttyConfigPath, encoding: .utf8)
         else {
             try? writeGhosttyConfig("")
+            ensureDefaultGhosttyConfig()
             return
         }
 
         try? writeGhosttyConfig(systemContent)
+        ensureDefaultGhosttyConfig()
+    }
+
+    private func ensureDefaultGhosttyConfig() {
+        let defaultKeys = [
+            "background-opacity = 0.6",
+            "background-blur = true",
+            "theme = dark:monochrome-dark,light:monochrome-light"
+        ]
+        var content = readGhosttyConfig()
+        if content.isEmpty {
+            content = defaultKeys.joined(separator: "\n")
+            try? writeGhosttyConfig(content)
+            return
+        }
+        var lines = content.components(separatedBy: "\n")
+
+        for key in defaultKeys {
+            let configKey = key.components(separatedBy: " = ").first ?? ""
+            if !lines.contains(where: { $0.hasPrefix(configKey) }) {
+                lines.append(key)
+            }
+        }
+
+        try? writeGhosttyConfig(lines.joined(separator: "\n"))
     }
 
     private static func restrictFilePermissions(_ url: URL) {

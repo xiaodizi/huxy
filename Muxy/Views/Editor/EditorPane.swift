@@ -26,7 +26,6 @@ struct EditorPane: View {
                 editorContentLayer
             }
         }
-        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .simultaneousGesture(TapGesture().onEnded { onFocus() })
         .onReceive(NotificationCenter.default.publisher(for: .findInTerminal)) { _ in
@@ -225,7 +224,6 @@ struct EditorPane: View {
                 .foregroundStyle(MuxyTheme.fgMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(MuxyTheme.bg)
     }
 
     private var showsCodeEditor: Bool {
@@ -358,7 +356,6 @@ private struct EditorMarkdownModePicker: View {
             }
         }
         .padding(2)
-        .background(MuxyTheme.bg)
         .overlay(
             RoundedRectangle(cornerRadius: 6)
                 .stroke(MuxyTheme.border, lineWidth: 1)
@@ -423,7 +420,6 @@ private struct EditorBreadcrumb: View {
         }
         .padding(.horizontal, 10)
         .frame(height: 32)
-        .background(MuxyTheme.bg)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(breadcrumbAccessibilityLabel)
     }

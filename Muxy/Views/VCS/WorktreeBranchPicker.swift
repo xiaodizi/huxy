@@ -160,6 +160,5 @@ struct WorktreeBranchPicker: View {
             }
         }
         .frame(width: 320, height: 460)
-        .background(MuxyTheme.bg)
     }
 }

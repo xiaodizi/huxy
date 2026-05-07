@@ -52,7 +52,6 @@ struct DiffBodyView: View {
                     .padding(12)
             }
         }
-        .background(MuxyTheme.bg)
     }
 
     private func truncatedBanner(onLoadFull: @escaping () -> Void) -> some View {

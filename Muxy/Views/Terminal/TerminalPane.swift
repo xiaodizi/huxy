@@ -17,6 +17,42 @@ struct TerminalPane: View {
     }
 
     var body: some View {
+        ZStack {
+            TerminalPaneBlurView()
+                .edgesIgnoringSafeArea(.all)
+
+            TerminalPaneContent(
+                state: state,
+                focused: focused,
+                visible: visible,
+                areaID: areaID,
+                remoteOwnerName: remoteOwnerName,
+                onFocus: onFocus,
+                onProcessExit: onProcessExit,
+                onSplitRequest: onSplitRequest
+            )
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .refocusActiveTerminal)) { _ in
+            guard focused, visible else { return }
+            let view = TerminalViewRegistry.shared.existingView(for: state.id)
+            DispatchQueue.main.async {
+                view?.window?.makeFirstResponder(view)
+            }
+        }
+    }
+}
+
+struct TerminalPaneContent: View {
+    let state: TerminalPaneState
+    let focused: Bool
+    let visible: Bool
+    let areaID: UUID
+    let remoteOwnerName: String?
+    let onFocus: () -> Void
+    let onProcessExit: () -> Void
+    let onSplitRequest: (SplitDirection, SplitPosition) -> Void
+
+    var body: some View {
         ZStack(alignment: .topTrailing) {
             TerminalBridge(
                 state: state,
@@ -62,13 +98,6 @@ struct TerminalPane: View {
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .refocusActiveTerminal)) { _ in
-            guard focused, visible else { return }
-            let view = TerminalViewRegistry.shared.existingView(for: state.id)
-            DispatchQueue.main.async {
-                view?.window?.makeFirstResponder(view)
-            }
-        }
     }
 }
 
@@ -105,7 +134,6 @@ struct RemoteControlledPlaceholder: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(MuxyTheme.bg)
     }
 }
 
@@ -317,4 +345,16 @@ struct TerminalBridge: NSViewRepresentable {
             state?.searchState.selected = selected
         }
     }
+}
+
+struct TerminalPaneBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

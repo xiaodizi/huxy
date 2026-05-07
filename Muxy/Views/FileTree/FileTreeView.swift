@@ -74,7 +74,7 @@ struct FileTreeView: View {
                 }
             }
         }
-        .background(MuxyTheme.bg)
+        .background(FileTreeBlurView())
         .background(keyCaptureLayer)
         .background(keyboardShortcuts)
         .contentShape(Rectangle())
@@ -758,10 +758,31 @@ private final class FileTreeKeyCaptureView: NSView {
         case .space: onActivate?()
         case .returnKey,
              .keypadEnter,
-             .f2: onRename?()
-        case .escape: onEscape?()
-        case .delete,
-             .forwardDelete: onDelete?()
+              .f2: onRename?()
+         case .escape: onEscape?()
+         case .delete,
+              .forwardDelete: onDelete?()
+         }
+     }
+}
+
+struct FileTreeBlurView: View {
+    var body: some View {
+        ZStack {
+            FileTreeBlurViewBase()
+            Color.black.opacity(0.20)
         }
     }
+}
+
+struct FileTreeBlurViewBase: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .sidebar
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
