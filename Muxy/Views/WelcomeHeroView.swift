@@ -21,10 +21,10 @@ struct WelcomeHeroView: View {
                     .foregroundColor(Color(white: 0.9))
 
                 // simple pixel-art-like placeholder
-                Image(systemName: "square.fill")
+                Image(systemName: "character.text.quote")
                     .resizable()
                     .frame(width: 64, height: 48)
-                    .foregroundColor(Color(red: 0.95, green: 0.5, blue: 0.3))
+                    .foregroundColor(TerminalTheme.orange)
 
                 Text("gpt-5-mini with medium effort · API Usage Billing")
                     .font(.system(size: 12, weight: .regular, design: .monospaced))
