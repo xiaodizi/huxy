@@ -17,8 +17,8 @@ struct WelcomeHeroView: View {
                 }
 
                 Text("Welcome back!")
-                    .font(.system(size: 24, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(white: 0.9))
+                    .font(.system(size: 28, weight: .bold, design: .monospaced))
+                     .foregroundColor(Color.white.opacity(0.94))
 
                 // simple pixel-art-like placeholder
                 Image(systemName: "character.text.quote")
@@ -28,7 +28,7 @@ struct WelcomeHeroView: View {
 
                 Text("gpt-5-mini with medium effort · API Usage Billing")
                     .font(.system(size: 12, weight: .regular, design: .monospaced))
-                    .foregroundColor(.gray)
+                    .foregroundColor(TerminalTheme.muted)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -51,7 +51,7 @@ struct WelcomeHeroView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(20)
+         .padding(26)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(TerminalTheme.panelBg)
