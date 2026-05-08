@@ -66,6 +66,12 @@ struct MainWindow: View {
     private let trafficLightWidth: CGFloat = 75
 
     var body: some View {
+        VStack(spacing:0) {
+            Spacer(minLength: 0)
+            StatusBarView()
+        }
+
+
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 if !isFullScreen {
@@ -1030,6 +1036,12 @@ private struct NavigationArrowButton: View {
     @State private var hovered = false
 
     var body: some View {
+        VStack(spacing:0) {
+            Spacer(minLength: 0)
+            StatusBarView()
+        }
+
+
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 12, weight: .semibold))
@@ -1172,6 +1184,12 @@ private struct WindowOpenReceiver: View {
     let openWindow: OpenWindowAction
 
     var body: some View {
+        VStack(spacing:0) {
+            Spacer(minLength: 0)
+            StatusBarView()
+        }
+
+
         Color.clear
             .frame(width: 0, height: 0)
             .onReceive(NotificationCenter.default.publisher(for: .openVCSWindow)) { _ in
