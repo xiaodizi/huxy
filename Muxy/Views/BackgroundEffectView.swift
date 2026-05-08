@@ -15,6 +15,11 @@ struct BackgroundEffectView<Content: View>: View {
     var body: some View {
         content
             .background(VisualEffectBackground(transparent: transparencyEnabled || themeBackgroundIsTransparent))
+            .overlay(
+                // subtle gradient overlay and vignette to match screenshot
+                LinearGradient(gradient: Gradient(colors: [TerminalTheme.bgTop.opacity(0.18), TerminalTheme.bgBottom.opacity(0.18)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                    .blendMode(.overlay)
+            )
     }
 }
 
