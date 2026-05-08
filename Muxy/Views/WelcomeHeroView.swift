@@ -36,13 +36,16 @@ struct WelcomeHeroView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Tips for getting started")
                     .font(.system(size: 18, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color.orange)
+                    .foregroundColor(TerminalTheme.orange)
 
-                Divider().background(Color.orange)
+                Rectangle()
+                    .fill(TerminalTheme.orange)
+                    .frame(height: 1)
+                    .opacity(0.9)
 
                 Text("Run /init to create a CLAUDE.md file with instructions for Claude")
                     .font(.system(size: 12, weight: .regular, design: .monospaced))
-                    .foregroundColor(.gray)
+                    .foregroundColor(TerminalTheme.muted)
 
                 Spacer()
             }
