@@ -51,8 +51,8 @@ struct WelcomeHeroView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.orange, lineWidth: 2)
-                .background(Color.black.opacity(0.25).cornerRadius(8))
+                .fill(TerminalTheme.panelBg)
+                .background(RoundedRectangle(cornerRadius: 8).stroke(TerminalTheme.orange, lineWidth: 2))
         )
         .padding(.horizontal, 12)
     }
