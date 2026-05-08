@@ -73,23 +73,10 @@ struct MainWindow: View {
 
 
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if !isFullScreen {
-                    Color.clear
-                        .frame(width: topBarLeadingWidth)
-                        .fixedSize(horizontal: true, vertical: false)
-                        .overlay(alignment: .trailing) {
-                            HStack(spacing: 0) {
-                                navigationArrows
-                                Rectangle().fill(MuxyTheme.border).frame(width: 1)
-                            }
-                        }
-                }
-                topBarContent
-            }
-            .frame(height: 32)
-            .background(WindowDragRepresentable())
-            .background(TopBarBlurView())
+            // Top bar: keep the translucent drag area but remove the embedded search/title controls
+            WindowDragRepresentable(alwaysEnabled: true)
+                .frame(height: 32)
+                .background(TopBarBlurView())
 
             Rectangle().fill(MuxyTheme.border).frame(height: 1)
                 .background(MuxyTheme.bg)
