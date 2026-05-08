@@ -6,12 +6,10 @@ struct WelcomeView: View {
             WelcomeBlurView()
 
             VStack(spacing: 0) {
-                WindowDragRepresentable()
-                    .frame(height: 32)
-                Spacer()
-                // Insert our hero prototype
+                    // Welcome hero shown at top (no extra top drag bar here)
                 WelcomeHeroView()
                     .frame(maxWidth: 900)
+                    .padding(.top, 8)
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
