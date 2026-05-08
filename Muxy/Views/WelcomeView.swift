@@ -9,9 +9,9 @@ struct WelcomeView: View {
                 WindowDragRepresentable()
                     .frame(height: 32)
                 Spacer()
-                Text("No project selected")
-                    .font(.system(size: 13))
-                    .foregroundStyle(MuxyTheme.fgDim)
+                // Insert our hero prototype
+                WelcomeHeroView()
+                    .frame(maxWidth: 900)
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
