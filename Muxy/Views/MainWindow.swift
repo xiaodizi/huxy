@@ -66,13 +66,28 @@ struct MainWindow: View {
     private let trafficLightWidth: CGFloat = 75
 
     var body: some View {
-        VStack(spacing:0) {
-            Spacer(minLength: 0)
-            TerminalBottomBar()
-        }
-
-
         VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                if !isFullScreen {
+                    Color.clear
+                        .frame(width: topBarLeadingWidth)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .overlay(alignment: .trailing) {
+                            HStack(spacing: 0) {
+                                navigationArrows
+                                Rectangle().fill(MuxyTheme.border).frame(width: 1)
+                            }
+                        }
+                }
+                topBarContent
+            }
+            .frame(height: 32)
+            .background(WindowDragRepresentable())
+            .background(MuxyTheme.bg)
+
+            Rectangle().fill(MuxyTheme.border).frame(height: 1)
+                .background(MuxyTheme.bg)
+
             HStack(spacing: 0) {
                 HStack(spacing: 0) {
                     Sidebar()
@@ -121,7 +136,6 @@ struct MainWindow: View {
                         }
                         VCSTabView(state: state, focused: false, onFocus: {})
                             .frame(width: vcsPanelWidth)
-                            .background(AttachedPanelBlurView())
                     }
                 } else if fileTreePanelVisible, let treeState = activeFileTreeState {
                     HStack(spacing: 0) {
@@ -152,7 +166,6 @@ struct MainWindow: View {
                         )
                         .id(treeState.rootPath)
                         .frame(width: CGFloat(fileTreePanelWidth))
-                        .background(AttachedPanelBlurView())
                     }
                 }
             }
@@ -1015,12 +1028,6 @@ private struct NavigationArrowButton: View {
     @State private var hovered = false
 
     var body: some View {
-        VStack(spacing:0) {
-            Spacer(minLength: 0)
-            TerminalBottomBar()
-        }
-
-
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 12, weight: .semibold))
@@ -1163,12 +1170,6 @@ private struct WindowOpenReceiver: View {
     let openWindow: OpenWindowAction
 
     var body: some View {
-        VStack(spacing:0) {
-            Spacer(minLength: 0)
-            TerminalBottomBar()
-        }
-
-
         Color.clear
             .frame(width: 0, height: 0)
             .onReceive(NotificationCenter.default.publisher(for: .openVCSWindow)) { _ in
@@ -1200,28 +1201,4 @@ private struct OverlayExitTracker: ViewModifier {
             onAnimatingOut(false)
         }
     }
-}
-
-struct TopBarBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
-}
-
-struct AttachedPanelBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
