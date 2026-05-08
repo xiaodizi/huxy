@@ -8,7 +8,7 @@ struct TerminalBottomBar: View {
     var body: some View {
         ZStack {
             // translucent blurred background
-            VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
+            VisualEffectView(material: .hudWindow, blendingMode: .withinWindow)
                 .cornerRadius(6)
 
             HStack(alignment: .center, spacing: 12) {
@@ -27,7 +27,7 @@ struct TerminalBottomBar: View {
                 HStack(spacing: 8) {
                     Capsule()
                         .fill(Color.black.opacity(0.35))
-                        .frame(width: 220, height: 8)
+                        .frame(width: 260, height: 8)
                         .overlay(
                             Capsule().fill(TerminalTheme.accentGreen)
                                 .frame(width: 6, height: 8)
@@ -44,7 +44,7 @@ struct TerminalBottomBar: View {
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundColor(TerminalTheme.muted)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 18)
             .padding(.vertical, 10)
         }
         .frame(height: 48)
