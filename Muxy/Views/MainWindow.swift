@@ -68,7 +68,7 @@ struct MainWindow: View {
     var body: some View {
         VStack(spacing:0) {
             Spacer(minLength: 0)
-            StatusBarView()
+            TerminalBottomBar()
         }
 
 
@@ -1025,7 +1025,7 @@ private struct NavigationArrowButton: View {
     var body: some View {
         VStack(spacing:0) {
             Spacer(minLength: 0)
-            StatusBarView()
+            TerminalBottomBar()
         }
 
 
@@ -1173,7 +1173,7 @@ private struct WindowOpenReceiver: View {
     var body: some View {
         VStack(spacing:0) {
             Spacer(minLength: 0)
-            StatusBarView()
+            TerminalBottomBar()
         }
 
 
