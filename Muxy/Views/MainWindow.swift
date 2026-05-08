@@ -73,14 +73,6 @@ struct MainWindow: View {
 
 
         VStack(spacing: 0) {
-            // Top bar: keep the translucent drag area but remove the embedded search/title controls
-            WindowDragRepresentable(alwaysEnabled: true)
-                .frame(height: 32)
-                .background(TopBarBlurView())
-
-            Rectangle().fill(MuxyTheme.border).frame(height: 1)
-                .background(MuxyTheme.bg)
-
             HStack(spacing: 0) {
                 HStack(spacing: 0) {
                     Sidebar()
