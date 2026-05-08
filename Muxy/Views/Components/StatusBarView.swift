@@ -36,7 +36,10 @@ struct StatusBarView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(MuxyTheme.surface.opacity(0.25))
+        .background(
+            LinearGradient(gradient: Gradient(colors: [TerminalTheme.bgTop.opacity(0.6), TerminalTheme.bgBottom.opacity(0.6)]), startPoint: .leading, endPoint: .trailing)
+                .overlay(Rectangle().stroke(Color.white.opacity(0.03), lineWidth: 1))
+        )
     }
 }
 
