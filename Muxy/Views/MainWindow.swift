@@ -67,32 +67,39 @@ struct MainWindow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if !isFullScreen {
-                    Color.clear
-                        .frame(width: topBarLeadingWidth)
-                        .fixedSize(horizontal: true, vertical: false)
-                        .overlay(alignment: .trailing) {
-                            HStack(spacing: 0) {
-                                navigationArrows
-                                Rectangle().fill(MuxyTheme.border).frame(width: 1)
+            ZStack {
+                // 毛玻璃背景和圆角
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
+                HStack(spacing: 0) {
+                    if !isFullScreen {
+                        Color.clear
+                            .frame(width: topBarLeadingWidth)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .overlay(alignment: .trailing) {
+                                HStack(spacing: 0) {
+                                    navigationArrows
+                                }
                             }
-                        }
+                    }
+                    topBarContent
                 }
-                topBarContent
+                .frame(height: 36)
+                .padding(.horizontal, 8)
             }
-            .frame(height: 32)
-            .background(WindowDragRepresentable())
-            .background(MuxyTheme.bg)
+            .frame(height: 36)
+            .padding(.horizontal, 8)
+            .padding(.top, 8)
+            .padding(.bottom, 2)
 
-            Rectangle().fill(MuxyTheme.border).frame(height: 1)
-                .background(MuxyTheme.bg)
+            // 去除分割线，保持极简
 
             HStack(spacing: 0) {
                 HStack(spacing: 0) {
                     Sidebar()
                     if !SidebarLayout.isHidden(expanded: sidebarExpanded, collapsedStyle: sidebarCollapsedStyle) {
-                        Rectangle().fill(MuxyTheme.border).frame(width: 1)
+                        Rectangle().fill(MuxyTheme.border.opacity(0.04)).frame(width: 1)
                             .accessibilityHidden(true)
                     }
                 }

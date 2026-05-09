@@ -50,7 +50,9 @@ struct ExpandedProjectRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // 极简风格：选中项高亮底色，无边框
             projectHeader
+                .background(isActive ? MuxyTheme.surface : MuxyTheme.bg)
             if worktreesExpanded, isGitRepo {
                 worktreeList
             }

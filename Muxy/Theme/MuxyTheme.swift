@@ -78,56 +78,41 @@ extension MuxyTheme {
         let colorScheme: ColorScheme
 
         @MainActor
-        init(from service: GhosttyService, appearance: ThemeAppearance) {
-            let resolvedPalette = EditorThemePalette.resolve(
-                preview: ThemeService.shared.activeThemePreview(for: appearance),
-                fallbackBackground: service.backgroundColor,
-                fallbackForeground: service.foregroundColor,
-                fallbackAccent: service.accentColor,
-                fallbackPaletteColor: { service.paletteColor(at: $0) }
-            )
-            let bgColor = resolvedPalette.background
-            let fgColor = resolvedPalette.foreground
-            let accentColor = resolvedPalette.accent
+        init(from _service: Any, appearance: Any) {
+            // 直接使用 Catppuccin Mocha 主题色
+            let palette = EditorThemePalette.active
+            self.palette = palette
+            self.nsBg = palette.background
+            self.bg = Color(nsColor: palette.background)
+            self.fg = Color(nsColor: palette.foreground)
+            self.fgMuted = Color(nsColor: NSColor(srgbRed: 0.73, green: 0.76, blue: 0.87, alpha: 1)) // #bac2de
+            self.fgDim = Color(nsColor: NSColor(srgbRed: 0.36, green: 0.36, blue: 0.44, alpha: 1)) // #585b70
+            self.surface = Color(nsColor: NSColor(srgbRed: 0.19, green: 0.19, blue: 0.25, alpha: 1)) // #313244
+            self.border = Color(nsColor: NSColor(srgbRed: 0.36, green: 0.36, blue: 0.44, alpha: 1)) // #585b70
+            self.hover = Color(nsColor: NSColor(srgbRed: 0.22, green: 0.22, blue: 0.29, alpha: 1)) // #45475a
+            self.accent = Color(nsColor: palette.accent)
+            self.accentSoft = Color(nsColor: palette.accent.withAlphaComponent(0.1))
+            self.warning = Color(nsColor: NSColor(srgbRed: 0.98, green: 0.89, blue: 0.69, alpha: 1)) // #f9e2af
 
-            palette = resolvedPalette
-            nsBg = bgColor
-            bg = Color(nsColor: bgColor)
-            fg = Color(nsColor: fgColor)
-            fgMuted = Color(nsColor: fgColor.withAlphaComponent(0.65))
-            fgDim = Color(nsColor: fgColor.withAlphaComponent(0.4))
-            surface = Color(nsColor: fgColor.withAlphaComponent(0.08))
-            border = Color(nsColor: fgColor.withAlphaComponent(0.12))
-            hover = Color(nsColor: fgColor.withAlphaComponent(0.06))
-            accent = Color(nsColor: accentColor)
-            accentSoft = Color(nsColor: accentColor.withAlphaComponent(0.1))
-            warning = Color(nsColor: resolvedPalette.paletteColor(at: 3) ?? NSColor.systemYellow)
+            let addColor = NSColor(srgbRed: 0.65, green: 0.89, blue: 0.63, alpha: 1) // #a6e3a1
+            let removeColor = NSColor(srgbRed: 0.95, green: 0.55, blue: 0.66, alpha: 1) // #f38ba8
+            let hunkColor = NSColor(srgbRed: 0.80, green: 0.76, blue: 0.97, alpha: 1) // #cba6f7
 
-            let addColor = resolvedPalette.paletteColor(at: 2) ?? NSColor.systemGreen
-            let removeColor = resolvedPalette.paletteColor(at: 1) ?? NSColor.systemRed
-            let hunkColor = resolvedPalette.paletteColor(at: 6) ?? accentColor
+            self.nsDiffAdd = addColor
+            self.nsDiffRemove = removeColor
+            self.nsDiffHunk = hunkColor
+            self.nsDiffString = addColor
+            self.nsDiffNumber = NSColor(srgbRed: 0.98, green: 0.89, blue: 0.69, alpha: 1) // #f9e2af
+            self.nsDiffComment = NSColor(srgbRed: 0.73, green: 0.76, blue: 0.87, alpha: 1) // #bac2de
 
-            nsDiffAdd = addColor
-            nsDiffRemove = removeColor
-            nsDiffHunk = hunkColor
-            nsDiffString = resolvedPalette.paletteColor(at: 2) ?? NSColor.systemGreen
-            nsDiffNumber = resolvedPalette.paletteColor(at: 3) ?? NSColor.systemYellow
-            nsDiffComment = resolvedPalette.paletteColor(at: 8) ?? fgColor.withAlphaComponent(0.5)
+            self.diffAddFg = Color(nsColor: addColor)
+            self.diffRemoveFg = Color(nsColor: removeColor)
+            self.diffHunkFg = Color(nsColor: hunkColor)
+            self.diffAddBg = Color(nsColor: addColor.withAlphaComponent(0.16))
+            self.diffRemoveBg = Color(nsColor: removeColor.withAlphaComponent(0.16))
+            self.diffHunkBg = Color(nsColor: hunkColor.withAlphaComponent(0.1))
 
-            diffAddFg = Color(nsColor: addColor)
-            diffRemoveFg = Color(nsColor: removeColor)
-            diffHunkFg = Color(nsColor: hunkColor)
-            diffAddBg = Color(nsColor: addColor.withAlphaComponent(0.16))
-            diffRemoveBg = Color(nsColor: removeColor.withAlphaComponent(0.16))
-            diffHunkBg = Color(nsColor: hunkColor.withAlphaComponent(0.1))
-
-            let srgb = bgColor.usingColorSpace(.sRGB)
-            let luminance: CGFloat = if let srgb {
-                0.2126 * srgb.redComponent + 0.7152 * srgb.greenComponent + 0.0722 * srgb.blueComponent
-            } else {
-                0
-            }
-            colorScheme = luminance > 0.5 ? .light : .dark
+            self.colorScheme = .dark
         }
     }
 }

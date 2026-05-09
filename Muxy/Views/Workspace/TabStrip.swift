@@ -109,6 +109,9 @@ struct PaneTabStrip: View {
             .background(WindowDragRepresentable(alwaysEnabled: isWindowTitleBar))
         }
         .frame(height: 32)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
             guard dragState.draggedID != nil else { return }
             dragState.frames = frames

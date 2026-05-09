@@ -3,6 +3,50 @@ import MuxyShared
 import SwiftUI
 
 struct ProjectRow: View {
+        // 解析 logo 路径为 NSImage
+        private var resolvedLogo: NSImage? {
+            guard let logoPath = project.logo else { return nil }
+            return NSImage(contentsOfFile: logoPath)
+        }
+
+        private var unread: Int {
+            NotificationStore.shared.unreadCount(for: project.id)
+        }
+
+        private var projectIcon: some View {
+            let logo = resolvedLogo
+            let unread = self.unread
+            return ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isActive ? MuxyTheme.surface : MuxyTheme.bg)
+
+                if let logo {
+                    Image(nsImage: logo)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 28, height: 28)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                } else {
+                    Text(displayLetter)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(letterForeground)
+                }
+            }
+            .frame(width: 28, height: 28)
+            .padding(3)
+            .overlay(alignment: .topTrailing) {
+                if unread > 0 {
+                    NotificationBadge(count: unread)
+                        .offset(x: 4, y: -4)
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if isRefreshingWorktrees {
+                    ProgressView()
+                        .controlSize(.mini)
+                }
+            }
+        }
     let project: Project
     let shortcutIndex: Int?
     let isAnyDragging: Bool
@@ -115,72 +159,6 @@ struct ProjectRow: View {
                     onCancel: { logoCropImage = nil }
                 )
             }
-            .overlay {
-                if showShortcutBadge, let shortcutIndex,
-                   let action = ShortcutAction.projectAction(for: shortcutIndex)
-                {
-                    ShortcutBadge(label: KeyBindingStore.shared.combo(for: action).displayString)
-                }
-            }
-            .popover(isPresented: $isRenaming, arrowEdge: .trailing) {
-                RenamePopover(
-                    text: $renameText,
-                    onCommit: { commitRename() },
-                    onCancel: { cancelRename() }
-                )
-            }
-            .popover(isPresented: $showColorPicker, arrowEdge: .trailing) {
-                ProjectIconColorPicker(selectedID: project.iconColor) { id in
-                    onSetIconColor(id)
-                    showColorPicker = false
-                }
-            }
-    }
-
-    private var resolvedLogo: NSImage? {
-        guard let filename = project.logo else { return nil }
-        return NSImage(contentsOfFile: ProjectLogoStorage.logoPath(for: filename))
-    }
-
-    private var projectIcon: some View {
-        let logo = resolvedLogo
-        let unread = NotificationStore.shared.unreadCount(for: project.id)
-        return ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(iconBackground(hasLogo: logo != nil))
-
-            if let logo {
-                Image(nsImage: logo)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 28, height: 28)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-            } else {
-                Text(displayLetter)
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(letterForeground)
-            }
-        }
-        .frame(width: 28, height: 28)
-        .padding(3)
-        .overlay(alignment: .topTrailing) {
-            if unread > 0 {
-                NotificationBadge(count: unread)
-                    .offset(x: 4, y: -4)
-            }
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 11)
-                .strokeBorder(isActive ? MuxyTheme.accent : .clear, lineWidth: 1.5)
-                .animation(.easeInOut(duration: 0.15), value: isActive)
-        }
-        .overlay(alignment: .bottomTrailing) {
-            if isRefreshingWorktrees {
-                ProgressView()
-                    .controlSize(.mini)
-                    .padding(4)
-            }
-        }
     }
 
     private func iconBackground(hasLogo: Bool) -> AnyShapeStyle {
