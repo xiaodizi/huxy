@@ -16,8 +16,12 @@ struct LayoutPickerMenu: View {
                 }
             } label: {
                 Image(systemName: "rectangle.split.2x2")
-                    .font(.system(size: 13, weight: .semibold))
-                    .frame(width: 24, height: 24)
+                    .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
+                    .frame(width: 26, height: 26)
+                    .background(
+                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .fill(hovered ? Color.white.opacity(0.08) : Color.clear)
+                    )
                     .contentShape(Rectangle())
             }
             .menuStyle(.borderlessButton)

@@ -95,7 +95,7 @@ struct GeneralSettingsView: View {
     private var worktreeLocationControl: some View {
         VStack(alignment: .leading, spacing: 7) {
             Text("Default path for new worktrees")
-                .font(.system(size: SettingsMetrics.labelFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
 
             HStack(alignment: .center, spacing: 8) {
                 pathDisplay
@@ -120,12 +120,12 @@ struct GeneralSettingsView: View {
     private var pathDisplay: some View {
         HStack(spacing: 7) {
             Image(systemName: defaultWorktreeParentPath.isEmpty ? "internaldrive" : "folder")
-                .font(.system(size: 11, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 15)
 
             Text(defaultWorktreeLocationText)
-                .font(.system(size: SettingsMetrics.footnoteFontSize, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .foregroundStyle(defaultWorktreeParentPath.isEmpty ? .secondary : .primary)
                 .lineLimit(1)
                 .truncationMode(.middle)

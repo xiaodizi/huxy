@@ -33,7 +33,7 @@ struct AIUsagePreviewButton: View {
             iconGlyph
             if let percentLabel {
                 Text(percentLabel)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                     .foregroundStyle(foreground)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -53,7 +53,7 @@ struct AIUsagePreviewButton: View {
             ProviderIconView(iconName: display.iconName, size: 14, style: .monochrome(foreground))
         } else {
             Image(systemName: "sparkles")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(foreground)
         }
     }
@@ -75,10 +75,10 @@ struct AIUsagePanel: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 6) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 Text("AI Usage")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 Spacer()
                 Button(action: onRefresh) {
@@ -88,7 +88,7 @@ struct AIUsagePanel: View {
                                 .controlSize(.small)
                         } else {
                             Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                         }
                     }
                     .frame(width: 14, height: 14)
@@ -99,14 +99,14 @@ struct AIUsagePanel: View {
                 .help("Refresh usage")
                 if let lastRefreshDate {
                     Text(Self.relativeFormatter.localizedString(for: lastRefreshDate, relativeTo: Date()))
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
             }
 
             if snapshots.isEmpty {
                 Text(isRefreshing ? "Refreshing usage data..." : "No usage data yet.")
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
 
@@ -134,7 +134,7 @@ struct AIProviderUsageView: View {
             HStack(spacing: 6) {
                 ProviderIconView(iconName: snapshot.providerIconName, size: 14, style: .monochrome(MuxyTheme.fg))
                 Text(snapshot.providerName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                     .foregroundStyle(MuxyTheme.fg)
                 Spacer(minLength: 4)
             }
@@ -158,7 +158,7 @@ struct AIProviderUsageView: View {
             case let .unavailable(message),
                  let .error(message):
                 Text(message)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
         }
@@ -347,7 +347,7 @@ struct AIUsageMetricRowView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Text(row.label)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgMuted)
 
                 if paceDetailText != nil {
@@ -359,7 +359,7 @@ struct AIUsageMetricRowView: View {
                 if canPin {
                     Button(action: togglePin) {
                         Image(systemName: isPinned ? "pin.fill" : "pin")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                             .foregroundStyle(isPinned ? MuxyTheme.accent : (pinHovered ? MuxyTheme.fg : MuxyTheme.fgMuted))
                             .rotationEffect(.degrees(45))
                             .frame(width: 14, height: 14)
@@ -373,12 +373,12 @@ struct AIUsageMetricRowView: View {
                 Spacer()
                 if let percent = displayPercent {
                     Text("\(Int(percent.rounded()))%")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                         .foregroundStyle(MuxyTheme.fg)
                 }
                 if let detail = displayDetail {
                     Text(detail)
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
             }
@@ -392,14 +392,14 @@ struct AIUsageMetricRowView: View {
             if let resetDate = row.resetDate {
                 HStack(spacing: 6) {
                     Text("Resets \(Self.resetFormatter.string(from: resetDate))")
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgDim)
 
                     Spacer(minLength: 0)
 
                     if let paceDetailText {
                         Text(paceDetailText)
-                            .font(.system(size: 11))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11))
                             .foregroundStyle(MuxyTheme.fgDim)
                             .lineLimit(1)
                     }

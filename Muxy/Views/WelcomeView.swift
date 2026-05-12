@@ -7,7 +7,7 @@ struct WelcomeView: View {
                 .frame(height: 32)
             Spacer()
             Text("No project selected")
-                .font(.system(size: 13))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13))
                 .foregroundStyle(MuxyTheme.fgDim)
             Spacer()
         }

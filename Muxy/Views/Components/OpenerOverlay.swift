@@ -36,7 +36,7 @@ struct OpenerOverlay: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3)
+            VisualEffectBlur()
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -75,7 +75,7 @@ struct OpenerOverlay: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .font(.system(size: 13))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13))
                 .accessibilityHidden(true)
             PaletteSearchField(
                 text: $query,
@@ -112,7 +112,7 @@ struct OpenerOverlay: View {
                 VStack {
                     Spacer()
                     Text(query.isEmpty ? "No items" : "No matches")
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     Spacer()
                 }
@@ -191,9 +191,9 @@ private struct OpenerCategoryChip: View {
         Button(action: action) {
             HStack(spacing: 5) {
                 Image(systemName: category.symbol)
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 Text(category.label)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
             }
             .padding(.horizontal, 9)
             .padding(.vertical, 4)
@@ -213,7 +213,7 @@ private struct OpenerSectionHeader: View {
     var body: some View {
         HStack {
             Text(title.uppercased())
-                .font(.system(size: 9, weight: .bold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 .tracking(0.6)
                 .foregroundStyle(MuxyTheme.fgDim)
             Spacer()
@@ -233,17 +233,17 @@ private struct OpenerRow: View {
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: item.category.symbol)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 16, alignment: .center)
             Text(item.title)
-                .font(.system(size: 12, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.middle)
             if case let .worktree(wt) = item, wt.isPrimary {
                 Text("PRIMARY")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                     .tracking(0.5)
                     .foregroundStyle(MuxyTheme.fgDim)
                     .padding(.horizontal, 4)
@@ -252,7 +252,7 @@ private struct OpenerRow: View {
             }
             if let subtitle = item.subtitle {
                 Text(subtitle)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgDim)
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -260,7 +260,7 @@ private struct OpenerRow: View {
             Spacer(minLength: 4)
             if isActive {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                     .foregroundStyle(MuxyTheme.accent)
             }
         }

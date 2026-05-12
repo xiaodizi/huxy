@@ -21,14 +21,14 @@ struct BranchPicker: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "arrow.triangle.branch")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 Text(currentBranch ?? "detached")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .frame(maxWidth: 120, alignment: .leading)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
             .foregroundStyle(MuxyTheme.fg.opacity(0.85))
@@ -135,7 +135,7 @@ private struct BranchRow: View {
                 .frame(width: 10)
 
             Text(name)
-                .font(.system(size: 12, weight: isActive ? .semibold : .medium, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(isActive ? .semibold : .medium))
                 .foregroundStyle(isActive ? MuxyTheme.fg : MuxyTheme.fg.opacity(0.9))
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -144,7 +144,7 @@ private struct BranchRow: View {
 
             if isActive {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                     .foregroundStyle(MuxyTheme.accent)
             }
         }

@@ -27,7 +27,7 @@ struct LogoCropperSheet: View {
     var body: some View {
         VStack(spacing: 16) {
             Text("Crop Logo")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
 
             ZStack {
@@ -66,10 +66,10 @@ struct LogoCropperSheet: View {
                 previewIcon
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Preview")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     Text("Drag to reposition, scroll to zoom")
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
                 Spacer()

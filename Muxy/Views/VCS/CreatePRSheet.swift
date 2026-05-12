@@ -129,9 +129,9 @@ struct CreatePRForm: View {
             Button(action: onCancel) {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                     Text("Back")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 }
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .padding(.vertical, 3)
@@ -141,10 +141,10 @@ struct CreatePRForm: View {
             .help("Back to commit")
 
             Image(systemName: "arrow.triangle.pull")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.accent)
             Text("New Pull Request")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
             Spacer(minLength: 0)
         }
     }
@@ -157,7 +157,7 @@ struct CreatePRForm: View {
                     HStack(spacing: 6) {
                         ProgressView().controlSize(.small)
                         Text("Loading remote branches…")
-                            .font(.system(size: 11))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11))
                             .foregroundStyle(MuxyTheme.fgMuted)
                     }
                     .padding(.horizontal, 8)
@@ -166,7 +166,7 @@ struct CreatePRForm: View {
                     .themedFieldBackground()
                 } else {
                     Text("No branches found.")
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.diffRemoveFg)
                 }
             } else {
@@ -191,16 +191,16 @@ struct CreatePRForm: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.triangle.branch")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                             .foregroundStyle(MuxyTheme.fgDim)
                         Text(baseBranch.isEmpty ? "Select branch" : baseBranch)
-                            .font(.system(size: 12, design: .monospaced))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 12))
                             .foregroundStyle(MuxyTheme.fg)
                             .lineLimit(1)
                             .truncationMode(.middle)
                         Spacer(minLength: 4)
                         Image(systemName: "chevron.down")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                             .foregroundStyle(MuxyTheme.fgDim)
                     }
                     .padding(.horizontal, 8)
@@ -232,7 +232,7 @@ struct CreatePRForm: View {
         VStack(alignment: .leading, spacing: 4) {
             fieldLabel("Description")
             TextEditor(text: $bodyText)
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fg)
                 .scrollContentBackground(.hidden)
                 .padding(.horizontal, 4)
@@ -257,7 +257,7 @@ struct CreatePRForm: View {
                 }
             }
             Text("A new branch will be created from \(currentBranchSnapshot) for this pull request.")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -279,10 +279,10 @@ struct CreatePRForm: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: includeAll == value ? "largecircle.fill.circle" : "circle")
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(includeAll == value ? MuxyTheme.accent : MuxyTheme.fgDim)
                 Text(label)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fg)
             }
             .contentShape(Rectangle())
@@ -296,9 +296,9 @@ struct CreatePRForm: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: advanced ? "chevron.up" : "chevron.down")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 Text("Advanced")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
             }
             .foregroundStyle(MuxyTheme.fgMuted)
             .contentShape(Rectangle())
@@ -310,7 +310,7 @@ struct CreatePRForm: View {
     private var draftToggle: some View {
         Toggle(isOn: $draft) {
             Text("Create as draft")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fg)
         }
         .toggleStyle(.checkbox)
@@ -318,7 +318,7 @@ struct CreatePRForm: View {
 
     private func warning(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11))
+            .font(.custom("JetBrainsMono Nerd Font", size: 11))
             .foregroundStyle(MuxyTheme.diffRemoveFg)
             .fixedSize(horizontal: false, vertical: true)
     }
@@ -327,7 +327,7 @@ struct CreatePRForm: View {
         HStack(spacing: 6) {
             Button(action: onCancel) {
                 Text("Cancel")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     .foregroundStyle(MuxyTheme.fg)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -345,7 +345,7 @@ struct CreatePRForm: View {
                         ProgressView().controlSize(.mini)
                     }
                     Text("Create PR")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                 }
                 .foregroundStyle(submitEnabled ? MuxyTheme.bg : MuxyTheme.fgDim)
                 .padding(.horizontal, 12)
@@ -368,7 +368,7 @@ struct CreatePRForm: View {
 
     private func fieldLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11))
+            .font(.custom("JetBrainsMono Nerd Font", size: 11))
             .foregroundStyle(MuxyTheme.fgMuted)
     }
 
@@ -415,7 +415,7 @@ private struct ThemedTextField: View {
     var body: some View {
         TextField(placeholder, text: $text)
             .textFieldStyle(.plain)
-            .font(.system(size: 12, design: monospaced ? .monospaced : .default))
+            .font(.custom("JetBrainsMono Nerd Font", size: 12))
             .foregroundStyle(MuxyTheme.fg)
             .padding(.horizontal, 8)
             .padding(.vertical, 7)

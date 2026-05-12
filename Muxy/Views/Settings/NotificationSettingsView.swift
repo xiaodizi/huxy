@@ -58,11 +58,11 @@ private struct ProviderToggleRow: View {
     var body: some View {
         HStack {
             Image(systemName: provider.iconName)
-                .font(.system(size: 10))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(.secondary)
                 .frame(width: 16)
             Text(provider.displayName)
-                .font(.system(size: SettingsMetrics.labelFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
             Spacer()
             if enabled {
                 Button {
@@ -80,7 +80,7 @@ private struct ProviderToggleRow: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .font(.system(size: SettingsMetrics.footnoteFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .foregroundStyle(refreshed ? .green : Color.accentColor)
                 .disabled(refreshed)
             }

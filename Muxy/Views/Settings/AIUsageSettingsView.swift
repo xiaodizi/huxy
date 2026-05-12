@@ -21,7 +21,7 @@ struct AIUsageSettingsView: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Text("AI Usage")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
 
                 Spacer()
 
@@ -64,7 +64,7 @@ struct AIUsageSettingsView: View {
     private var disabledSettings: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Enable AI Usage to show the usage board in the sidebar.")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -75,7 +75,7 @@ struct AIUsageSettingsView: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Text("Show")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
 
                 Spacer()
 
@@ -95,7 +95,7 @@ struct AIUsageSettingsView: View {
 
             HStack(spacing: 8) {
                 Text("Auto Refresh")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
 
                 Spacer()
 
@@ -117,9 +117,9 @@ struct AIUsageSettingsView: View {
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Show Secondary Limits")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                     Text("Display weekly and monthly quotas alongside the primary session usage.")
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(.secondary)
                 }
 
@@ -138,7 +138,7 @@ struct AIUsageSettingsView: View {
 
             HStack(spacing: 8) {
                 Text("Choose which providers appear on the usage board.")
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(.secondary)
 
                 Spacer()
@@ -148,9 +148,9 @@ struct AIUsageSettingsView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                         Text("Refresh")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     }
                 }
                 .buttonStyle(.borderless)
@@ -179,12 +179,12 @@ struct AIUsageSettingsView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(provider.displayName)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .lineLimit(1)
 
                 if provider.hasNotificationIntegration {
                     Text("Integrated")
-                        .font(.system(size: 9, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
             }

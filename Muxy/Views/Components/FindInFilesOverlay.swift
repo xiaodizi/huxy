@@ -39,7 +39,7 @@ struct FindInFilesOverlay: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .font(.system(size: 13))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13))
                 .accessibilityHidden(true)
             PaletteSearchField(
                 text: $query,
@@ -63,7 +63,7 @@ struct FindInFilesOverlay: View {
                 Text(query.trimmingCharacters(in: .whitespaces).count < TextSearchService.minQueryLength
                     ? "Type at least \(TextSearchService.minQueryLength) characters"
                     : "No matches found")
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 Spacer()
             }
@@ -182,19 +182,19 @@ private struct FileGroupHeader: View {
     var body: some View {
         HStack(spacing: 6) {
             Text(fileName)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
             if !directory.isEmpty {
                 Text(directory)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgDim)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
             Spacer(minLength: 8)
             Text("\(group.matches.count)")
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 .foregroundStyle(MuxyTheme.bg)
                 .padding(.horizontal, 7)
                 .padding(.vertical, 2)
@@ -212,7 +212,7 @@ private struct MatchRow: View {
 
     var body: some View {
         highlightedSnippet
-            .font(.system(size: 12, design: .monospaced))
+            .font(.custom("JetBrainsMono Nerd Font", size: 12))
             .lineLimit(1)
             .truncationMode(.tail)
             .padding(.leading, 24)

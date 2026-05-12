@@ -129,14 +129,14 @@ struct ExpandedProjectRow: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(project.name)
-                    .font(.system(size: 13, weight: isActive ? .semibold : .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(isActive ? .semibold : .medium))
                     .foregroundStyle(MuxyTheme.fg)
                     .lineLimit(1)
                     .truncationMode(.tail)
 
                 if isGitRepo, let worktree = activeWorktree {
                     Text(worktree.isPrimary ? "primary" : worktree.name)
-                        .font(.system(size: 11, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fg)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -189,7 +189,7 @@ struct ExpandedProjectRow: View {
             }
         } label: {
             Image(systemName: "chevron.right")
-                .font(.system(size: 9, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
                 .rotationEffect(.degrees(worktreesExpanded ? 90 : 0))
                 .animation(.easeInOut(duration: 0.15), value: worktreesExpanded)
@@ -215,7 +215,7 @@ struct ExpandedProjectRow: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
             } else {
                 Text(displayLetter)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
                     .foregroundStyle(letterForeground)
             }
         }
@@ -449,7 +449,7 @@ private struct ExpandedWorktreeRow: View {
             if isRenaming {
                 TextField("", text: $renameText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     .foregroundStyle(MuxyTheme.fg)
                     .focused($renameFieldFocused)
                     .onSubmit { commitRename() }
@@ -458,7 +458,7 @@ private struct ExpandedWorktreeRow: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 4) {
                         Text(displayName)
-                            .font(.system(size: 12, weight: activeStyle ? .semibold : .regular))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(activeStyle ? .semibold : .regular))
                             .foregroundStyle(MuxyTheme.fg)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -470,7 +470,7 @@ private struct ExpandedWorktreeRow: View {
 
                     if let branch = branchLabel {
                         Text(branch)
-                            .font(.system(size: 10, design: .monospaced))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10))
                             .foregroundStyle(MuxyTheme.fg)
                             .lineLimit(1)
                             .truncationMode(.middle)
@@ -491,7 +491,7 @@ private struct ExpandedWorktreeRow: View {
         }
         .contextMenu {
             if worktree.isPrimary {
-                Text("Primary worktree").font(.system(size: 11))
+                Text("Primary worktree").font(.custom("JetBrainsMono Nerd Font", size: 11))
             } else if let onRemove {
                 Button("Rename") { startRename() }
                 Divider()
@@ -499,7 +499,7 @@ private struct ExpandedWorktreeRow: View {
             } else {
                 Button("Rename") { startRename() }
                 Divider()
-                Text("External worktree").font(.system(size: 11))
+                Text("External worktree").font(.custom("JetBrainsMono Nerd Font", size: 11))
             }
         }
         .accessibilityElement(children: .combine)
@@ -561,11 +561,11 @@ private struct ExpandedNewWorktreeButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: "plus")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                     .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fg)
                     .frame(width: 8, height: 8)
                 Text("New Worktree")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fg)
                 Spacer()
             }
@@ -581,7 +581,7 @@ private struct ExpandedNewWorktreeButton: View {
 private struct PrimaryBadge: View {
     var body: some View {
         Text("PRIMARY")
-            .font(.system(size: 8, weight: .bold))
+            .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
             .tracking(0.4)
             .foregroundStyle(MuxyTheme.fg)
             .padding(.horizontal, 4)
@@ -599,11 +599,11 @@ private struct ExpandedRenamePopover: View {
     var body: some View {
         VStack(spacing: 8) {
             Text("Rename Project")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             TextField("Project name", text: $text)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .focused($isFocused)
                 .onSubmit { onCommit() }
                 .onExitCommand { onCancel() }

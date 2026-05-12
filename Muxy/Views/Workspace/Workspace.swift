@@ -80,10 +80,7 @@ struct TerminalArea: View {
 
 struct WorkspaceBlurView: View {
     var body: some View {
-        ZStack {
-            WorkspaceBlurViewBase()
-            Color.black.opacity(0.15)
-        }
+        WorkspaceBlurViewBase()
     }
 }
 

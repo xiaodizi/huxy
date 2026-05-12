@@ -66,113 +66,115 @@ struct MainWindow: View {
     private let trafficLightWidth: CGFloat = 75
 
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                // 毛玻璃背景和圆角
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
-                HStack(spacing: 0) {
-                    if !isFullScreen {
-                        Color.clear
-                            .frame(width: topBarLeadingWidth)
-                            .fixedSize(horizontal: true, vertical: false)
-                            .overlay(alignment: .trailing) {
-                                HStack(spacing: 0) {
-                                    navigationArrows
+        ZStack {
+            VisualEffectBlur()
+            VStack(spacing: 0) {
+                ZStack {
+                    VisualEffectBlur()
+                    HStack(spacing: 0) {
+                        if !isFullScreen {
+                            Color.clear
+                                .frame(width: topBarLeadingWidth)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .overlay(alignment: .trailing) {
+                                    HStack(spacing: 0) {
+                                        navigationArrows
+                                    }
                                 }
-                            }
+                        }
+                        topBarContent
                     }
-                    topBarContent
+                    .frame(height: 36)
+                    .padding(.horizontal, 10)
                 }
                 .frame(height: 36)
-                .padding(.horizontal, 8)
-            }
-            .frame(height: 36)
-            .padding(.horizontal, 8)
-            .padding(.top, 8)
-            .padding(.bottom, 2)
+                .padding(.horizontal, 10)
+                .padding(.top, 6)
+                .padding(.bottom, 2)
+                .font(.custom("JetBrainsMono Nerd Font", size: 13))
 
-            // 去除分割线，保持极简
+                // 去除分割线，保持极简
 
-            HStack(spacing: 0) {
                 HStack(spacing: 0) {
-                    Sidebar()
-                    if !SidebarLayout.isHidden(expanded: sidebarExpanded, collapsedStyle: sidebarCollapsedStyle) {
-                        Rectangle().fill(MuxyTheme.border.opacity(0.04)).frame(width: 1)
-                            .accessibilityHidden(true)
-                    }
-                }
-                .fixedSize(horizontal: true, vertical: false)
-                .background(MuxyTheme.bg)
-
-                ZStack {
-                    MuxyTheme.bg
-                    if let project = activeProject,
-                       appState.workspaceRoot(for: project.id) == nil,
-                       let worktree = resolvedActiveWorktree(for: project)
-                    {
-                        EmptyProjectPlaceholder(project: project) {
-                            appState.selectWorktree(projectID: project.id, worktree: worktree)
-                        }
-                    } else if projectsWithWorkspaces.isEmpty {
-                        WelcomeView()
-                    } else if let project = activeProjectWithWorkspace,
-                              let activeKey = appState.activeWorktreeKey(for: project.id)
-                    {
-                        ForEach(mountedWorktreeKeys(for: project), id: \.self) { key in
-                            TerminalArea(
-                                project: project,
-                                worktreeKey: key,
-                                isActiveProject: key == activeKey
-                            )
-                            .opacity(key == activeKey ? 1 : 0)
-                            .allowsHitTesting(key == activeKey)
-                            .zIndex(key == activeKey ? 1 : 0)
-                        }
-                    }
-                }
-
-                if vcsPanelVisible, VCSDisplayMode.current == .attached, let state = activeVCSState {
                     HStack(spacing: 0) {
-                        sidePanelResizeHandle { delta in
-                            vcsPanelWidth = max(
-                                AttachedVCSLayout.minWidth,
-                                min(AttachedVCSLayout.maxWidth, vcsPanelWidth - delta)
-                            )
+                        Sidebar()
+                        if !SidebarLayout.isHidden(expanded: sidebarExpanded, collapsedStyle: sidebarCollapsedStyle) {
+                            Rectangle().fill(MuxyTheme.border.opacity(0.04)).frame(width: 1)
+                                .accessibilityHidden(true)
                         }
-                        VCSTabView(state: state, focused: false, onFocus: {})
-                            .frame(width: vcsPanelWidth)
                     }
-                } else if fileTreePanelVisible, let treeState = activeFileTreeState {
-                    HStack(spacing: 0) {
-                        sidePanelResizeHandle { delta in
-                            let next = fileTreePanelWidth - Double(delta)
-                            fileTreePanelWidth = max(
-                                Double(FileTreeLayout.minWidth),
-                                min(Double(FileTreeLayout.maxWidth), next)
-                            )
-                        }
-                        FileTreeView(
-                            state: treeState,
-                            onOpenFile: { filePath in
-                                guard let projectID = appState.activeProjectID else { return }
-                                appState.openFile(filePath, projectID: projectID, preserveFocus: true)
-                            },
-                            onOpenTerminal: { directory in
-                                guard let projectID = appState.activeProjectID else { return }
-                                appState.dispatch(.createTabInDirectory(
-                                    projectID: projectID,
-                                    areaID: nil,
-                                    directory: directory
-                                ))
-                            },
-                            onFileMoved: { oldPath, newPath in
-                                appState.handleFileMoved(from: oldPath, to: newPath)
+                    .fixedSize(horizontal: true, vertical: false)
+                    // .background(MuxyTheme.bg) // 移除自定义背景
+
+                    ZStack {
+                        VisualEffectBlur()
+                        // MuxyTheme.bg // 移除自定义背景
+                        if let project = activeProject,
+                           appState.workspaceRoot(for: project.id) == nil,
+                           let worktree = resolvedActiveWorktree(for: project)
+                        {
+                            EmptyProjectPlaceholder(project: project) {
+                                appState.selectWorktree(projectID: project.id, worktree: worktree)
                             }
-                        )
-                        .id(treeState.rootPath)
-                        .frame(width: CGFloat(fileTreePanelWidth))
+                        } else if projectsWithWorkspaces.isEmpty {
+                            WelcomeView()
+                        } else if let project = activeProjectWithWorkspace,
+                                  let activeKey = appState.activeWorktreeKey(for: project.id)
+                        {
+                            ForEach(mountedWorktreeKeys(for: project), id: \.self) { key in
+                                TerminalArea(
+                                    project: project,
+                                    worktreeKey: key,
+                                    isActiveProject: key == activeKey
+                                )
+                                .opacity(key == activeKey ? 1 : 0)
+                                .allowsHitTesting(key == activeKey)
+                                .zIndex(key == activeKey ? 1 : 0)
+                            }
+                        }
+                    }
+
+                    if vcsPanelVisible, VCSDisplayMode.current == .attached, let state = activeVCSState {
+                        HStack(spacing: 0) {
+                            sidePanelResizeHandle { delta in
+                                vcsPanelWidth = max(
+                                    AttachedVCSLayout.minWidth,
+                                    min(AttachedVCSLayout.maxWidth, vcsPanelWidth - delta)
+                                )
+                            }
+                            VCSTabView(state: state, focused: false, onFocus: {})
+                                .frame(width: vcsPanelWidth)
+                        }
+                    } else if fileTreePanelVisible, let treeState = activeFileTreeState {
+                        HStack(spacing: 0) {
+                            sidePanelResizeHandle { delta in
+                                let next = fileTreePanelWidth - Double(delta)
+                                fileTreePanelWidth = max(
+                                    Double(FileTreeLayout.minWidth),
+                                    min(Double(FileTreeLayout.maxWidth), next)
+                                )
+                            }
+                            FileTreeView(
+                                state: treeState,
+                                onOpenFile: { filePath in
+                                    guard let projectID = appState.activeProjectID else { return }
+                                    appState.openFile(filePath, projectID: projectID, preserveFocus: true)
+                                },
+                                onOpenTerminal: { directory in
+                                    guard let projectID = appState.activeProjectID else { return }
+                                    appState.dispatch(.createTabInDirectory(
+                                        projectID: projectID,
+                                        areaID: nil,
+                                        directory: directory
+                                    ))
+                                },
+                                onFileMoved: { oldPath, newPath in
+                                    appState.handleFileMoved(from: oldPath, to: newPath)
+                                }
+                            )
+                            .id(treeState.rootPath)
+                            .frame(width: CGFloat(fileTreePanelWidth))
+                        }
                     }
                 }
             }
@@ -182,10 +184,10 @@ struct MainWindow: View {
             if let toast = ToastState.shared.message {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundStyle(MuxyTheme.diffAddFg)
                     Text(toast)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                         .foregroundStyle(MuxyTheme.fg)
                 }
                 .padding(.horizontal, 14)
@@ -265,7 +267,7 @@ struct MainWindow: View {
         ))
         .background(WindowConfigurator(configVersion: ghostty.configVersion))
         .background(WindowTitleUpdater(title: windowTitle))
-        .ignoresSafeArea(.container, edges: .top)
+        .ignoresSafeArea()
         .onReceive(NotificationCenter.default.publisher(for: .quickOpen)) { _ in
             showQuickOpen.toggle()
         }
@@ -437,7 +439,7 @@ struct MainWindow: View {
                     HStack {
                         if let project = activeProject {
                             Text(project.name)
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                                 .foregroundStyle(MuxyTheme.fgMuted)
                                 .padding(.leading, 12)
                         }
@@ -1037,7 +1039,7 @@ private struct NavigationArrowButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(foregroundColor)
                 .frame(width: 22, height: 22)
                 .contentShape(Rectangle())

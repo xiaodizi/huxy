@@ -10,7 +10,7 @@ struct DebugButton: View {
             showingPopover.toggle()
         } label: {
             Image(systemName: "ladybug.fill")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(hovered ? MuxyTheme.warning : MuxyTheme.warning.opacity(0.75))
                 .frame(width: 22, height: 22)
                 .contentShape(Rectangle())
@@ -33,14 +33,14 @@ private struct DebugInfoPopover: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 6) {
                 Image(systemName: "ladybug.fill")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                     .foregroundStyle(MuxyTheme.warning)
                 Text("Debug")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fg)
                 Spacer(minLength: 12)
                 Text("DEV")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                     .foregroundStyle(MuxyTheme.bg)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1)
@@ -64,15 +64,15 @@ private struct DebugInfoPopover: View {
     private func metricRow(_ label: String, value: String, icon: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 10, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 14)
             Text(label)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
             Spacer(minLength: 8)
             Text(value)
-                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 .foregroundStyle(MuxyTheme.fg)
         }
     }

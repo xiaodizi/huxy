@@ -13,13 +13,13 @@ struct TerminalSearchBar: View {
             HStack(spacing: 6) {
                 HStack(spacing: 4) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .accessibilityHidden(true)
 
                     TextField("Search", text: $searchState.needle)
                         .textFieldStyle(.plain)
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fg)
                         .focused($isFieldFocused)
                         .onSubmit { onNavigateNext() }
@@ -29,7 +29,7 @@ struct TerminalSearchBar: View {
 
                     if !searchState.displayText.isEmpty {
                         Text(searchState.displayText)
-                            .font(.system(size: 10))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10))
                             .foregroundStyle(MuxyTheme.fgMuted)
                             .lineLimit(1)
                             .fixedSize()
@@ -47,21 +47,21 @@ struct TerminalSearchBar: View {
 
                 Button(action: onNavigatePrevious) {
                     Image(systemName: "chevron.up")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 }
                 .buttonStyle(SearchBarButtonStyle())
                 .accessibilityLabel("Previous Match")
 
                 Button(action: onNavigateNext) {
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 }
                 .buttonStyle(SearchBarButtonStyle())
                 .accessibilityLabel("Next Match")
 
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 }
                 .buttonStyle(SearchBarButtonStyle())
                 .accessibilityLabel("Close Search")

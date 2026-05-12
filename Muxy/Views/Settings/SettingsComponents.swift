@@ -49,7 +49,7 @@ struct SettingsSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, SettingsMetrics.horizontalPadding)
                 .padding(.top, SettingsMetrics.sectionHeaderTopPadding)
@@ -59,7 +59,7 @@ struct SettingsSection<Content: View>: View {
 
             if let footer {
                 Text(footer)
-                    .font(.system(size: SettingsMetrics.footnoteFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, SettingsMetrics.horizontalPadding)
@@ -92,7 +92,7 @@ struct SettingsRow<Content: View>: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: SettingsMetrics.labelFontSize, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize).weight(.medium))
             Spacer()
             content
         }

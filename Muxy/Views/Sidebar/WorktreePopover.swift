@@ -169,7 +169,7 @@ private struct WorktreePopoverRow: View {
                 if isRenaming {
                     TextField("", text: $renameText)
                         .textFieldStyle(.plain)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundStyle(MuxyTheme.fg)
                         .focused($renameFieldFocused)
                         .onSubmit { commitRename() }
@@ -177,13 +177,13 @@ private struct WorktreePopoverRow: View {
                 } else {
                     HStack(spacing: 6) {
                         Text(displayName)
-                            .font(.system(size: 12, weight: selected ? .semibold : .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(selected ? .semibold : .medium))
                             .foregroundStyle(selected ? MuxyTheme.fg : MuxyTheme.fg.opacity(0.9))
                             .lineLimit(1)
                             .truncationMode(.middle)
                         if worktree.isPrimary {
                             Text("PRIMARY")
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                                 .tracking(0.5)
                                 .foregroundStyle(MuxyTheme.fgDim)
                                 .padding(.horizontal, 4)
@@ -194,7 +194,7 @@ private struct WorktreePopoverRow: View {
                 }
                 if let branch = branchSubtitle, !isRenaming {
                     Text(branch)
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgDim)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -213,7 +213,7 @@ private struct WorktreePopoverRow: View {
         }
         .contextMenu {
             if worktree.isPrimary {
-                Text("Primary worktree").font(.system(size: 11))
+                Text("Primary worktree").font(.custom("JetBrainsMono Nerd Font", size: 11))
             } else if let onRemove {
                 Button("Rename") { startRename() }
                 Divider()
@@ -221,7 +221,7 @@ private struct WorktreePopoverRow: View {
             } else {
                 Button("Rename") { startRename() }
                 Divider()
-                Text("External worktree").font(.system(size: 11))
+                Text("External worktree").font(.custom("JetBrainsMono Nerd Font", size: 11))
             }
         }
     }

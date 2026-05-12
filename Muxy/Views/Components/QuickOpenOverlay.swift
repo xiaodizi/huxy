@@ -31,26 +31,15 @@ private struct FileResultRow: View {
         let ext = URL(fileURLWithPath: result.absolutePath).pathExtension.lowercased()
         switch ext {
         case "swift": return "swift"
-        case "js",
-             "jsx",
-             "mjs": return "j.square"
-        case "ts",
-             "tsx",
-             "mts": return "t.square"
+        case "js", "jsx", "mjs": return "j.square"
+        case "ts", "tsx", "mts": return "t.square"
         case "py": return "p.square"
         case "json": return "curlybraces"
-        case "html",
-             "htm": return "chevron.left.forwardslash.chevron.right"
-        case "css",
-             "scss": return "paintbrush"
-        case "md",
-             "markdown": return "doc.richtext"
-        case "yaml",
-             "yml",
-             "toml": return "gearshape"
-        case "sh",
-             "bash",
-             "zsh": return "terminal"
+        case "html", "htm": return "chevron.left.forwardslash.chevron.right"
+        case "css", "scss": return "paintbrush"
+        case "md", "markdown": return "doc.richtext"
+        case "yaml", "yml", "toml": return "gearshape"
+        case "sh", "bash", "zsh": return "terminal"
         default: return "doc.text"
         }
     }
@@ -58,19 +47,18 @@ private struct FileResultRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: fileIcon)
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 16)
             VStack(alignment: .leading, spacing: 1) {
                 Text(result.fileName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                     .foregroundStyle(MuxyTheme.fg)
                     .lineLimit(1)
                 Text(result.relativePath)
-                    .font(.system(size: 10))
-                    .foregroundStyle(MuxyTheme.fgDim)
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
+                    .foregroundStyle(MuxyTheme.fgMuted)
                     .lineLimit(1)
-                    .truncationMode(.middle)
             }
             Spacer()
         }
@@ -81,4 +69,4 @@ private struct FileResultRow: View {
             hovered = isHovered
         }
     }
-}
+            }

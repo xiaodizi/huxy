@@ -22,7 +22,7 @@ struct CommitHistoryView: View {
                 .padding(20)
         } else if state.commits.isEmpty {
             Text("No commits")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
@@ -57,7 +57,7 @@ struct CommitHistoryView: View {
                             .padding(.vertical, 10)
                     } else {
                         Text("Load more")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                             .foregroundStyle(MuxyTheme.accent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
@@ -146,7 +146,7 @@ private struct CommitRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(commit.subject)
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.regular))
                     .foregroundStyle(MuxyTheme.fg)
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -157,12 +157,12 @@ private struct CommitRow: View {
                     }
 
                     Text(commit.authorName)
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgDim)
                         .lineLimit(1)
 
                     Text(relativeDate(commit.authorDate))
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
             }
@@ -171,7 +171,7 @@ private struct CommitRow: View {
 
             if hovered {
                 Text(commit.shortHash)
-                    .font(.system(size: 10, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(MuxyTheme.fgDim)
                     .padding(.trailing, 2)
             }
@@ -233,9 +233,9 @@ private struct CommitRow: View {
 
         return HStack(spacing: 2) {
             Image(systemName: icon)
-                .font(.system(size: 8, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.semibold))
             Text(ref.name)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 .lineLimit(1)
         }
         .foregroundStyle(color)
@@ -343,7 +343,7 @@ private struct NameInputSheet: View {
     var body: some View {
         VStack(spacing: 16) {
             Text(title)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
 
             TextField(placeholder, text: $name)

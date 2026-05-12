@@ -11,7 +11,7 @@ struct SegmentedPicker<T: Hashable>: View {
                     selection = option.value
                 } label: {
                     Text(option.label)
-                        .font(.system(size: 11, weight: selection == option.value ? .semibold : .regular))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(selection == option.value ? .semibold : .regular))
                         .foregroundStyle(selection == option.value ? MuxyTheme.fg : MuxyTheme.fgMuted)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 5)

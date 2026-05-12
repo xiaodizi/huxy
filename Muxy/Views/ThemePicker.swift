@@ -68,7 +68,7 @@ private struct ThemeRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 4) {
                 Text(theme.name)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fg)
                     .lineLimit(1)
 
@@ -76,7 +76,7 @@ private struct ThemeRow: View {
 
                 if isActive {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                         .foregroundStyle(Color.accentColor)
                 }
             }
@@ -86,7 +86,7 @@ private struct ThemeRow: View {
                     .fill(Color(nsColor: theme.background))
                     .overlay(
                         Text("Ab")
-                            .font(.system(size: 9, weight: .medium, design: .monospaced))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.medium))
                             .foregroundStyle(Color(nsColor: theme.foreground))
                     )
                     .frame(width: 24)

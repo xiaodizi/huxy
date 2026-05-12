@@ -26,7 +26,7 @@ struct ProjectIconColorPicker: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
 
             LazyVGrid(columns: columns, spacing: 8) {
@@ -42,9 +42,9 @@ struct ProjectIconColorPicker: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "arrow.uturn.backward")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                     Text("Reset to Default")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 }
                 .foregroundStyle(MuxyTheme.fgMuted)
             }

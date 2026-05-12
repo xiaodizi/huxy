@@ -17,18 +17,18 @@ struct PullRequestsListView: View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fgDim)
                 TextField("Search", text: $state.pullRequestSearchQuery)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fg)
                 if !state.pullRequestSearchQuery.isEmpty {
                     Button {
                         state.pullRequestSearchQuery = ""
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 10))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 10))
                             .foregroundStyle(MuxyTheme.fgDim)
                     }
                     .buttonStyle(.plain)
@@ -59,9 +59,9 @@ struct PullRequestsListView: View {
             } label: {
                 HStack(spacing: 3) {
                     Text(filterLabel(state.pullRequestStateFilter))
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 8, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                 }
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .padding(.horizontal, 6)
@@ -124,16 +124,16 @@ struct PullRequestsListView: View {
     private var unfetchedState: some View {
         VStack(spacing: 8) {
             Text("Pull requests not synced yet")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
             Button {
                 state.loadPullRequests()
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                     Text("Sync now")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 }
                 .foregroundStyle(MuxyTheme.fg)
                 .padding(.horizontal, 10)
@@ -149,10 +149,10 @@ struct PullRequestsListView: View {
     private func emptyState(icon: String, text: String) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 16))
+                .font(.custom("JetBrainsMono Nerd Font", size: 16))
                 .foregroundStyle(MuxyTheme.fgDim)
             Text(text)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .multilineTextAlignment(.center)
         }
@@ -174,26 +174,26 @@ struct PullRequestRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(pr.title)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                         .foregroundStyle(MuxyTheme.fg)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     Text("#\(pr.number)")
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
                 HStack(spacing: 4) {
                     Text(pr.author)
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     Text("•")
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgDim)
                     Image(systemName: "arrow.triangle.branch")
-                        .font(.system(size: 9))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 9))
                         .foregroundStyle(MuxyTheme.fgDim)
                     Text("\(pr.headBranch) → \(pr.baseBranch)")
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -218,7 +218,7 @@ struct PullRequestRow: View {
     private var stateBadge: some View {
         let (symbol, color) = stateAppearance
         Image(systemName: symbol)
-            .font(.system(size: 11, weight: .semibold))
+            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
             .foregroundStyle(color)
             .frame(width: 14)
     }
@@ -239,15 +239,15 @@ struct PullRequestRow: View {
             EmptyView()
         case .pending:
             Image(systemName: "clock")
-                .font(.system(size: 10))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(MuxyTheme.fgMuted)
         case .success:
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 10))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(MuxyTheme.diffAddFg)
         case .failure:
             Image(systemName: "xmark.octagon.fill")
-                .font(.system(size: 10))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(MuxyTheme.diffRemoveFg)
         }
     }
@@ -259,10 +259,10 @@ struct PullRequestRow: View {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "arrow.down.to.line")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 }
                 Text("Checkout")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
             }
             .foregroundStyle(MuxyTheme.fg)
             .padding(.horizontal, 8)
@@ -301,7 +301,7 @@ struct PullRequestsAutoSyncMenu: View {
             }
         } label: {
             Image(systemName: state.pullRequestAutoSyncMinutes > 0 ? "clock.fill" : "clock")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(state.pullRequestAutoSyncMinutes > 0 ? MuxyTheme.accent : MuxyTheme.fgMuted)
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())

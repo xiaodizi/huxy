@@ -28,7 +28,7 @@ struct ProjectRow: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 } else {
                     Text(displayLetter)
-                        .font(.system(size: 13, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
                         .foregroundStyle(letterForeground)
                 }
             }
@@ -256,11 +256,11 @@ private struct RenamePopover: View {
     var body: some View {
         VStack(spacing: 8) {
             Text("Rename Project")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             TextField("Project name", text: $text)
                 .textFieldStyle(.roundedBorder)
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .focused($isFocused)
                 .onSubmit { onCommit() }
                 .onExitCommand { onCancel() }

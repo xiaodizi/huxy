@@ -33,7 +33,7 @@ final class EditorSettings {
     static let markdownPreviewZoomStep: CGFloat = 0.1
 
     var fontSize: CGFloat = 13 { didSet { save() } }
-    var fontFamily: String = "SF Mono" { didSet { save() } }
+    var fontFamily: String = "JetBrainsMono Nerd Font" { didSet { save() } }
     var defaultEditor: DefaultEditor = .builtIn { didSet { save() } }
     var externalEditorCommand: String = "vim" { didSet { save() } }
     var markdownPreviewFontFamily: String = EditorSettings.defaultMarkdownPreviewFontFamily { didSet { save() } }
@@ -106,7 +106,7 @@ final class EditorSettings {
     func resetToDefaults() {
         isBatchLoading = true
         fontSize = 13
-        fontFamily = "SF Mono"
+        fontFamily = "JetBrainsMono Nerd Font"
         defaultEditor = .builtIn
         externalEditorCommand = "vim"
         markdownPreviewFontFamily = Self.defaultMarkdownPreviewFontFamily

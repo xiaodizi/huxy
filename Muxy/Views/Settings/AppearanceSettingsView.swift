@@ -92,10 +92,10 @@ struct AppearanceSettingsView: View {
         } label: {
             HStack(spacing: 6) {
                 Text(title)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                     .lineLimit(1)
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 5)

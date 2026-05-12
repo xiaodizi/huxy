@@ -33,13 +33,13 @@ struct ProviderIconView: View {
             }
         } else {
             Image(systemName: "sparkles")
-                .font(.system(size: size * 0.8))
+                .font(.custom("JetBrainsMono Nerd Font", size: size * 0.8))
                 .foregroundStyle(.secondary)
                 .frame(width: size, height: size)
         }
         #else
         Image(systemName: "sparkles")
-            .font(.system(size: size * 0.8))
+            .font(.custom("JetBrainsMono Nerd Font", size: size * 0.8))
             .foregroundStyle(.secondary)
             .frame(width: size, height: size)
         #endif

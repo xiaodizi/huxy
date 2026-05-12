@@ -109,13 +109,13 @@ struct RemoteControlledPlaceholder: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "iphone.gen3")
-                .font(.system(size: 28))
+                .font(.custom("JetBrainsMono Nerd Font", size: 28))
                 .foregroundStyle(MuxyTheme.fgMuted)
             Text("Controlled by \(deviceName)")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             Text("This terminal session is currently being used on \(deviceName). Take over to resume on Mac.")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
@@ -125,7 +125,7 @@ struct RemoteControlledPlaceholder: View {
                 HStack(spacing: 8) {
                     Text("Take Over")
                     Text("⌘↩")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                         .opacity(0.72)
                 }
             }

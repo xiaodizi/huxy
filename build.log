@@ -1,0 +1,1874 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+[2/46] Compiling Muxy StatusBarView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[3/46] Compiling Muxy TerminalBottomBar.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[4/46] Compiling Muxy UpdateBadge.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[5/48] Compiling Muxy FindInFilesOverlay.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[6/48] Compiling Muxy IconButton.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[7/48] Compiling Muxy OpenInIDEControl.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[8/48] Compiling Muxy QuickOpenOverlay.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:77:9: [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m23 |[0;0m }
+[0;36m24 |[0;0m 
+[0;36m25 |[0;0m private struct FileResultRow: View {
+   [0;36m|[0;0m                `- [1;39mnote: [1;39min declaration of 'FileResultRow'[0;0m
+[0;36m26 |[0;0m     let result: FileSearchResult
+[0;36m27 |[0;0m     let isHighlighted: Bool
+   [0;36m:[0;0m
+[0;36m75 |[0;0m             Spacer()
+[0;36m76 |[0;0m         }
+[0;36m77 |[0;0m         .padding(.horizontal, 12)
+   [0;36m|[0;0m         `- [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m78 |[0;0m         .padding(.vertical, 6)
+[0;36m79 |[0;0m         .background(isHighlighted ? MuxyTheme.surface : hovered ? MuxyTheme.hover : .clear)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[9/48] Compiling Muxy SearchableListPicker.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:77:9: [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m23 |[0;0m }
+[0;36m24 |[0;0m 
+[0;36m25 |[0;0m private struct FileResultRow: View {
+   [0;36m|[0;0m                `- [1;39mnote: [1;39min declaration of 'FileResultRow'[0;0m
+[0;36m26 |[0;0m     let result: FileSearchResult
+[0;36m27 |[0;0m     let isHighlighted: Bool
+   [0;36m:[0;0m
+[0;36m75 |[0;0m             Spacer()
+[0;36m76 |[0;0m         }
+[0;36m77 |[0;0m         .padding(.horizontal, 12)
+   [0;36m|[0;0m         `- [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m78 |[0;0m         .padding(.vertical, 6)
+[0;36m79 |[0;0m         .background(isHighlighted ? MuxyTheme.surface : hovered ? MuxyTheme.hover : .clear)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[10/48] Compiling Muxy SegmentedPicker.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:77:9: [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m23 |[0;0m }
+[0;36m24 |[0;0m 
+[0;36m25 |[0;0m private struct FileResultRow: View {
+   [0;36m|[0;0m                `- [1;39mnote: [1;39min declaration of 'FileResultRow'[0;0m
+[0;36m26 |[0;0m     let result: FileSearchResult
+[0;36m27 |[0;0m     let isHighlighted: Bool
+   [0;36m:[0;0m
+[0;36m75 |[0;0m             Spacer()
+[0;36m76 |[0;0m         }
+[0;36m77 |[0;0m         .padding(.horizontal, 12)
+   [0;36m|[0;0m         `- [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m78 |[0;0m         .padding(.vertical, 6)
+[0;36m79 |[0;0m         .background(isHighlighted ? MuxyTheme.surface : hovered ? MuxyTheme.hover : .clear)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[11/48] Compiling Muxy EditorPane.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[12/48] Compiling Muxy EditorSearchBar.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[13/48] Compiling Muxy PathBreadcrumb.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[14/48] Compiling Muxy SettingsComponents.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:391:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m389 |[0;0m                 .help("Notifications")
+[0;36m390 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m391 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m392 |[0;0m                 }
+[0;36m393 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:415:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m413 |[0;0m                 .help("Notifications")
+[0;36m414 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m415 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m416 |[0;0m                 }
+[0;36m417 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+[15/48] Compiling Muxy ShortcutBadge.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:391:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m389 |[0;0m                 .help("Notifications")
+[0;36m390 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m391 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m392 |[0;0m                 }
+[0;36m393 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:415:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m413 |[0;0m                 .help("Notifications")
+[0;36m414 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m415 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m416 |[0;0m                 }
+[0;36m417 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+[16/48] Compiling Muxy Sidebar.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:391:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m389 |[0;0m                 .help("Notifications")
+[0;36m390 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m391 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m392 |[0;0m                 }
+[0;36m393 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Sidebar.swift:415:21: [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m413 |[0;0m                 .help("Notifications")
+[0;36m414 |[0;0m                 .popover(isPresented: $showNotifications) {
+[0;36m415 |[0;0m                     [4;39mNotificationPanel[0;0m(onDismiss: { showNotifications = false })
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'NotificationPanel' in scope[0;0m
+[0;36m416 |[0;0m                 }
+[0;36m417 |[0;0m             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
+[17/48] Compiling Muxy OpenerOverlay.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[18/48] Compiling Muxy PaletteOverlay.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[19/48] Compiling Muxy PopoverPicker.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[20/48] Compiling Muxy LayoutPickerMenu.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[21/48] Compiling Muxy TabStrip.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[22/48] Emitting module Muxy
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:77:9: [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m23 |[0;0m }
+[0;36m24 |[0;0m 
+[0;36m25 |[0;0m private struct FileResultRow: View {
+   [0;36m|[0;0m                `- [1;39mnote: [1;39min declaration of 'FileResultRow'[0;0m
+[0;36m26 |[0;0m     let result: FileSearchResult
+[0;36m27 |[0;0m     let isHighlighted: Bool
+   [0;36m:[0;0m
+[0;36m75 |[0;0m             Spacer()
+[0;36m76 |[0;0m         }
+[0;36m77 |[0;0m         .padding(.horizontal, 12)
+   [0;36m|[0;0m         `- [1;31merror: [1;39mexpected declaration[0;0m
+[0;36m78 |[0;0m         .padding(.vertical, 6)
+[0;36m79 |[0;0m         .background(isHighlighted ? MuxyTheme.surface : hovered ? MuxyTheme.hover : .clear)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 10))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:21: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:12:25: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                         `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m14 |[0;0m                         .lineLimit(2)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:13: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m             `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:31: [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m                               `- [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:18:17: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                 `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:24:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:42:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+ [0;36m42 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m43 |[0;0m         ZStack {
+ [0;36m44 |[0;0m             NotificationPanelBlurView()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:26: [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+Foundation.UUID:2:15: [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m1 |[0;0m @available(macOS 10.8, iOS 6.0, tvOS 9.0, watchOS 2.0, *)
+ [0;36m2 |[0;0m public struct UUID : Hashable, Equatable, CustomStringConvertible, Sendable {
+   [0;36m|[0;0m               `- [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m3 |[0;0m     public var uuid: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) { get }
+ [0;36m4 |[0;0m     public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:26: [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+Swift.String:1:23: [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m1 |[0;0m @frozen public struct String {
+  [0;36m|[0;0m                       `- [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m2 |[0;0m     public var _guts: _StringGuts
+[0;36m3 |[0;0m     @inlinable public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:16:21: [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m14 |[0;0m                         .lineLimit(2)
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = [4;39mminutes[0;0m / 60
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text([4;39mitem[0;0m.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:22:8: [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        |- [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+    [0;36m|[0;0m        `- [1;39mnote: [1;39madd stubs for conformance[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+
+SwiftUI.View.Body:2:16: [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m1 |[0;0m protocol View {
+[0;36m2 |[0;0m associatedtype Body : View}
+  [0;36m|[0;0m                `- [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m3 |[0;0m 
+[23/48] Compiling Muxy VCSWindowView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[24/48] Compiling Muxy WorktreeBranchPicker.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[25/48] Compiling Muxy WelcomeHeroView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[26/48] Compiling Muxy WelcomeView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[27/48] Compiling Muxy PullRequestsListView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[28/48] Compiling Muxy VCSTabView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[29/48] Compiling Muxy AppBundleIconView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[30/48] Compiling Muxy DebugButton.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[31/48] Compiling Muxy FileTreeIcon.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[32/48] Compiling Muxy CreateBranchSheet.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[33/48] Compiling Muxy CreatePRSheet.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[34/48] Compiling Muxy DiffComponents.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[35/48] Compiling Muxy WorktreePopover.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[36/48] Compiling Muxy BranchPicker.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[37/48] Compiling Muxy CommitHistoryView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[38/48] Compiling Muxy NotificationPanel.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 10))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:21: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:12:25: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                         `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m14 |[0;0m                         .lineLimit(2)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:13: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m             `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:31: [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m                               `- [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:18:17: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                 `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:24:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:90: [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                                                                                          `- [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:42:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+ [0;36m42 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m43 |[0;0m         ZStack {
+ [0;36m44 |[0;0m             NotificationPanelBlurView()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:26: [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+Foundation.UUID:2:15: [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m1 |[0;0m @available(macOS 10.8, iOS 6.0, tvOS 9.0, watchOS 2.0, *)
+ [0;36m2 |[0;0m public struct UUID : Hashable, Equatable, CustomStringConvertible, Sendable {
+   [0;36m|[0;0m               `- [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m3 |[0;0m     public var uuid: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) { get }
+ [0;36m4 |[0;0m     public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:26: [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+Swift.String:1:23: [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m1 |[0;0m @frozen public struct String {
+  [0;36m|[0;0m                       `- [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m2 |[0;0m     public var _guts: _StringGuts
+[0;36m3 |[0;0m     @inlinable public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:16:21: [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m14 |[0;0m                         .lineLimit(2)
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = [4;39mminutes[0;0m / 60
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text([4;39mitem[0;0m.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:22:8: [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        |- [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+    [0;36m|[0;0m        `- [1;39mnote: [1;39madd stubs for conformance[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+
+SwiftUI.View.Body:2:16: [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m1 |[0;0m protocol View {
+[0;36m2 |[0;0m associatedtype Body : View}
+  [0;36m|[0;0m                `- [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m3 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:22: [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.medium[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:28:13: [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+ [0;36m28 |[0;0m         _ = [4;39mstore[0;0m.readStateVersion
+    [0;36m|[0;0m             `- [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:22: [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .[4;39mfont[0;0m(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight([4;39m.light[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:32:21: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: [4;39mn[0;0m.id,
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:34:24: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: [4;39mn[0;0m.title,
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:35:23: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: [4;39mn[0;0m.body,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+ [0;36m37 |[0;0m                 isRead: n.isRead
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:39:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+ [0;36m39 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:24: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:76: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:126:39: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m124 |[0;0m     private func notificationAccessibilityLabel(for item: NotificationPanelItem) -> String {
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { [4;39mlabel[0;0m += [4;39m": \(item.body)"[0;0m }
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m127 |[0;0m         label += ", \(item.relativeTimestamp)"
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:127:15: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { label += ": \(item.body)" }
+[0;36m127 |[0;0m         [4;39mlabel[0;0m += [4;39m", \(item.relativeTimestamp)"[0;0m
+    [0;36m|[0;0m               `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+[0;36m129 |[0;0m         return label
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:134:83: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+    [0;36m|[0;0m                                                                                   `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:137:23: [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+[0;36m137 |[0;0m             appState: [4;39mappState[0;0m,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:140:9: [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+[0;36m140 |[0;0m         [4;39monDismiss[0;0m()
+    [0;36m|[0;0m         `- [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m141 |[0;0m     }
+[0;36m142 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:133:39: [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m130 |[0;0m     }
+[0;36m131 |[0;0m 
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+    [0;36m|[0;0m                  `- [1;39mnote: [1;39madd '@MainActor' to make instance method 'selectItem' part of global actor 'MainActor'[0;0m
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Services/NotificationStore.swift:10:16: [1;39mnote: [1;39mstatic property declared here[0;0m
+  [0;36m8 |[0;0m @Observable
+  [0;36m9 |[0;0m final class NotificationStore {
+ [0;36m10 |[0;0m     static let shared = NotificationStore()
+    [0;36m|[0;0m                `- [1;39mnote: [1;39mstatic property declared here[0;0m
+ [0;36m11 |[0;0m 
+ [0;36m12 |[0;0m     var appState: AppState?
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:159:44: [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m157 |[0;0m             VStack(alignment: .leading, spacing: 2) {
+[0;36m158 |[0;0m                 HStack {
+[0;36m159 |[0;0m                     Image(systemName: [4;39mitem[0;0m.[4;39msourceIcon[0;0m)
+    [0;36m|[0;0m                                            `- [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m160 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+[0;36m161 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+[39/48] Compiling Muxy AIUsageSettingsView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 10))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:21: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:12:25: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                         `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m14 |[0;0m                         .lineLimit(2)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:13: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m             `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:31: [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m                               `- [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:18:17: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                 `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:24:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:90: [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                                                                                          `- [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:42:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+ [0;36m42 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m43 |[0;0m         ZStack {
+ [0;36m44 |[0;0m             NotificationPanelBlurView()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:26: [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+Foundation.UUID:2:15: [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m1 |[0;0m @available(macOS 10.8, iOS 6.0, tvOS 9.0, watchOS 2.0, *)
+ [0;36m2 |[0;0m public struct UUID : Hashable, Equatable, CustomStringConvertible, Sendable {
+   [0;36m|[0;0m               `- [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m3 |[0;0m     public var uuid: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) { get }
+ [0;36m4 |[0;0m     public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:26: [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+Swift.String:1:23: [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m1 |[0;0m @frozen public struct String {
+  [0;36m|[0;0m                       `- [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m2 |[0;0m     public var _guts: _StringGuts
+[0;36m3 |[0;0m     @inlinable public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:16:21: [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m14 |[0;0m                         .lineLimit(2)
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = [4;39mminutes[0;0m / 60
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text([4;39mitem[0;0m.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:22:8: [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        |- [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+    [0;36m|[0;0m        `- [1;39mnote: [1;39madd stubs for conformance[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+
+SwiftUI.View.Body:2:16: [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m1 |[0;0m protocol View {
+[0;36m2 |[0;0m associatedtype Body : View}
+  [0;36m|[0;0m                `- [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m3 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:22: [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.medium[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:28:13: [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+ [0;36m28 |[0;0m         _ = [4;39mstore[0;0m.readStateVersion
+    [0;36m|[0;0m             `- [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:22: [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .[4;39mfont[0;0m(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight([4;39m.light[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:32:21: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: [4;39mn[0;0m.id,
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:34:24: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: [4;39mn[0;0m.title,
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:35:23: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: [4;39mn[0;0m.body,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+ [0;36m37 |[0;0m                 isRead: n.isRead
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:39:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+ [0;36m39 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:24: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:76: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:126:39: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m124 |[0;0m     private func notificationAccessibilityLabel(for item: NotificationPanelItem) -> String {
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { [4;39mlabel[0;0m += [4;39m": \(item.body)"[0;0m }
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m127 |[0;0m         label += ", \(item.relativeTimestamp)"
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:127:15: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { label += ": \(item.body)" }
+[0;36m127 |[0;0m         [4;39mlabel[0;0m += [4;39m", \(item.relativeTimestamp)"[0;0m
+    [0;36m|[0;0m               `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+[0;36m129 |[0;0m         return label
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:134:83: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+    [0;36m|[0;0m                                                                                   `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:137:23: [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+[0;36m137 |[0;0m             appState: [4;39mappState[0;0m,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:140:9: [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+[0;36m140 |[0;0m         [4;39monDismiss[0;0m()
+    [0;36m|[0;0m         `- [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m141 |[0;0m     }
+[0;36m142 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:133:39: [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m130 |[0;0m     }
+[0;36m131 |[0;0m 
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+    [0;36m|[0;0m                  `- [1;39mnote: [1;39madd '@MainActor' to make instance method 'selectItem' part of global actor 'MainActor'[0;0m
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Services/NotificationStore.swift:10:16: [1;39mnote: [1;39mstatic property declared here[0;0m
+  [0;36m8 |[0;0m @Observable
+  [0;36m9 |[0;0m final class NotificationStore {
+ [0;36m10 |[0;0m     static let shared = NotificationStore()
+    [0;36m|[0;0m                `- [1;39mnote: [1;39mstatic property declared here[0;0m
+ [0;36m11 |[0;0m 
+ [0;36m12 |[0;0m     var appState: AppState?
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:159:44: [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m157 |[0;0m             VStack(alignment: .leading, spacing: 2) {
+[0;36m158 |[0;0m                 HStack {
+[0;36m159 |[0;0m                     Image(systemName: [4;39mitem[0;0m.[4;39msourceIcon[0;0m)
+    [0;36m|[0;0m                                            `- [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m160 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+[0;36m161 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+[40/48] Compiling Muxy AppearanceSettingsView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:30: [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m [4;39m                        .font(.custom("JetBrainsMono Nerd Font", size: 10))[0;0m
+    [0;36m|[0;0m                              `- [1;31merror: [1;39munexpected initializer in pattern; did you mean to use '='?[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:21: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39munnamed parameters must be written with the empty name '_'[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:12:25: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text(item.body)
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                         `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m14 |[0;0m                         .lineLimit(2)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:13: [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m             `- [1;31merror: [1;39mexpected 'func' keyword in instance method declaration[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:17:31: [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+    [0;36m|[0;0m                               `- [1;31merror: [1;39mexpected parameter type following ':'[0;0m
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:18:17: [1;31merror: [1;39mexpected declaration[0;0m
+  [0;36m1 |[0;0m import SwiftUI
+  [0;36m2 |[0;0m 
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanelItem'[0;0m
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         let hours = minutes / 60
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                 `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m19 |[0;0m                 .foregroundStyle(MuxyTheme.fgMuted)
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:24:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:90: [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                                                                                          `- [1;31merror: [1;39mexpected ',' separator[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:42:21: [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        `- [1;39mnote: [1;39min declaration of 'NotificationPanel'[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m:[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+ [0;36m42 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mexpected declaration[0;0m
+ [0;36m43 |[0;0m         ZStack {
+ [0;36m44 |[0;0m             NotificationPanelBlurView()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:5:26: [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m3 |[0;0m struct NotificationPanelItem: Identifiable {
+  [0;36m4 |[0;0m     let id: UUID
+  [0;36m5 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Foundation.UUID'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+
+Foundation.UUID:2:15: [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m1 |[0;0m @available(macOS 10.8, iOS 6.0, tvOS 9.0, watchOS 2.0, *)
+ [0;36m2 |[0;0m public struct UUID : Hashable, Equatable, CustomStringConvertible, Sendable {
+   [0;36m|[0;0m               `- [1;39mnote: [1;39m'UUID' declared here[0;0m
+ [0;36m3 |[0;0m     public var uuid: (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8) { get }
+ [0;36m4 |[0;0m     public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:8:26: [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m6 |[0;0m     let title: String
+  [0;36m7 |[0;0m     let body: String
+  [0;36m8 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                          `- [1;31merror: [1;39m'font' is not a member type of struct 'Swift.String'[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+
+Swift.String:1:23: [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m1 |[0;0m @frozen public struct String {
+  [0;36m|[0;0m                       `- [1;39mnote: [1;39m'String' declared here[0;0m
+[0;36m2 |[0;0m     public var _guts: _StringGuts
+[0;36m3 |[0;0m     @inlinable public init()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:16:21: [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m14 |[0;0m                         .lineLimit(2)
+ [0;36m15 |[0;0m         guard minutes >= 60 else { return "\(minutes)m" }
+ [0;36m16 |[0;0m         let hours = [4;39mminutes[0;0m / 60
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'minutes' in scope[0;0m
+ [0;36m17 |[0;0m             Image(systemName: "xmark")
+ [0;36m18 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:11:26: [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+  [0;36m9 |[0;0m     let isRead: Bool
+ [0;36m10 |[0;0m 
+ [0;36m11 |[0;0m                     Text([4;39mitem[0;0m.body)
+    [0;36m|[0;0m                          `- [1;31merror: [1;39mcannot find type 'item' in scope[0;0m
+ [0;36m12 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 11))
+ [0;36m13 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:22:8: [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+ [0;36m20 |[0;0m                 .frame(width: 14, height: 14)
+ [0;36m21 |[0;0m                 .background(MuxyTheme.surface, in: Circle())
+ [0;36m22 |[0;0m struct NotificationPanel: View {
+    [0;36m|[0;0m        |- [1;31merror: [1;39mtype 'NotificationPanelItem.NotificationPanel' does not conform to protocol 'View'[0;0m
+    [0;36m|[0;0m        `- [1;39mnote: [1;39madd stubs for conformance[0;0m
+ [0;36m23 |[0;0m     @Environment(AppState.self) private var appState
+ [0;36m24 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+
+SwiftUI.View.Body:2:16: [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m1 |[0;0m protocol View {
+[0;36m2 |[0;0m associatedtype Body : View}
+  [0;36m|[0;0m                `- [1;39mnote: [1;39mprotocol requires nested type 'Body'[0;0m
+[0;36m3 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:22: [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mreference to member 'font' cannot be resolved without a contextual type[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:27:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m25 |[0;0m 
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.medium[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'medium'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:28:13: [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m26 |[0;0m     private var items: [NotificationPanelItem] {
+ [0;36m27 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+ [0;36m28 |[0;0m         _ = [4;39mstore[0;0m.readStateVersion
+    [0;36m|[0;0m             `- [1;31merror: [1;39mcannot find 'store' in scope[0;0m
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:22: [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .[4;39mfont[0;0m(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mvalue of type 'AIProviderRegistry' has no member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 24).weight(.light))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:30:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m28 |[0;0m         _ = store.readStateVersion
+ [0;36m29 |[0;0m         let registry = AIProviderRegistry.shared
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight([4;39m.light[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'light'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:32:21: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m30 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: [4;39mn[0;0m.id,
+    [0;36m|[0;0m                     `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:34:24: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: [4;39mn[0;0m.title,
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:35:23: [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: [4;39mn[0;0m.body,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'n' in scope[0;0m
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+ [0;36m37 |[0;0m                 isRead: n.isRead
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     [4;39m.font[0;0m(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:33:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m31 |[0;0m             NotificationPanelItem(
+ [0;36m32 |[0;0m                 id: n.id,
+ [0;36m33 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:22: [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                      `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'font'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:36:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m34 |[0;0m                 title: n.title,
+ [0;36m35 |[0;0m                 body: n.body,
+ [0;36m36 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 10))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:39:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m37 |[0;0m                 isRead: n.isRead
+ [0;36m38 |[0;0m             )
+ [0;36m39 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 11))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m40 |[0;0m     }
+ [0;36m41 |[0;0m 
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:24: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                        `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:63:76: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m61 |[0;0m         HStack {
+ [0;36m62 |[0;0m             Text("Notifications")
+ [0;36m63 |[0;0m                 .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m64 |[0;0m                 .foregroundStyle(MuxyTheme.fg)
+ [0;36m65 |[0;0m             Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mcannot convert value of type 'ObjectIdentifier' to expected argument type 'UUID'[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:84:62: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m82 |[0;0m                 ForEach(currentItems) { item in
+ [0;36m83 |[0;0m                     NotificationRow(item: item, isHighlighted: false, onRemove: {
+ [0;36m84 |[0;0m                         NotificationStore.shared.remove(item.id)
+    [0;36m|[0;0m                                                              `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+ [0;36m85 |[0;0m                     })
+ [0;36m86 |[0;0m                     .contentShape(Rectangle())
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:28: [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font([4;39m.custom[0;0m("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+    [0;36m|[0;0m                            `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'custom'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:101:80: [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+ [0;36m99 |[0;0m             HStack {
+[0;36m100 |[0;0m                 Text("Notifications")
+[0;36m101 |[0;0m                     .font(.custom("JetBrainsMono Nerd Font", size: 12).weight([4;39m.semibold[0;0m))
+    [0;36m|[0;0m                                                                                `- [1;31merror: [1;39mcannot infer contextual base in reference to member 'semibold'[0;0m
+[0;36m102 |[0;0m                     .foregroundStyle(MuxyTheme.fg)
+[0;36m103 |[0;0m                 Spacer()
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:126:39: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m124 |[0;0m     private func notificationAccessibilityLabel(for item: NotificationPanelItem) -> String {
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { [4;39mlabel[0;0m += [4;39m": \(item.body)"[0;0m }
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m127 |[0;0m         label += ", \(item.relativeTimestamp)"
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:127:15: [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m125 |[0;0m         var label = item.title
+[0;36m126 |[0;0m         if !item.body.isEmpty { label += ": \(item.body)" }
+[0;36m127 |[0;0m         [4;39mlabel[0;0m += [4;39m", \(item.relativeTimestamp)"[0;0m
+    [0;36m|[0;0m               `- [1;31merror: [1;39mbinary operator '+=' cannot be applied to operands of type 'String' and 'String.Stride'[0;0m
+[0;36m128 |[0;0m         if !item.isRead { label += ", unread" }
+[0;36m129 |[0;0m         return label
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:134:83: [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+    [0;36m|[0;0m                                                                                   `- [1;31merror: [1;39mproperty 'id' requires that 'NotificationPanelItem' be a class type[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+
+Swift.Identifiable:2:11: [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m1 |[0;0m @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+[0;36m2 |[0;0m extension Identifiable where Self : AnyObject {
+  [0;36m|[0;0m           `- [1;39mnote: [1;39mwhere 'Self' = 'NotificationPanelItem'[0;0m
+[0;36m3 |[0;0m     public var id: ObjectIdentifier { get }
+[0;36m4 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:137:23: [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+[0;36m136 |[0;0m             to: notification,
+[0;36m137 |[0;0m             appState: [4;39mappState[0;0m,
+    [0;36m|[0;0m                       `- [1;31merror: [1;39mcannot find 'appState' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:140:9: [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m138 |[0;0m             notificationStore: store
+[0;36m139 |[0;0m         )
+[0;36m140 |[0;0m         [4;39monDismiss[0;0m()
+    [0;36m|[0;0m         `- [1;31merror: [1;39mcannot find 'onDismiss' in scope[0;0m
+[0;36m141 |[0;0m     }
+[0;36m142 |[0;0m }
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:133:39: [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m130 |[0;0m     }
+[0;36m131 |[0;0m 
+[0;36m132 |[0;0m     private func selectItem(_ item: NotificationPanelItem) {
+    [0;36m|[0;0m                  `- [1;39mnote: [1;39madd '@MainActor' to make instance method 'selectItem' part of global actor 'MainActor'[0;0m
+[0;36m133 |[0;0m         let store = NotificationStore.shared
+    [0;36m|[0;0m                                       `- [1;31merror: [1;39mmain actor-isolated static property 'shared' can not be referenced from a nonisolated context[0;0m
+[0;36m134 |[0;0m         guard let notification = store.notifications.first(where: { $0.id == item.id }) else { return }
+[0;36m135 |[0;0m         NotificationNavigator.navigate(
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Services/NotificationStore.swift:10:16: [1;39mnote: [1;39mstatic property declared here[0;0m
+  [0;36m8 |[0;0m @Observable
+  [0;36m9 |[0;0m final class NotificationStore {
+ [0;36m10 |[0;0m     static let shared = NotificationStore()
+    [0;36m|[0;0m                `- [1;39mnote: [1;39mstatic property declared here[0;0m
+ [0;36m11 |[0;0m 
+ [0;36m12 |[0;0m     var appState: AppState?
+
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/NotificationPanel.swift:159:44: [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m157 |[0;0m             VStack(alignment: .leading, spacing: 2) {
+[0;36m158 |[0;0m                 HStack {
+[0;36m159 |[0;0m                     Image(systemName: [4;39mitem[0;0m.[4;39msourceIcon[0;0m)
+    [0;36m|[0;0m                                            `- [1;31merror: [1;39mvalue of type 'NotificationPanelItem' has no member 'sourceIcon'[0;0m
+[0;36m160 |[0;0m                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
+[0;36m161 |[0;0m                         .foregroundStyle(MuxyTheme.fgMuted)
+[41/48] Compiling Muxy GeneralSettingsView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[42/48] Compiling Muxy KeyboardShortcutsSettingsView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[43/48] Compiling Muxy NotificationSettingsView.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[44/48] Compiling Muxy AIUsagePanel.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[45/48] Compiling Muxy CreateWorktreeSheet.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 
+[46/48] Compiling Muxy ProjectRow.swift
+/Users/lei.fu/LLM/claude_code/huxy/Muxy/Views/Components/QuickOpenOverlay.swift:84:1: [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m82 |[0;0m         }
+[0;36m83 |[0;0m     }
+[0;36m84 |[0;0m }
+   [0;36m|[0;0m `- [1;31merror: [1;39mextraneous '}' at top level[0;0m
+[0;36m85 |[0;0m 

@@ -49,7 +49,7 @@ struct EditorPane: View {
                 HStack(spacing: 6) {
                     ProgressView().controlSize(.mini)
                     Text("Loading full file...")
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
                 .padding(.horizontal, 8)
@@ -220,7 +220,7 @@ struct EditorPane: View {
             ProgressView()
                 .controlSize(.small)
             Text("Loading full markdown preview...")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -233,10 +233,10 @@ struct EditorPane: View {
     private var externalChangeBanner: some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.diffHunkFg)
             Text("This file changed on disk. You have unsaved changes.")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fg)
             Spacer()
             Button("Reload from Disk") {
@@ -265,13 +265,13 @@ struct EditorPane: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 28))
+                .font(.custom("JetBrainsMono Nerd Font", size: 28))
                 .foregroundStyle(MuxyTheme.fgMuted)
             Text("Large File")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             Text("This file is \(formattedLargeFileSize). Large files may slow down the editor.")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
@@ -301,7 +301,7 @@ struct EditorPane: View {
         VStack {
             Spacer()
             Text(error)
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.diffRemoveFg)
             Spacer()
         }
@@ -319,7 +319,7 @@ private struct EditorMarkdownModePicker: View {
                     scrollSyncEnabled.toggle()
                 } label: {
                     Image(systemName: "arrow.up.and.down")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                         .foregroundStyle(scrollSyncEnabled ? MuxyTheme.accent : MuxyTheme.fg)
                         .frame(width: 22, height: 20)
                         .background(
@@ -342,7 +342,7 @@ private struct EditorMarkdownModePicker: View {
                     mode = candidate
                 } label: {
                     Image(systemName: candidate.symbol)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                         .frame(width: 22, height: 20)
                         .background(
                             RoundedRectangle(cornerRadius: 4)
@@ -388,10 +388,10 @@ private struct EditorBreadcrumb: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: "doc.text")
-                .font(.system(size: 10))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(MuxyTheme.fgDim)
             Text(relativePath)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -403,7 +403,7 @@ private struct EditorBreadcrumb: View {
             }
             if state.isReadOnly {
                 Label("Read-only", systemImage: "lock.fill")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                     .foregroundStyle(MuxyTheme.diffHunkFg)
             }
             Spacer()
@@ -415,7 +415,7 @@ private struct EditorBreadcrumb: View {
                 .padding(.trailing, 6)
             }
             Text("Ln \(state.cursorLine), Col \(state.cursorColumn)")
-                .font(.system(size: 10, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(MuxyTheme.fgDim)
         }
         .padding(.horizontal, 10)

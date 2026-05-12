@@ -47,22 +47,22 @@ struct WorktreeBranchPicker: View {
         Button(action: open) {
             HStack(spacing: 4) {
                 Image(systemName: "square.stack.3d.up")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 Text(worktreeLabel)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 7, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 7).weight(.bold))
                     .foregroundStyle(MuxyTheme.fgDim)
                 Image(systemName: "arrow.triangle.branch")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                 Text(branchLabel)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
             .frame(maxWidth: 160, alignment: .leading)
@@ -106,7 +106,7 @@ struct WorktreeBranchPicker: View {
             }
         } label: {
             Text(item.title)
-                .font(.system(size: 11, weight: isActive ? .semibold : .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(isActive ? .semibold : .medium))
                 .foregroundStyle(isActive ? MuxyTheme.fg : MuxyTheme.fgDim)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(alignment: .bottom) {

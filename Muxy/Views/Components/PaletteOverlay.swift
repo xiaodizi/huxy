@@ -32,7 +32,6 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
                 resultsList
             }
             .frame(width: 500, height: 380)
-            .background(PaletteBlurView())
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(MuxyTheme.border, lineWidth: 1))
             .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
@@ -52,7 +51,7 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .font(.system(size: 13))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13))
                 .accessibilityHidden(true)
             PaletteSearchField(
                 text: $query,
@@ -76,7 +75,7 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
                 VStack {
                     Spacer()
                     Text(query.isEmpty ? emptyLabel : noMatchLabel)
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     Spacer()
                 }

@@ -19,11 +19,11 @@ struct CreateBranchSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("New Branch")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("Branch Name")
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 TextField("feature-x", text: $name)
                     .textFieldStyle(.roundedBorder)
@@ -33,7 +33,7 @@ struct CreateBranchSheet: View {
 
             if let currentBranch {
                 Text("Created from \(currentBranch)")
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
 

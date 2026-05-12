@@ -9,21 +9,21 @@ struct UpdateBadge: View {
         Button(action: action) {
             HStack(spacing: 4) {
                 Image(systemName: "arrow.down.circle.fill")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 Text("Update \(version)")
-                    .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                     .lineLimit(1)
             }
             .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(MuxyTheme.surface)
+                    .fill(Color.white.opacity(0.04))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 5)
-                    .stroke(MuxyTheme.border, lineWidth: 1)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

@@ -57,7 +57,7 @@ private struct DiffViewerBreadcrumb: View {
                 .frame(width: 11, height: 11)
 
             Text(state.filePath)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -65,7 +65,7 @@ private struct DiffViewerBreadcrumb: View {
 
             if state.isStaged {
                 Text("Staged")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fgMuted)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1)
@@ -75,12 +75,12 @@ private struct DiffViewerBreadcrumb: View {
             if let diff = loadedDiff {
                 if diff.additions > 0 {
                     Text("+\(diff.additions)")
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                         .foregroundStyle(MuxyTheme.diffAddFg)
                 }
                 if diff.deletions > 0 {
                     Text("-\(diff.deletions)")
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                         .foregroundStyle(MuxyTheme.diffRemoveFg)
                 }
             }
@@ -113,7 +113,7 @@ private struct DiffViewerBreadcrumb: View {
             state.mode = mode
         } label: {
             Image(systemName: symbol)
-                .font(.system(size: 10, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 .foregroundStyle(selected ? MuxyTheme.fg : MuxyTheme.fgMuted)
                 .frame(width: 22, height: 20)
                 .background(selected ? MuxyTheme.bg : Color.clear)

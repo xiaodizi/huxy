@@ -69,7 +69,7 @@ private struct HelpWelcomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Welcome to Muxy")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 22).weight(.bold))
                     .foregroundStyle(MuxyTheme.fg)
                 Text(
                     "Muxy is a native macOS terminal multiplexer organised around projects, "
@@ -81,7 +81,7 @@ private struct HelpWelcomeView: View {
                 HelpQuickStart()
 
                 Text("Where to next")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fg)
                     .padding(.top, 8)
                 Text(
@@ -115,23 +115,23 @@ private struct HelpQuickStart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Quick start")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             ForEach(Array(steps.enumerated()), id: \.element.id) { index, step in
                 HStack(alignment: .top, spacing: 12) {
                     Text("\(index + 1)")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .frame(width: 22, height: 22)
                         .background(MuxyTheme.fgMuted.opacity(0.15), in: Circle())
                         .foregroundStyle(MuxyTheme.fg)
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 8) {
                             Text(step.title)
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                                 .foregroundStyle(MuxyTheme.fg)
                             if let shortcut = step.shortcut {
                                 Text(shortcut)
-                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                                     .foregroundStyle(MuxyTheme.fgMuted)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -139,7 +139,7 @@ private struct HelpQuickStart: View {
                             }
                         }
                         Text(step.detail)
-                            .font(.system(size: 12))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 12))
                             .foregroundStyle(MuxyTheme.fgMuted)
                     }
                 }
@@ -162,7 +162,7 @@ private struct HelpShortcutsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Keyboard Shortcuts")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 22).weight(.bold))
                     .foregroundStyle(MuxyTheme.fg)
                 Text("Defaults shown. All shortcuts can be remapped in Settings → Shortcuts.")
                     .foregroundStyle(MuxyTheme.fgMuted)
@@ -170,17 +170,17 @@ private struct HelpShortcutsView: View {
                 ForEach(groups, id: \.category) { group in
                     VStack(alignment: .leading, spacing: 6) {
                         Text(group.category)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                             .foregroundStyle(MuxyTheme.fg)
                             .padding(.bottom, 2)
                         ForEach(group.actions) { action in
                             HStack {
                                 Text(action.displayName)
-                                    .font(.system(size: 12))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                                     .foregroundStyle(MuxyTheme.fg)
                                 Spacer()
                                 Text(KeyBindingStore.shared.combo(for: action).displayString)
-                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                                     .foregroundStyle(MuxyTheme.fgMuted)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -272,7 +272,7 @@ private struct HelpFeaturesView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Features")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 22).weight(.bold))
                     .foregroundStyle(MuxyTheme.fg)
                 Text("Every feature has a short overview here and a full page in the documentation.")
                     .foregroundStyle(MuxyTheme.fgMuted)
@@ -295,10 +295,10 @@ private struct HelpFeaturesView: View {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(feature.title)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                         .foregroundStyle(MuxyTheme.fg)
                     Text(feature.summary)
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
                 Spacer()
@@ -319,7 +319,7 @@ private struct HelpLinksView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Links")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 22).weight(.bold))
                     .foregroundStyle(MuxyTheme.fg)
                 Text("Find more information, file an issue, or join the community.")
                     .foregroundStyle(MuxyTheme.fgMuted)
@@ -365,21 +365,21 @@ private struct HelpLinksView: View {
             Button(action: action) {
                 HStack(spacing: 12) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 14))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 14))
                         .foregroundStyle(MuxyTheme.fg)
                         .frame(width: 24, height: 24)
                         .background(MuxyTheme.fgMuted.opacity(0.12), in: RoundedRectangle(cornerRadius: 6))
                     VStack(alignment: .leading, spacing: 2) {
                         Text(title)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                             .foregroundStyle(MuxyTheme.fg)
                         Text(subtitle)
-                            .font(.system(size: 11))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11))
                             .foregroundStyle(MuxyTheme.fgMuted)
                     }
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
                 .padding(12)

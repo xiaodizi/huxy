@@ -120,7 +120,7 @@ struct FileTreeView: View {
     private var header: some View {
         HStack(spacing: 0) {
             Text((state.rootPath as NSString).lastPathComponent)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.head)
@@ -337,7 +337,7 @@ private struct FileTreeRow: View {
                 )
             } else {
                 Text(entry.name)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(textColor)
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -393,7 +393,7 @@ private struct FileTreeRow: View {
 
     private var icon: some View {
         Image(systemName: iconSymbol)
-            .font(.system(size: 11))
+            .font(.custom("JetBrainsMono Nerd Font", size: 11))
             .foregroundStyle(iconColor)
             .frame(width: 14)
     }
@@ -480,7 +480,7 @@ private struct FileTreeNewEntryRow: View {
         HStack(spacing: 4) {
             Color.clear.frame(width: CGFloat(depth) * 12)
             Image(systemName: kind == .folder ? "folder" : "doc")
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 14)
             FileTreeRenameField(
@@ -508,7 +508,7 @@ private struct FileTreeRenameField: View {
     var body: some View {
         TextField("", text: $text)
             .textFieldStyle(.plain)
-            .font(.system(size: 12))
+            .font(.custom("JetBrainsMono Nerd Font", size: 12))
             .foregroundStyle(MuxyTheme.fg)
             .focused($focused)
             .onAppear {

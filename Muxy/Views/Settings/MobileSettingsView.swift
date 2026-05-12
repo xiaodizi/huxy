@@ -29,7 +29,7 @@ struct MobileSettingsView: View {
                 SettingsRow("Port") {
                     TextField("\(MobileServerService.defaultPort)", text: $portText)
                         .textFieldStyle(.roundedBorder)
-                        .font(.system(size: SettingsMetrics.labelFontSize, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                         .frame(width: SettingsMetrics.controlWidth)
                         .onChange(of: portText) { _, _ in
                             guard portText != String(service.port) else { return }
@@ -44,14 +44,14 @@ struct MobileSettingsView: View {
                 if let error = portValidationError ?? service.lastError {
                     HStack(spacing: 6) {
                         Text(error)
-                            .font(.system(size: SettingsMetrics.footnoteFontSize))
+                            .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                             .foregroundStyle(.red)
                             .fixedSize(horizontal: false, vertical: true)
                         if service.isPortInUse {
                             Button("Free Port") {
                                 showFreePortConfirmation = true
                             }
-                            .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                             .buttonStyle(.borderless)
                             .foregroundStyle(MuxyTheme.accent)
                         }
@@ -68,7 +68,7 @@ struct MobileSettingsView: View {
             ) {
                 if devices.devices.isEmpty {
                     Text("No devices approved yet.")
-                        .font(.system(size: SettingsMetrics.labelFontSize))
+                        .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, SettingsMetrics.horizontalPadding)
                         .padding(.vertical, SettingsMetrics.rowVerticalPadding)
@@ -128,9 +128,9 @@ struct MobileSettingsView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(device.name)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                 Text(lastSeenText(device))
-                    .font(.system(size: SettingsMetrics.footnoteFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -138,7 +138,7 @@ struct MobileSettingsView: View {
                 deviceToRevoke = device
             }
             .buttonStyle(.borderless)
-            .font(.system(size: SettingsMetrics.footnoteFontSize))
+            .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
             .foregroundStyle(.red)
         }
         .padding(.horizontal, SettingsMetrics.horizontalPadding)

@@ -373,7 +373,7 @@ struct VCSTabView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if state.files.isEmpty, state.errorMessage != nil {
             Text(state.errorMessage ?? "")
-                .font(.system(size: 12))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -435,14 +435,14 @@ struct VCSTabView: View {
             ZStack(alignment: .topLeading) {
                 if state.commitMessage.isEmpty {
                     Text("Commit message (⌘↵ to commit on \(state.branchName ?? "branch"))")
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgDim)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 10)
                         .allowsHitTesting(false)
                 }
                 TextEditor(text: $state.commitMessage)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fg)
                     .scrollContentBackground(.hidden)
                     .padding(.horizontal, 5)
@@ -477,10 +477,10 @@ struct VCSTabView: View {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                 }
                 Text("Commit")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
             }
             .foregroundStyle(commitEnabled ? MuxyTheme.bg : MuxyTheme.fgDim)
             .frame(maxWidth: .infinity)
@@ -508,13 +508,13 @@ struct VCSTabView: View {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "arrow.down")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                 }
                 Text("Pull")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 if state.aheadBehind.behind > 0 {
                     Text("\(state.aheadBehind.behind)")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                         .foregroundStyle(MuxyTheme.bg)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 1)
@@ -543,13 +543,13 @@ struct VCSTabView: View {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "arrow.up")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                 }
                 Text("Push")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 if state.aheadBehind.ahead > 0 {
                     Text("\(state.aheadBehind.ahead)")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                         .foregroundStyle(MuxyTheme.bg)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 1)
@@ -715,7 +715,7 @@ struct VCSSectionVisibilityMenu: View {
             }
         } label: {
             Image(systemName: "sidebar.squares.left")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(hovered ? MuxyTheme.fg : MuxyTheme.fgMuted)
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())
@@ -768,9 +768,9 @@ struct PRPill: View {
         Button(action: onRequestCreate) {
             HStack(spacing: 4) {
                 Image(systemName: "arrow.triangle.pull")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 Text("Create PR")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
             }
             .foregroundStyle(MuxyTheme.accent)
             .padding(.horizontal, 6)
@@ -790,13 +790,13 @@ struct PRPill: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: prStateIcon(info))
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                     .foregroundStyle(prStateColor(info))
                 Text("PR #\(info.number)")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fg.opacity(0.85))
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
             .padding(.horizontal, 6)
@@ -882,9 +882,9 @@ struct PRPill: View {
         Button(action: action) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                 Text(text)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
             }
             .foregroundStyle(tint)
             .padding(.horizontal, 6)
@@ -912,13 +912,13 @@ struct PRPopover: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: stateIcon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
                     .foregroundStyle(stateColor)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Pull Request #\(info.number)")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                     Text(stateLabel)
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
                 Spacer(minLength: 0)
@@ -930,7 +930,7 @@ struct PRPopover: View {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                                 .foregroundStyle(MuxyTheme.fgMuted)
                         }
                     }
@@ -958,9 +958,9 @@ struct PRPopover: View {
             Button(action: onOpenInBrowser) {
                 HStack(spacing: 6) {
                     Image(systemName: "arrow.up.right.square")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                     Text("Open on GitHub")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                     Spacer(minLength: 0)
                 }
                 .foregroundStyle(MuxyTheme.fg)
@@ -983,10 +983,10 @@ struct PRPopover: View {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "arrow.triangle.merge")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.bold))
                         }
                         Text(state.isMergingPullRequest ? "Merging…" : mergeMethod.label)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                         Spacer(minLength: 0)
                     }
                     .foregroundStyle(mergeDisabled ? MuxyTheme.fgDim : MuxyTheme.bg)
@@ -1008,10 +1008,10 @@ struct PRPopover: View {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "xmark.circle")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                         }
                         Text("Close PR")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                         Spacer(minLength: 0)
                     }
                     .foregroundStyle(MuxyTheme.diffRemoveFg)
@@ -1157,11 +1157,11 @@ struct PRPopover: View {
     private func infoRow(label: String, value: String, valueColor: Color = MuxyTheme.fg) -> some View {
         HStack(spacing: 6) {
             Text(label)
-                .font(.system(size: 11))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 70, alignment: .leading)
             Text(value)
-                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -1356,7 +1356,7 @@ private struct SectionSplitLayout: View {
                 sectionHeader(for: .changes, collapsed: false)
                 if state.files.isEmpty {
                     Text("No changes")
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -1399,19 +1399,19 @@ private struct SectionSplitLayout: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: isCollapsedState ? "chevron.right" : "chevron.down")
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
                             .foregroundStyle(MuxyTheme.fgDim)
                             .frame(width: 10)
 
                         Text(section.title)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                             .foregroundStyle(MuxyTheme.fgMuted)
                     }
                 }
                 .buttonStyle(.plain)
 
                 Text("\(sectionCount(for: section))")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
                     .foregroundStyle(MuxyTheme.bg)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 1)
@@ -1487,7 +1487,7 @@ private struct SectionSplitLayout: View {
             state.mode = state.mode == .unified ? .split : .unified
         } label: {
             Image(systemName: state.mode == .unified ? "rectangle.split.2x1" : "rectangle")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())
@@ -1501,7 +1501,7 @@ private struct SectionSplitLayout: View {
             state.fileListMode = state.fileListMode == .flat ? .folders : .flat
         } label: {
             Image(systemName: state.fileListMode == .flat ? "folder" : "list.bullet")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())
@@ -1517,7 +1517,7 @@ private struct SectionSplitLayout: View {
             state.setExpanded(files: files, expanded: !anyExpanded)
         } label: {
             Image(systemName: anyExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())
@@ -1677,12 +1677,12 @@ private struct FileRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .frame(width: 12)
 
             Text(statusText)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.bold))
                 .foregroundStyle(statusColor)
                 .frame(width: 14)
 
@@ -1691,7 +1691,7 @@ private struct FileRow: View {
                 .frame(width: 11, height: 11)
 
             Text(displayPath)
-                .font(.system(size: 12, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -1703,17 +1703,17 @@ private struct FileRow: View {
 
             if stats.binary {
                 Text("Binary")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                     .foregroundStyle(MuxyTheme.fgMuted)
             } else {
                 if let additions = stats.additions {
                     Text("+\(additions)")
-                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundStyle(MuxyTheme.diffAddFg)
                 }
                 if let deletions = stats.deletions {
                     Text("-\(deletions)")
-                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundStyle(MuxyTheme.diffRemoveFg)
                 }
             }
@@ -1755,23 +1755,23 @@ private struct FolderRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .frame(width: 12)
 
             Image(systemName: "folder")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 11, height: 11)
 
             Text(name)
-                .font(.system(size: 12, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
             Text("\(fileCount) \(fileCount == 1 ? "file" : "files")")
-                .font(.system(size: 10, weight: .regular))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.regular))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .lineLimit(1)
 

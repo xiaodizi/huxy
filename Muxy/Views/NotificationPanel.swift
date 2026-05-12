@@ -1,48 +1,29 @@
 import SwiftUI
 
+
 struct NotificationPanelItem: Identifiable {
     let id: UUID
-    let sourceIcon: String
     let title: String
     let body: String
-    let timestamp: Date
     let isRead: Bool
-
-    var relativeTimestamp: String {
-        let interval = Date().timeIntervalSince(timestamp)
-        guard interval >= 60 else { return "now" }
-        let minutes = Int(interval / 60)
-        guard minutes >= 60 else { return "\(minutes)m" }
-        let hours = minutes / 60
-        guard hours >= 24 else { return "\(hours)h" }
-        return "\(hours / 24)d"
-    }
 }
 
 struct NotificationPanel: View {
     @Environment(AppState.self) private var appState
-    let onDismiss: () -> Void
-
+    @Environment(\ .dismiss) private var onDismiss
     private var items: [NotificationPanelItem] {
-        let store = NotificationStore.shared
-        _ = store.readStateVersion
-        let registry = AIProviderRegistry.shared
-        return store.notifications.map { n in
+        NotificationStore.shared.notifications.map { n in
             NotificationPanelItem(
                 id: n.id,
-                sourceIcon: registry.iconName(for: n.source),
                 title: n.title,
                 body: n.body,
-                timestamp: n.timestamp,
                 isRead: n.isRead
             )
         }
     }
-
     var body: some View {
         ZStack {
             NotificationPanelBlurView()
-
             VStack(spacing: 0) {
                 let currentItems = items
                 if currentItems.isEmpty {
@@ -56,18 +37,19 @@ struct NotificationPanel: View {
             .frame(width: 320, height: 400)
         }
     }
+    // ...existing code...
 
     private var header: some View {
         HStack {
             Text("Notifications")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             Spacer()
             Button {
                 NotificationStore.shared.clear()
             } label: {
                 Text("Clear All")
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgMuted)
             }
             .buttonStyle(.plain)
@@ -98,7 +80,7 @@ struct NotificationPanel: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Notifications")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                     .foregroundStyle(MuxyTheme.fg)
                 Spacer()
             }
@@ -110,10 +92,10 @@ struct NotificationPanel: View {
             VStack(spacing: 8) {
                 Spacer()
                 Image(systemName: "bell.slash")
-                    .font(.system(size: 24, weight: .light))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 24).weight(.light))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 Text("No notifications")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                     .foregroundStyle(MuxyTheme.fgMuted)
                 Spacer()
             }
@@ -124,7 +106,6 @@ struct NotificationPanel: View {
     private func notificationAccessibilityLabel(for item: NotificationPanelItem) -> String {
         var label = item.title
         if !item.body.isEmpty { label += ": \(item.body)" }
-        label += ", \(item.relativeTimestamp)"
         if !item.isRead { label += ", unread" }
         return label
     }
@@ -156,16 +137,16 @@ private struct NotificationRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
-                    Image(systemName: item.sourceIcon)
-                        .font(.system(size: 10))
+                    Image(systemName: "bell")
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     Text(item.title)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundStyle(MuxyTheme.fg)
                         .lineLimit(1)
                     Spacer()
-                    Text(item.relativeTimestamp)
-                        .font(.system(size: 10))
+                    EmptyView()
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                     if hovered {
                         dismissButton
@@ -174,7 +155,7 @@ private struct NotificationRow: View {
 
                 if !item.body.isEmpty {
                     Text(item.body)
-                        .font(.system(size: 11))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .lineLimit(2)
                 }
@@ -191,7 +172,7 @@ private struct NotificationRow: View {
             onRemove()
         } label: {
             Image(systemName: "xmark")
-                .font(.system(size: 8, weight: .bold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(width: 14, height: 14)
                 .background(MuxyTheme.surface, in: Circle())

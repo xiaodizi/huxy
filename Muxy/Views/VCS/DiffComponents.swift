@@ -8,7 +8,7 @@ struct DiffSectionDivider: View {
     var body: some View {
         HStack(spacing: 0) {
             Text(text)
-                .font(.system(size: 11, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .lineLimit(1)
                 .truncationMode(.tail)

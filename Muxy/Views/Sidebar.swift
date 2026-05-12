@@ -242,7 +242,7 @@ private struct AddProjectButton: View {
             RoundedRectangle(cornerRadius: 6)
                 .fill(MuxyTheme.hover)
             Image(systemName: "plus")
-                .font(.system(size: 13, weight: .bold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
                 .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
         }
         .frame(width: 28, height: 28)
@@ -255,13 +255,13 @@ private struct AddProjectButton: View {
                 RoundedRectangle(cornerRadius: 6)
                     .fill(MuxyTheme.surface)
                 Image(systemName: "plus")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
                     .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
             }
             .frame(width: 28, height: 28)
 
             Text("Add Project")
-                .font(.system(size: 12, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                 .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
                 .lineLimit(1)
             Spacer()
@@ -388,7 +388,7 @@ struct SidebarFooter: View {
             IconButton(symbol: notificationBellIcon, accessibilityLabel: "Notifications") { showNotifications.toggle() }
                 .help("Notifications")
                 .popover(isPresented: $showNotifications) {
-                    NotificationPanel(onDismiss: { showNotifications = false })
+                    NotificationPanel()
                 }
             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
                 .help("Theme Picker (\(KeyBindingStore.shared.combo(for: .toggleThemePicker).displayString))")
@@ -412,7 +412,7 @@ struct SidebarFooter: View {
             IconButton(symbol: notificationBellIcon, accessibilityLabel: "Notifications") { showNotifications.toggle() }
                 .help("Notifications")
                 .popover(isPresented: $showNotifications) {
-                    NotificationPanel(onDismiss: { showNotifications = false })
+                    NotificationPanel()
                 }
             IconButton(symbol: "paintpalette", accessibilityLabel: "Theme Picker") { showThemePicker.toggle() }
                 .help("Theme Picker (\(KeyBindingStore.shared.combo(for: .toggleThemePicker).displayString))")
@@ -425,10 +425,7 @@ struct SidebarFooter: View {
 
 struct SidebarBlurView: View {
     var body: some View {
-        ZStack {
-            SidebarBlurViewBase()
-            Color.black.opacity(0.20)
-        }
+        SidebarBlurViewBase()
     }
 }
 

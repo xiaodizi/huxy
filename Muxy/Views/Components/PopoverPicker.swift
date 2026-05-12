@@ -90,10 +90,10 @@ struct PopoverPicker<Item: Identifiable, RowContent: View>: View {
             HStack(spacing: 8) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 12))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 }
                 Text(title)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
                 Spacer()
                 ProgressView()
                     .controlSize(.small)

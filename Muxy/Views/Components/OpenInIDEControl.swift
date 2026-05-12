@@ -28,13 +28,13 @@ struct OpenInIDEControl: View {
                         AppBundleIconView(appURL: defaultIDE.appURL, fallbackSystemName: defaultIDE.symbolName, size: 16)
                     } else {
                         Image(systemName: "chevron.left.forwardslash.chevron.right")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                             .foregroundStyle(primaryForeground)
                     }
                 }
-                .frame(width: 22, height: 24)
+                .frame(width: 24, height: 26)
                 .contentShape(Rectangle())
-                .background(hoveredPrimary ? MuxyTheme.hover : .clear, in: RoundedRectangle(cornerRadius: 5))
+                .background(hoveredPrimary ? Color.white.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
             }
             .buttonStyle(.plain)
             .disabled(projectPath == nil || defaultIDE == nil)
@@ -42,7 +42,7 @@ struct OpenInIDEControl: View {
             .help(helpText)
             .accessibilityLabel(helpText)
 
-            menuToggleButton(width: 14)
+            menuToggleButton(width: 16)
         }
         .popover(isPresented: $showingMenu, arrowEdge: .bottom) {
             menuPopoverContent
@@ -60,7 +60,7 @@ struct OpenInIDEControl: View {
                     }
                     Text(defaultIDE.map { "Open in \($0.displayName)" } ?? "Open in IDE")
                 }
-                .font(.system(size: 12, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(primaryForeground)
                 .padding(.horizontal, 8)
                 .frame(height: 24)
@@ -86,9 +86,10 @@ struct OpenInIDEControl: View {
             showingMenu.toggle()
         } label: {
             Image(systemName: "chevron.down")
-                .font(.system(size: 8, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.semibold))
                 .foregroundStyle(menuForeground)
-                .frame(width: width, height: 24)
+                .frame(width: width, height: 26)
+                .background(hoveredMenu ? Color.white.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -116,7 +117,7 @@ struct OpenInIDEControl: View {
 
             if installedApps.isEmpty {
                 Text("No supported IDEs found")
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgMuted)
                     .padding(.leading, 10)
                     .padding(.trailing, 12)
@@ -137,7 +138,7 @@ struct OpenInIDEControl: View {
     private func menuSection(title: String, apps: [IDEIntegrationService.IDEApplication]) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(title)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .padding(.leading, 9)
                 .padding(.trailing, 12)
@@ -244,7 +245,7 @@ private struct IDEMenuRow: View {
             HStack(spacing: 7) {
                 AppBundleIconView(appURL: ide.appURL, fallbackSystemName: ide.symbolName, size: 14)
                 Text(ide.displayName)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
             }
             .foregroundStyle(MuxyTheme.fg)
             .padding(.leading, 9)
@@ -273,7 +274,7 @@ private struct IDEMenuActionRow: View {
             HStack(spacing: 7) {
                 AppBundleIconView(appURL: appURL, fallbackSystemName: fallbackSystemName, size: 14)
                 Text(title)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
             }
             .foregroundStyle(MuxyTheme.fg)
             .padding(.leading, 9)

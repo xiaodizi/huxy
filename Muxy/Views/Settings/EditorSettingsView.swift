@@ -25,7 +25,7 @@ struct EditorSettingsView: View {
                     SettingsRow("Editor Command") {
                         TextField("vim", text: $settings.externalEditorCommand)
                             .textFieldStyle(.roundedBorder)
-                            .font(.system(size: SettingsMetrics.labelFontSize, design: .monospaced))
+                            .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                             .frame(width: SettingsMetrics.controlWidth)
                     }
                 }
@@ -63,20 +63,20 @@ struct EditorSettingsView: View {
                             settings.adjustMarkdownPreviewFontScale(by: -EditorSettings.markdownPreviewZoomStep)
                         } label: {
                             Image(systemName: "minus")
-                                .font(.system(size: 10, weight: .medium))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                                 .frame(width: 20, height: 20)
                         }
                         .buttonStyle(.borderless)
 
                         Text("\(Int((settings.markdownPreviewFontScale * 100).rounded()))%")
-                            .font(.system(size: SettingsMetrics.labelFontSize, design: .monospaced))
+                            .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                             .frame(width: 44)
 
                         Button {
                             settings.adjustMarkdownPreviewFontScale(by: EditorSettings.markdownPreviewZoomStep)
                         } label: {
                             Image(systemName: "plus")
-                                .font(.system(size: 10, weight: .medium))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                                 .frame(width: 20, height: 20)
                         }
                         .buttonStyle(.borderless)
@@ -111,13 +111,13 @@ struct EditorSettingsView: View {
                                 settings.fontSize -= 1
                             } label: {
                                 Image(systemName: "minus")
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                                     .frame(width: 20, height: 20)
                             }
                             .buttonStyle(.borderless)
 
                             Text("\(Int(settings.fontSize)) pt")
-                                .font(.system(size: SettingsMetrics.labelFontSize, design: .monospaced))
+                                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                                 .frame(width: 44)
 
                             Button {
@@ -125,7 +125,7 @@ struct EditorSettingsView: View {
                                 settings.fontSize += 1
                             } label: {
                                 Image(systemName: "plus")
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                                     .frame(width: 20, height: 20)
                             }
                             .buttonStyle(.borderless)
@@ -141,7 +141,7 @@ struct EditorSettingsView: View {
                 Button("Reset to Defaults") {
                     settings.resetToDefaults()
                 }
-                .font(.system(size: SettingsMetrics.footnoteFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .buttonStyle(.borderless)
                 .foregroundStyle(.secondary)
             }

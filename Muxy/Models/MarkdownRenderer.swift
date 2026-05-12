@@ -113,7 +113,7 @@ enum MarkdownRenderer {
                     --code-bg: #F6F8FA;
                     --blockquote-border: #D0D7DE;
                     --row-alt: #F6F8FA;
-                    --md-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                    --md-font-family: 'JetBrainsMono Nerd Font', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
                     --md-font-size: 14px;
                 }
                 * { box-sizing: border-box; margin: 0; padding: 0; }

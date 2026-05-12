@@ -12,11 +12,11 @@ struct PathBreadcrumb: View {
             ForEach(Array(components.enumerated()), id: \.offset) { index, component in
                 if index > 0 {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 7, weight: .bold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 7).weight(.bold))
                         .foregroundStyle(MuxyTheme.fgDim)
                 }
                 Text(component)
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(index == components.count - 1 ? MuxyTheme.fg : MuxyTheme.fgMuted)
                     .lineLimit(1)
             }

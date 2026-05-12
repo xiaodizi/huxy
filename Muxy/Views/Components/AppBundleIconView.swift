@@ -14,7 +14,7 @@ struct AppBundleIconView: View {
                 .antialiased(true)
         } else {
             Image(systemName: fallbackSystemName)
-                .font(.system(size: size * 0.85, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: size * 0.85).weight(.semibold))
                 .foregroundStyle(.secondary)
                 .frame(width: size, height: size)
         }

@@ -1,4 +1,5 @@
 import AppKit
+// 确保 AppDelegate 存在
 import SwiftUI
 
 @main
@@ -140,6 +141,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var pendingOpenPaths: [String] = []
     private var systemAppearanceObserver: NSObjectProtocol?
 
+
+
     @MainActor
     func handleOpenProjectPath(_ path: String) {
         let standardized = URL(fileURLWithPath: path).standardizedFileURL.path
@@ -225,6 +228,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationSocketServer.shared.start()
         AIProviderRegistry.shared.installAll()
         _ = AIUsageSettingsStore.isUsageEnabled()
+
+        // 延迟到主线程，遍历所有窗口设置透明和隐藏标题栏
+        DispatchQueue.main.async {
+            for window in NSApplication.shared.windows {
+                window.isOpaque = false
+                window.backgroundColor = .clear
+                window.titlebarAppearsTransparent = true
+                window.titleVisibility = .hidden
+            }
+        }
 
         consumeLaunchArguments()
     }

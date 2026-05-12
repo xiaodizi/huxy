@@ -73,7 +73,6 @@ struct TabAreaView: View {
                         area.reorderTab(fromOffsets: fromOffsets, toOffset: toOffset)
                     }
                 )
-                Rectangle().fill(MuxyTheme.border).frame(height: 1)
             }
             ZStack {
                 ForEach(area.tabs) { tab in
@@ -154,16 +153,6 @@ struct TabAreaView: View {
         .background(
             ZStack {
                 TabAreaBlurView()
-                // styled rounded search pill overlay visually centered in top area
-                GeometryReader { geo in
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.sRGB, red: 0.09, green: 0.09, blue: 0.11, opacity: 0.55))
-                        .shadow(color: Color.black.opacity(0.25), radius: 6, x: 0, y: 2)
-                        .frame(height: 30)
-                        .position(x: geo.size.width/2, y: 18)
-                        .allowsHitTesting(false)
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.06), lineWidth: 1).frame(height: 30).position(x: geo.size.width/2, y: 18))
-                }
             }
         )
     }
@@ -231,10 +220,7 @@ private struct TabContentView: View {
 
 struct TabAreaBlurView: View {
     var body: some View {
-        ZStack {
-            TabAreaBlurViewBase()
-            Color.black.opacity(0.15)
-        }
+        TabAreaBlurViewBase()
     }
 }
 

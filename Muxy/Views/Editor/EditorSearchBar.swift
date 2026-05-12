@@ -24,7 +24,7 @@ struct EditorSearchBar: View {
                     state.replaceVisible.toggle()
                 } label: {
                     Image(systemName: state.replaceVisible ? "chevron.down" : "chevron.right")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 }
                 .buttonStyle(EditorSearchButtonStyle())
                 .help(state.replaceVisible ? "Hide Replace" : "Show Replace")
@@ -55,13 +55,13 @@ struct EditorSearchBar: View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgMuted)
                     .accessibilityHidden(true)
 
                 TextField("Search", text: $state.searchNeedle)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fg)
                     .focused($isFieldFocused)
                     .onSubmit { onNext() }
@@ -73,7 +73,7 @@ struct EditorSearchBar: View {
 
                 if !displayText.isEmpty {
                     Text(displayText)
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .lineLimit(1)
                         .fixedSize()
@@ -102,21 +102,21 @@ struct EditorSearchBar: View {
 
             Button(action: onPrevious) {
                 Image(systemName: "chevron.up")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
             }
             .buttonStyle(EditorSearchButtonStyle())
             .accessibilityLabel("Previous Match")
 
             Button(action: onNext) {
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
             }
             .buttonStyle(EditorSearchButtonStyle())
             .accessibilityLabel("Next Match")
 
             Button(action: onClose) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
             }
             .buttonStyle(EditorSearchButtonStyle())
             .accessibilityLabel("Close Search")
@@ -127,13 +127,13 @@ struct EditorSearchBar: View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: "arrow.2.squarepath")
-                    .font(.system(size: 11))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 11))
                     .foregroundStyle(MuxyTheme.fgMuted)
                     .accessibilityHidden(true)
 
                 TextField("Replace", text: $state.replaceText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fg)
                     .onSubmit(onReplace)
             }
@@ -173,7 +173,7 @@ private struct EditorSearchTextButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 11, weight: .medium))
+            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
             .foregroundStyle(isEnabled ? MuxyTheme.fg : MuxyTheme.fgDim)
             .padding(.horizontal, 8)
             .frame(height: 22)
@@ -196,7 +196,7 @@ private struct EditorSearchOptionToggle: View {
             isOn.toggle()
         } label: {
             Text(label)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
                 .foregroundStyle(isOn ? MuxyTheme.fg : MuxyTheme.fgMuted)
                 .frame(width: 20, height: 18)
                 .background(isOn ? MuxyTheme.border : .clear)

@@ -1,6 +1,7 @@
 import MuxyShared
 import SwiftUI
 import UniformTypeIdentifiers
+import AppKit
 
 struct PaneTabStrip: View {
     struct TabSnapshot: Identifiable {
@@ -41,6 +42,15 @@ struct PaneTabStrip: View {
     @State private var dragState = TabDragState()
     @State private var tabFrames: [UUID: CGRect] = [:]
     @State private var containerFrame: CGRect = .zero
+    @State private var tabContentWidths: [UUID: CGFloat] = [:]
+
+    private struct TabContentWidthPreferenceKey: PreferenceKey {
+        static let defaultValue: [UUID: CGFloat] = [:]
+        static func reduce(value: inout [UUID: CGFloat], nextValue: () -> [UUID: CGFloat]) {
+            let next = nextValue()
+            for (k, v) in next { value[k] = v }
+        }
+    }
 
     static func snapshots(from tabs: [TerminalTab]) -> [TabSnapshot] {
         tabs.map { tab in
@@ -67,8 +77,25 @@ struct PaneTabStrip: View {
         .frame(height: 28)
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
             tabFrames = frames
+            // debug log frames and activeTabID
+            let entries = frames.map { (k, v) in "\(k.uuidString):{x:\(Int(v.origin.x)),y:\(Int(v.origin.y)),w:\(Int(v.size.width)),h:\(Int(v.size.height))}" }
+            let log = "active:\(activeTabID?.uuidString ?? "nil") frames:[\(entries.joined(separator: ","))]\n"
+            try? log.write(toFile: "/tmp/tabstrip_debug.log", atomically: true, encoding: .utf8)
             guard dragState.draggedID != nil else { return }
             dragState.frames = frames
+        }
+        .onPreferenceChange(TabContentWidthPreferenceKey.self) { widths in
+            tabContentWidths = widths
+            // debug log widths
+            let entries = widths.map { (k, v) in "\(k.uuidString):\(Int(v))" }
+            let log = "widths:[\(entries.joined(separator: ","))]\n"
+            if let fh = FileHandle(forUpdatingAtPath: "/tmp/tabstrip_debug.log") {
+                fh.seekToEndOfFile()
+                if let data = log.data(using: .utf8) { fh.write(data) }
+                fh.closeFile()
+            } else {
+                try? log.write(toFile: "/tmp/tabstrip_debug.log", atomically: true, encoding: .utf8)
+            }
         }
     }
 
@@ -109,10 +136,49 @@ private var capsuleContainer: some View {
                 .background(tab.id == activeTabID ? Color.clear : Color(white: 0.333))
                 .clipShape(Capsule())
                 .background {
+                    // measure intrinsic content width invisibly and report via preference
+                    HStack {
+                        HStack(spacing: 6) {
+                            // replicate icon for measurement
+                            Group {
+                                if tab.isPinned {
+                                    Image(systemName: "pin.fill")
+                                        .font(.system(size: 10, weight: .semibold))
+                                } else if tab.kind == .vcs {
+                                    Image(systemName: "doc.richtext")
+                                        .font(.system(size: 12, weight: .semibold))
+                                } else if tab.kind == .editor {
+                                    Image(systemName: "pencil.line")
+                                        .font(.system(size: 12, weight: .semibold))
+                                } else if tab.kind == .diffViewer {
+                                    Image(systemName: "rectangle.split.2x1")
+                                        .font(.system(size: 11, weight: .semibold))
+                                } else {
+                                    Image(systemName: "terminal")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                            }
+
+                            Text(tab.title)
+                                .font(.system(size: 12, weight: tab.id == activeTabID ? .medium : .regular))
+                                .lineLimit(1)
+                        }
+                        .fixedSize()
+                        .opacity(0)
+                        .background(GeometryReader { g in
+                            Color.clear.preference(
+                                key: TabContentWidthPreferenceKey.self,
+                                value: [tab.id: g.size.width]
+                            )
+                        })
+                        Spacer(minLength: 0)
+                    }
                     GeometryReader { geo in
+                        let origin = geo.frame(in: .named("TabStripCapsuleSpace")).origin
+                        let rect = CGRect(origin: origin, size: geo.size)
                         Color.clear.preference(
                             key: TabFramePreferenceKey.self,
-                            value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
+                            value: [tab.id: rect]
                         )
                     }
                 }
@@ -147,8 +213,38 @@ private var capsuleContainer: some View {
         GeometryReader { proxy in
             if let active = activeTabID, let frame = tabFrames[active] {
                 let localRect = frame // frame already in TabStripCapsuleSpace coordinates
-                let capsuleWidth = max(localRect.width + 16, 80)
+                // prefer measured content width from preferences, fallback to text metrics
+                let measuredContentWidth: CGFloat = {
+                    var w = tabContentWidths[active] ?? localRect.width
+                    if w <= 0 {
+                        if let snapshot = tabs.first(where: { $0.id == active }) {
+                            let font = NSFont.systemFont(ofSize: 12, weight: .medium)
+                            let attrs = [NSAttributedString.Key.font: font]
+                            let titleWidth = (snapshot.title as NSString).size(withAttributes: attrs).width
+                            // estimate icon + paddings
+                            w = titleWidth + 32
+                        } else {
+                            w = localRect.width
+                        }
+                    }
+                    return w
+                }()
                 let capsuleHeight: CGFloat = 28
+                // Prefer measured content width if available; otherwise fallback and cap to tab frame width
+                let capsuleWidth: CGFloat = {
+                    if let measured = tabContentWidths[active], measured > 0 {
+                        return max(measured + 32, 80)
+                    }
+                    return min(max(measuredContentWidth + 32, 80), max(localRect.width, 80))
+                }()
+
+                // Clamp center position within container proxy bounds
+                let halfW = capsuleWidth / 2
+                let minX = halfW + 4
+                let maxX = max(proxy.size.width - halfW - 4, minX)
+                // If content measured, assume it's centered within the tab frame and use localRect.midX; else also midX
+                let centerX = min(max(localRect.midX, minX), maxX)
+                let centerY = min(max(localRect.midY, capsuleHeight / 2), max(proxy.size.height - capsuleHeight / 2, capsuleHeight / 2))
 
                 Capsule()
                     .fill(LinearGradient(
@@ -156,7 +252,7 @@ private var capsuleContainer: some View {
                         startPoint: .top,
                         endPoint: .bottom))
                     .frame(width: capsuleWidth, height: capsuleHeight)
-                    .position(x: localRect.midX, y: localRect.midY)
+                    .position(x: centerX, y: centerY)
                     .shadow(color: Color.black.opacity(0.15), radius: 1, x: 0, y: 1)
                     .allowsHitTesting(false)
 

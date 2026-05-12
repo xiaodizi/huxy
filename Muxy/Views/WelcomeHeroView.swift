@@ -8,16 +8,16 @@ struct WelcomeHeroView: View {
             VStack(spacing: 16) {
                 HStack {
                     Text("Claude Code")
-                        .font(.system(size: 20, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 20).weight(.semibold))
                         .foregroundColor(.orange)
                     Spacer()
                     Text("v2.1.133")
-                        .font(.system(size: 12, weight: .regular, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.regular))
                         .foregroundColor(.gray)
                 }
 
                 Text("Welcome back!")
-                    .font(.system(size: 28, weight: .bold, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 28).weight(.bold))
                      .foregroundColor(Color.white.opacity(0.94))
 
                 // simple pixel-art-like placeholder
@@ -27,7 +27,7 @@ struct WelcomeHeroView: View {
                     .foregroundColor(TerminalTheme.orange)
 
                 Text("gpt-5-mini with medium effort · API Usage Billing")
-                    .font(.system(size: 12, weight: .regular, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.regular))
                     .foregroundColor(TerminalTheme.muted)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,7 +35,7 @@ struct WelcomeHeroView: View {
             // Right tips column
             VStack(alignment: .leading, spacing: 8) {
                 Text("Tips for getting started")
-                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 18).weight(.bold))
                     .foregroundColor(TerminalTheme.orange)
 
                 Rectangle()
@@ -44,7 +44,7 @@ struct WelcomeHeroView: View {
                     .opacity(0.9)
 
                 Text("Run /init to create a CLAUDE.md file with instructions for Claude")
-                    .font(.system(size: 12, weight: .regular, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.regular))
                     .foregroundColor(TerminalTheme.muted)
 
                 Spacer()

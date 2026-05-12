@@ -14,10 +14,10 @@ struct TerminalBottomBar: View {
             HStack(alignment: .center, spacing: 12) {
                 HStack(spacing: 8) {
                     Text("[\(modelName)]")
-                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                         .foregroundColor(TerminalTheme.accentGreen)
                     Text(context)
-                        .font(.system(size: 12, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundColor(MuxyTheme.fg)
                 }
 
@@ -34,14 +34,14 @@ struct TerminalBottomBar: View {
                                 .offset(x: -100)
                         )
                     Text(tokenUsage)
-                        .font(.system(size: 12, design: .monospaced))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
                         .foregroundColor(TerminalTheme.muted)
                 }
 
                 Spacer()
 
                 Text("CLAUDE.md | 58 rules | 2 MCPs | 3 hooks")
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundColor(TerminalTheme.muted)
             }
             .padding(.horizontal, 18)

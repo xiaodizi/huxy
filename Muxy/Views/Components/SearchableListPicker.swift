@@ -21,7 +21,7 @@ struct SearchableListPicker<Item: Identifiable, RowContent: View>: View {
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(MuxyTheme.fgMuted)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .accessibilityHidden(true)
                 PaletteSearchField(
                     text: $searchText,
@@ -40,7 +40,7 @@ struct SearchableListPicker<Item: Identifiable, RowContent: View>: View {
 
             if filteredItems.isEmpty {
                 Text(emptyLabel)
-                    .font(.system(size: 12))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(MuxyTheme.fgMuted)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {

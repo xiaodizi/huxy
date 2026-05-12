@@ -78,10 +78,10 @@ struct KeyboardShortcutsSettingsView: View {
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                 TextField(section.searchPlaceholder, text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
@@ -95,7 +95,7 @@ struct KeyboardShortcutsSettingsView: View {
                     conflictWarning = nil
                 }
                 .buttonStyle(.plain)
-                .font(.system(size: SettingsMetrics.footnoteFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .foregroundStyle(.secondary)
             case .custom:
                 Button {
@@ -107,7 +107,7 @@ struct KeyboardShortcutsSettingsView: View {
                     recordingCommandShortcutID = shortcut.id
                 } label: {
                     Image(systemName: "plus")
-                        .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .semibold))
+                        .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.semibold))
                 }
                 .buttonStyle(.plain)
                 .help("Add Command Shortcut")
@@ -182,14 +182,14 @@ struct KeyboardShortcutsSettingsView: View {
     private var commandShortcutsSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Custom Commands")
-                .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .semibold))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, SettingsMetrics.horizontalPadding)
                 .padding(.top, SettingsMetrics.sectionHeaderTopPadding)
                 .padding(.bottom, 2)
 
             Text("Press the command layer shortcut, then a command key to open a new terminal tab.")
-                .font(.system(size: SettingsMetrics.footnoteFontSize))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, SettingsMetrics.horizontalPadding)
@@ -377,7 +377,7 @@ private struct ShortcutRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(action.displayName)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isRecording {
@@ -389,7 +389,7 @@ private struct ShortcutRow: View {
 
             if let conflictAction {
                 Text("Conflicts with \"\(conflictAction.displayName)\" — press a different shortcut or Esc to cancel")
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(.orange)
             }
         }
@@ -404,7 +404,7 @@ private struct ShortcutRow: View {
             if hovered {
                 Button(action: onReset) {
                     Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
@@ -413,7 +413,7 @@ private struct ShortcutRow: View {
 
             Button(action: onStartRecording) {
                 Text(combo.displayString)
-                    .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium, design: .rounded))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -430,7 +430,12 @@ private struct ShortcutRow: View {
                 .opacity(0)
 
             Text("Press shortcut…")
-                .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
+                                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
+                                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 10))
+                                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                 .foregroundStyle(.orange)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -453,7 +458,7 @@ private struct CommandPrefixRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text("Command Layer")
-                    .font(.system(size: SettingsMetrics.labelFontSize))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isRecording {
@@ -465,7 +470,7 @@ private struct CommandPrefixRow: View {
 
             if let conflictMessage {
                 Text("\(conflictMessage) — press a different shortcut or Esc to cancel")
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(.orange)
             }
         }
@@ -480,7 +485,7 @@ private struct CommandPrefixRow: View {
             if hovered {
                 Button(action: onReset) {
                     Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 10))
+                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
@@ -489,7 +494,7 @@ private struct CommandPrefixRow: View {
 
             Button(action: onStartRecording) {
                 Text(combo.displayString)
-                    .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium, design: .rounded))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -506,7 +511,7 @@ private struct CommandPrefixRow: View {
                 .opacity(0)
 
             Text("Press shortcut…")
-                .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                 .foregroundStyle(.orange)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -535,14 +540,18 @@ private struct CommandShortcutRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
-                TextField("Name", text: $shortcut.name)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(size: SettingsMetrics.labelFontSize))
-                    .frame(width: 120)
+			TextField("Name", text: $shortcut.name)
+				.textFieldStyle(.roundedBorder)
+				.font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
+				.frame(width: 120)
 
                 TextField("Command", text: $shortcut.command)
                     .textFieldStyle(.roundedBorder)
-                    .font(.system(size: SettingsMetrics.labelFontSize, design: .monospaced))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.semibold))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
+                                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                     .frame(maxWidth: .infinity)
 
                 if isRecording {
@@ -554,7 +563,7 @@ private struct CommandShortcutRow: View {
 
             if let conflictMessage {
                 Text("\(conflictMessage) — press a different shortcut or Esc to cancel")
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(.orange)
             }
         }
@@ -568,7 +577,7 @@ private struct CommandShortcutRow: View {
         HStack(spacing: 6) {
             Button(action: onStartRecording) {
                 Text("\(prefixCombo.displayString) \(shortcut.combo.displayString)")
-                    .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium, design: .rounded))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -578,7 +587,7 @@ private struct CommandShortcutRow: View {
 
             Button(action: onDelete) {
                 Image(systemName: "trash")
-                    .font(.system(size: 10))
+                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
                     .foregroundStyle(
                         deleteButtonHovered ? AnyShapeStyle(MuxyTheme.diffRemoveFg) : AnyShapeStyle(.secondary)
                     )
@@ -604,7 +613,7 @@ private struct CommandShortcutRow: View {
                 .opacity(0)
 
             Text("Press key…")
-                .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium))
+                .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                 .foregroundStyle(.orange)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -627,7 +636,7 @@ private struct DeleteAllCommandShortcutsRow: View {
 
             Button(action: action) {
                 Text(title)
-                    .font(.system(size: SettingsMetrics.footnoteFontSize, weight: .medium))
+                    .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize).weight(.medium))
                     .foregroundStyle(isConfirming ? MuxyTheme.diffRemoveFg : .secondary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
