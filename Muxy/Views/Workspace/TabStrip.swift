@@ -2,6 +2,17 @@ import MuxyShared
 import SwiftUI
 import UniformTypeIdentifiers
 
+extension View {
+    @ViewBuilder
+    func applyIf<Content: View>(_ condition: Bool, _ transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+}
+
 struct PaneTabStrip: View {
     struct TabSnapshot: Identifiable {
         let id: UUID
@@ -76,63 +87,116 @@ private var capsuleContainer: some View {
     ZStack {
         HStack(spacing: 0) {
             ForEach(Array(tabs.enumerated()), id: \.element.id) { index, tab in
-                HStack(spacing: 0) {
-                    TabCell(
-                        tab: tab,
-                        active: tab.id == activeTabID,
-                        paneFocused: isFocused,
-                        areaID: areaID,
-                        hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
-                        isAnyDragging: dragState.draggedID != nil,
-                        shortcutIndex: index < 9 ? index + 1 : nil,
-                        closableOthersCount: closableOthersCount(excluding: tab.id),
-                        closableLeftCount: closableCount(leftOf: index),
-                        closableRightCount: closableCount(rightOf: index),
-                        onSelect: { onSelectTab(tab.id) },
-                        onCloseOthers: { onCloseOtherTabs(tab.id) },
-                        onCloseLeft: { onCloseTabsToLeft(tab.id) },
-                        onCloseRight: { onCloseTabsToRight(tab.id) },
-                        onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
-                        onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
-                        onTogglePin: { onTogglePin(tab.id) },
-                        onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
-                        onSetColorID: { onSetColorID(tab.id, $0) }
-                    )
+                if tab.id == activeTabID {
+                    // Active tab: draw capsule inside tab with close, title, badge
+                    HStack(spacing: 0) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.6))
+                                .padding(6)
+                                .background(Color.white.opacity(0.03))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white.opacity(0.06), lineWidth: 0.5))
+                                .onTapGesture { onCloseTab(tab.id) }
 
-                    if !tab.isPinned {
-                        CloseButton(
-                            onTap: { onCloseTab(tab.id) }
+                            Text(tab.title)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+
+                            // Shortcut badge on right
+                            if index < 9 {
+                                Text(KeyBindingStore.shared.combo(for: ShortcutAction.tabAction(for: index + 1) ?? .newTab).displayString)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundStyle(Color(white: 0.8))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.black.opacity(0.18))
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .frame(height: 24)
+                        .background(
+                            Capsule()
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)]),
+                                    startPoint: .top,
+                                    endPoint: .bottom))
                         )
-                        .padding(.trailing, 8)
-                    }
-                }
-                .background(tab.id == activeTabID ? Color.clear : Color(white: 0.333))
-                .clipShape(Capsule())
-                .background {
-                    GeometryReader { geo in
-                        Color.clear.preference(
-                            key: TabFramePreferenceKey.self,
-                            value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
+                        .overlay(
+                            Capsule().stroke(Color(white: 0.2), lineWidth: 0.5)
                         )
                     }
-                }
-                .gesture(
-                    DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
-                        .onChanged { value in
-                            handleDragChanged(
-                                tab: tab,
-                                globalLocation: value.location,
-                                dragStartGlobalLocation: value.startLocation
+                    .background {
+                        GeometryReader { geo in
+                            Color.clear.preference(
+                                key: TabFramePreferenceKey.self,
+                                value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
                             )
                         }
-                        .onEnded { value in
-                            handleDragEnded(
-                                tab: tab,
-                                globalLocation: value.location,
-                                dragStartGlobalLocation: value.startLocation
+                    }
+                                                }
+                            .onEnded { value in
+                                handleDragEnded(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
+                    )
+                } else {
+                    HStack(spacing: 0) {
+                        TabCell(
+                            tab: tab,
+                            active: false,
+                            paneFocused: isFocused,
+                            areaID: areaID,
+                            hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
+                            isAnyDragging: dragState.draggedID != nil,
+                            shortcutIndex: index < 9 ? index + 1 : nil,
+                            closableOthersCount: closableOthersCount(excluding: tab.id),
+                            closableLeftCount: closableCount(leftOf: index),
+                            closableRightCount: closableCount(rightOf: index),
+                            onSelect: { onSelectTab(tab.id) },
+                            onCloseOthers: { onCloseOtherTabs(tab.id) },
+                            onCloseLeft: { onCloseTabsToLeft(tab.id) },
+                            onCloseRight: { onCloseTabsToRight(tab.id) },
+                            onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
+                            onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
+                            onTogglePin: { onTogglePin(tab.id) },
+                            onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
+                            onSetColorID: { onSetColorID(tab.id, $0) }
+                        )
+
+                        if !tab.isPinned {
+                            CloseButton(
+                                onTap: { onCloseTab(tab.id) }
+                            )
+                            .padding(.trailing, 8)
+                        }
+                    }
+                    .background(Color(white: 0.333))
+                    .clipShape(Capsule())
+                    .background {
+                        GeometryReader { geo in
+                            Color.clear.preference(
+                                key: TabFramePreferenceKey.self,
+                                value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
                             )
                         }
-                )
+                    }
+                                                }
+                            .onEnded { value in
+                                handleDragEnded(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
+                    )
+                }
 
                 if index < tabs.count - 1 {
                     Rectangle()
@@ -144,58 +208,6 @@ private var capsuleContainer: some View {
         }
         .padding(.horizontal, 6)
 
-        GeometryReader { proxy in
-            if let active = activeTabID, let frame = tabFrames[active] {
-                let localRect = frame // frame already in TabStripCapsuleSpace coordinates
-                let capsuleWidth = max(localRect.width + 16, 80)
-                let capsuleHeight: CGFloat = 28
-
-                Capsule()
-                    .fill(LinearGradient(
-                        gradient: Gradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)]),
-                        startPoint: .top,
-                        endPoint: .bottom))
-                    .frame(width: capsuleWidth, height: capsuleHeight)
-                    .position(x: localRect.midX, y: localRect.midY)
-                    .shadow(color: Color.black.opacity(0.15), radius: 1, x: 0, y: 1)
-                    .allowsHitTesting(false)
-
-                HStack(spacing: 8) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
-                        .padding(6)
-                        .background(Color.white.opacity(0.03))
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white.opacity(0.06), lineWidth: 0.5))
-                        .onTapGesture { onCloseTab(active) }
-
-                    Spacer()
-
-                    if let snapshot = tabs.first(where: { $0.id == active }) {
-                        Text(snapshot.title)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(.white)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                            .onTapGesture { onSelectTab(active) }
-                    }
-
-                    Spacer()
-
-                    Text(KeyBindingStore.shared.combo(for: .tabAction(for: 1) ?? .newTab).displayString)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(Color(white: 0.8))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.black.opacity(0.18))
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                }
-                .frame(width: capsuleWidth - 12, height: capsuleHeight)
-                .position(x: localRect.midX, y: localRect.midY)
-            }
-        }
-        .animation(.easeInOut(duration: 0.16), value: activeTabID)
         .coordinateSpace(name: "TabStripCapsuleSpace")
     }
 }
