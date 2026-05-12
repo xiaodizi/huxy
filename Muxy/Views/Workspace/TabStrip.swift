@@ -137,7 +137,15 @@ private var capsuleContainer: some View {
                             )
                         }
                     }
-                                                }
+                    .gesture(
+                        DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
+                            .onChanged { value in
+                                handleDragChanged(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
                             .onEnded { value in
                                 handleDragEnded(
                                     tab: tab,
@@ -187,7 +195,15 @@ private var capsuleContainer: some View {
                             )
                         }
                     }
-                                                }
+                    .gesture(
+                        DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
+                            .onChanged { value in
+                                handleDragChanged(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
                             .onEnded { value in
                                 handleDragEnded(
                                     tab: tab,
