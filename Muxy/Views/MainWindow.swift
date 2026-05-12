@@ -92,6 +92,9 @@ struct MainWindow: View {
             .padding(.horizontal, 8)
             .padding(.top, 8)
             .padding(.bottom, 2)
+            .overlay(alignment: .leading) {
+                WindowDragRepresentable()
+            }
 
             // 去除分割线，保持极简
 

@@ -76,6 +76,9 @@ struct PaneTabStrip: View {
             rightToolbarButtons
         }
         .frame(height: 28)
+        .overlay {
+            WindowDragRepresentable()
+        }
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
             tabFrames = frames
             guard dragState.draggedID != nil else { return }
@@ -118,15 +121,13 @@ private var capsuleContainer: some View {
                         }
                         .padding(.horizontal, 10)
                         .frame(height: 24)
-                        .background(
-                            Capsule()
-                                .fill(LinearGradient(
-                                    gradient: Gradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)]),
-                                    startPoint: .top,
-                                    endPoint: .bottom))
-                        )
+                        // Do not draw a full capsule here — MainWindow already provides the pill background.
+                        // Instead, use a subtle inner highlight and stroke for the active tab content.
+                        .background(Color.clear)
                         .overlay(
-                            Capsule().stroke(Color(white: 0.2), lineWidth: 0.5)
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.06), lineWidth: 0.6)
+                                .blendMode(.overlay)
                         )
                     }
                     .background {

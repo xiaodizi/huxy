@@ -18,26 +18,13 @@ struct WindowDragRepresentable: NSViewRepresentable {
 final class WindowDragView: NSView {
     var alwaysEnabled = false
 
-    override func accessibilityRole() -> NSAccessibility.Role? {
-        .unknown
-    }
+    override var acceptsFirstResponder: Bool { false }
 
-    override func isAccessibilityElement() -> Bool {
-        false
-    }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { false }
 
-    private var isAtWindowTop: Bool {
-        guard let window else { return false }
-        let frameInWindow = convert(bounds, to: nil)
-        guard let contentHeight = window.contentView?.bounds.height else { return false }
-        return frameInWindow.maxY >= contentHeight - 1
-    }
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
 
     override func mouseDown(with event: NSEvent) {
-        guard alwaysEnabled || isAtWindowTop else {
-            super.mouseDown(with: event)
-            return
-        }
         if event.clickCount == 2 {
             let action = UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick") ?? "Maximize"
             switch action {
