@@ -39,6 +39,8 @@ struct PaneTabStrip: View {
     let onReorderTab: (IndexSet, Int) -> Void
     @Environment(TabDragCoordinator.self) private var dragCoordinator
     @State private var dragState = TabDragState()
+    @State private var tabFrames: [UUID: CGRect] = [:]
+    @State private var containerFrame: CGRect = .zero
 
     static func snapshots(from tabs: [TerminalTab]) -> [TabSnapshot] {
         tabs.map { tab in
@@ -55,108 +57,63 @@ struct PaneTabStrip: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            GeometryReader { geo in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    tabRow(availableWidth: geo.size.width)
-                        .frame(minWidth: geo.size.width, alignment: .leading)
-                        .background(WindowDragRepresentable(alwaysEnabled: isWindowTitleBar))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 32)
+            leftToolbarButtons
 
-            HStack(spacing: 0) {
-                if showDevelopmentBadge {
-                    developmentBadge
-                        .padding(.trailing, 6)
-                }
-                if isWindowTitleBar {
-                    OpenInIDEControl(
-                        projectPath: openInIDEProjectPath,
-                        filePath: openInIDEFilePath,
-                        cursorProvider: openInIDECursorProvider
-                    )
-                    LayoutPickerMenu(projectID: projectID)
-                }
-                if isWindowTitleBar, let version = UpdateService.shared.availableUpdateVersion {
-                    UpdateBadge(version: version) {
-                        UpdateService.shared.checkForUpdates()
-                    }
-                    .padding(.trailing, 4)
-                }
-                IconButton(symbol: "square.split.2x1", accessibilityLabel: "Split Right") { onSplit(.horizontal) }
-                    .help(shortcutTooltip("Split Right", for: .splitRight))
-                IconButton(symbol: "square.split.1x2", accessibilityLabel: "Split Down") { onSplit(.vertical) }
-                    .help(shortcutTooltip("Split Down", for: .splitDown))
-                IconButton(symbol: "plus", accessibilityLabel: "New Tab") { onCreateTab() }
-                    .help(shortcutTooltip("New Tab", for: .newTab))
-                if showVCSButton {
-                    IconButton(symbol: "doc.text", size: 12, accessibilityLabel: "Quick Open") {
-                        NotificationCenter.default.post(name: .quickOpen, object: nil)
-                    }
-                    .help(shortcutTooltip("Quick Open", for: .quickOpen))
-                    FileDiffIconButton(action: onCreateVCSTab)
-                        .help(shortcutTooltip("Source Control", for: .openVCSTab))
-                    FileTreeIconButton {
-                        NotificationCenter.default.post(name: .toggleFileTree, object: nil)
-                    }
-                    .help(shortcutTooltip("File Tree", for: .toggleFileTree))
-                }
-            }
-            .padding(.leading, 8)
-            .padding(.trailing, 4)
-            .fixedSize(horizontal: true, vertical: false)
-            .background(WindowDragRepresentable(alwaysEnabled: isWindowTitleBar))
+            capsuleContainer
+                .layoutPriority(1)
+
+            rightToolbarButtons
         }
-        .frame(height: 32)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
+        .frame(height: 28)
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
+            tabFrames = frames
             guard dragState.draggedID != nil else { return }
             dragState.frames = frames
         }
     }
 
-    private func tabRow(availableWidth: CGFloat) -> some View {
-        let count = max(tabs.count, 1)
-        let effectiveWidth = availableWidth > 0 ? availableWidth : TabCell.maxWidth * CGFloat(count)
-        let perTabIdeal = effectiveWidth / CGFloat(count)
-        let perTabWidth = max(TabCell.minWidth, min(TabCell.maxWidth, perTabIdeal))
-
-        return HStack(spacing: 0) {
+private var capsuleContainer: some View {
+    ZStack {
+        HStack(spacing: 0) {
             ForEach(Array(tabs.enumerated()), id: \.element.id) { index, tab in
-                TabCell(
-                    tab: tab,
-                    active: tab.id == activeTabID,
-                    paneFocused: isFocused,
-                    areaID: areaID,
-                    hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
-                    isAnyDragging: dragState.draggedID != nil,
-                    shortcutIndex: index < 9 ? index + 1 : nil,
-                    closableOthersCount: closableOthersCount(excluding: tab.id),
-                    closableLeftCount: closableCount(leftOf: index),
-                    closableRightCount: closableCount(rightOf: index),
-                    onSelect: { onSelectTab(tab.id) },
-                    onClose: { onCloseTab(tab.id) },
-                    onCloseOthers: { onCloseOtherTabs(tab.id) },
-                    onCloseLeft: { onCloseTabsToLeft(tab.id) },
-                    onCloseRight: { onCloseTabsToRight(tab.id) },
-                    onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
-                    onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
-                    onTogglePin: { onTogglePin(tab.id) },
-                    onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
-                    onSetColorID: { onSetColorID(tab.id, $0) }
-                )
-                .frame(width: perTabWidth)
+                HStack(spacing: 0) {
+                    TabCell(
+                        tab: tab,
+                        active: tab.id == activeTabID,
+                        paneFocused: isFocused,
+                        areaID: areaID,
+                        hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
+                        isAnyDragging: dragState.draggedID != nil,
+                        shortcutIndex: index < 9 ? index + 1 : nil,
+                        closableOthersCount: closableOthersCount(excluding: tab.id),
+                        closableLeftCount: closableCount(leftOf: index),
+                        closableRightCount: closableCount(rightOf: index),
+                        onSelect: { onSelectTab(tab.id) },
+                        onCloseOthers: { onCloseOtherTabs(tab.id) },
+                        onCloseLeft: { onCloseTabsToLeft(tab.id) },
+                        onCloseRight: { onCloseTabsToRight(tab.id) },
+                        onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
+                        onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
+                        onTogglePin: { onTogglePin(tab.id) },
+                        onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
+                        onSetColorID: { onSetColorID(tab.id, $0) }
+                    )
+
+                    if !tab.isPinned {
+                        CloseButton(
+                            onTap: { onCloseTab(tab.id) }
+                        )
+                        .padding(.trailing, 8)
+                    }
+                }
+                .background(tab.id == activeTabID ? Color.clear : Color(white: 0.333))
+                .clipShape(Capsule())
                 .background {
-                    if dragState.draggedID != nil {
-                        GeometryReader { geo in
-                            Color.clear.preference(
-                                key: TabFramePreferenceKey.self,
-                                value: [tab.id: geo.frame(in: .named(DragCoordinateSpace.mainWindow))]
-                            )
-                        }
+                    GeometryReader { geo in
+                        Color.clear.preference(
+                            key: TabFramePreferenceKey.self,
+                            value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
+                        )
                     }
                 }
                 .gesture(
@@ -176,8 +133,123 @@ struct PaneTabStrip: View {
                             )
                         }
                 )
+
+                if index < tabs.count - 1 {
+                    Rectangle()
+                        .fill(Color(white: 0.2))
+                        .frame(width: 1)
+                        .padding(.vertical, 4)
+                }
             }
         }
+        .padding(.horizontal, 6)
+
+        GeometryReader { proxy in
+            if let active = activeTabID, let frame = tabFrames[active] {
+                let localRect = frame // frame already in TabStripCapsuleSpace coordinates
+                let capsuleWidth = max(localRect.width + 16, 80)
+                let capsuleHeight: CGFloat = 28
+
+                Capsule()
+                    .fill(LinearGradient(
+                        gradient: Gradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)]),
+                        startPoint: .top,
+                        endPoint: .bottom))
+                    .frame(width: capsuleWidth, height: capsuleHeight)
+                    .position(x: localRect.midX, y: localRect.midY)
+                    .shadow(color: Color.black.opacity(0.15), radius: 1, x: 0, y: 1)
+                    .allowsHitTesting(false)
+
+                HStack(spacing: 8) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.6))
+                        .padding(6)
+                        .background(Color.white.opacity(0.03))
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.white.opacity(0.06), lineWidth: 0.5))
+                        .onTapGesture { onCloseTab(active) }
+
+                    Spacer()
+
+                    if let snapshot = tabs.first(where: { $0.id == active }) {
+                        Text(snapshot.title)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .onTapGesture { onSelectTab(active) }
+                    }
+
+                    Spacer()
+
+                    Text(KeyBindingStore.shared.combo(for: .tabAction(for: 1) ?? .newTab).displayString)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Color(white: 0.8))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.black.opacity(0.18))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+                .frame(width: capsuleWidth - 12, height: capsuleHeight)
+                .position(x: localRect.midX, y: localRect.midY)
+            }
+        }
+        .animation(.easeInOut(duration: 0.16), value: activeTabID)
+        .coordinateSpace(name: "TabStripCapsuleSpace")
+    }
+}
+
+    private var leftToolbarButtons: some View {
+        HStack(spacing: 0) {
+            if showDevelopmentBadge {
+                DebugButton()
+                    .padding(.trailing, 4)
+            }
+            if isWindowTitleBar {
+                OpenInIDEControl(
+                    projectPath: openInIDEProjectPath,
+                    filePath: openInIDEFilePath,
+                    cursorProvider: openInIDECursorProvider
+                )
+                LayoutPickerMenu(projectID: projectID)
+            }
+        }
+        .padding(.leading, 8)
+        .fixedSize(horizontal: true, vertical: false)
+        .background(WindowDragRepresentable(alwaysEnabled: isWindowTitleBar))
+    }
+
+    private var rightToolbarButtons: some View {
+        HStack(spacing: 0) {
+            if isWindowTitleBar, let version = UpdateService.shared.availableUpdateVersion {
+                UpdateBadge(version: version) {
+                    UpdateService.shared.checkForUpdates()
+                }
+                .padding(.trailing, 4)
+            }
+            IconButton(symbol: "square.split.2x1", accessibilityLabel: "Split Right") { onSplit(.horizontal) }
+                .help(shortcutTooltip("Split Right", for: .splitRight))
+            IconButton(symbol: "square.split.1x2", accessibilityLabel: "Split Down") { onSplit(.vertical) }
+                .help(shortcutTooltip("Split Down", for: .splitDown))
+            IconButton(symbol: "plus", accessibilityLabel: "New Tab") { onCreateTab() }
+                .help(shortcutTooltip("New Tab", for: .newTab))
+            if showVCSButton {
+                IconButton(symbol: "doc.text", size: 12, accessibilityLabel: "Quick Open") {
+                    NotificationCenter.default.post(name: .quickOpen, object: nil)
+                }
+                .help(shortcutTooltip("Quick Open", for: .quickOpen))
+                FileDiffIconButton(action: onCreateVCSTab)
+                    .help(shortcutTooltip("Source Control", for: .openVCSTab))
+                FileTreeIconButton {
+                    NotificationCenter.default.post(name: .toggleFileTree, object: nil)
+                }
+                .help(shortcutTooltip("File Tree", for: .toggleFileTree))
+            }
+        }
+        .padding(.trailing, 8)
+        .fixedSize(horizontal: true, vertical: false)
+        .background(WindowDragRepresentable(alwaysEnabled: isWindowTitleBar))
     }
 
     private func closableOthersCount(excluding tabID: UUID) -> Int {
@@ -194,10 +266,6 @@ struct PaneTabStrip: View {
 
     private func shortcutTooltip(_ name: String, for action: ShortcutAction) -> String {
         "\(name) (\(KeyBindingStore.shared.combo(for: action).displayString))"
-    }
-
-    private var developmentBadge: some View {
-        DebugButton()
     }
 
     private static let dragActivationDistance: CGFloat = 4
@@ -303,6 +371,29 @@ private struct TabWidthPreferenceKey: PreferenceKey {
     }
 }
 
+private struct CloseButton: View {
+    let onTap: () -> Void
+    @State private var hovered = false
+
+    var body: some View {
+        Image(systemName: "xmark")
+            .font(.system(size: 8, weight: .medium))
+            .foregroundStyle(.white.opacity(0.5))
+            .opacity(hovered ? 1 : 0.5)
+            .animation(.linear(duration: 0.2), value: hovered)
+        .onHover { hovering in
+            hovered = hovering
+        }
+        .onTapGesture(perform: onTap)
+        .accessibilityLabel("Close Tab")
+        .accessibilityAddTraits(.isButton)
+        .overlay {
+            MiddleClickView(action: onTap)
+                .allowsHitTesting(false)
+        }
+    }
+}
+
 private struct TabCell: View {
     static let minWidth: CGFloat = 44
     static let maxWidth: CGFloat = 200
@@ -319,7 +410,6 @@ private struct TabCell: View {
     var closableLeftCount: Int = 0
     var closableRightCount: Int = 0
     let onSelect: () -> Void
-    let onClose: () -> Void
     let onCloseOthers: () -> Void
     let onCloseLeft: () -> Void
     let onCloseRight: () -> Void
@@ -348,21 +438,13 @@ private struct TabCell: View {
     }
 
     private var tabBackground: Color {
-        guard let tabColor else {
-            return active ? MuxyTheme.surface : .clear
+        if active {
+            return Color.white.opacity(0.1)
         }
-        let opacity = if active { 0.18 } else if hovered { 0.08 } else { 0.04 }
-        return tabColor.opacity(opacity)
-    }
-
-    private var bottomAccentColor: Color? {
-        if active, paneFocused {
-            return tabColor ?? MuxyTheme.accent
+        if hovered {
+            return Color.white.opacity(0.05)
         }
-        if let tabColor, !active {
-            return tabColor
-        }
-        return nil
+        return .clear
     }
 
     private var showBadge: Bool {
@@ -375,135 +457,99 @@ private struct TabCell: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 6) {
-                tabIconView
-                    .foregroundStyle(active ? MuxyTheme.fg : MuxyTheme.fgMuted)
-                    .opacity(titleHidden && hovered && !tab.isPinned ? 0 : 1)
-                    .overlay(alignment: .topTrailing) {
-                        if hasUnread, !active {
-                            Circle()
-                                .fill(MuxyTheme.accent)
-                                .frame(width: 6, height: 6)
-                                .offset(x: 3, y: -3)
-                        }
+        HStack(spacing: 6) {
+            tabIconView
+                .foregroundStyle(active ? .white : Color(white: 0.63))
+                .opacity(titleHidden && hovered && !tab.isPinned ? 0 : 1)
+                .overlay(alignment: .topTrailing) {
+                    if hasUnread, !active {
+                        Circle()
+                            .fill(MuxyTheme.accent)
+                            .frame(width: 6, height: 6)
+                            .offset(x: 3, y: -3)
                     }
+                }
 
-                if isRenaming {
-                    TextField("", text: $renameText)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 12))
-                        .foregroundStyle(MuxyTheme.fg)
-                        .focused($renameFieldFocused)
-                        .onSubmit { commitRename() }
-                        .onExitCommand { cancelRename() }
-                        .onChange(of: renameFieldFocused) { _, focused in
-                            if !focused, isRenaming { commitRename() }
-                        }
-                } else if !titleHidden {
-                    Text(tab.title)
-                        .font(.system(size: 12))
-                        .foregroundStyle(active ? MuxyTheme.fg : MuxyTheme.fgMuted)
-                        .lineLimit(1)
-                        .truncationMode(.head)
-                }
-            }
-            .padding(.leading, titleHidden ? 0 : 12)
-            .padding(.trailing, titleHidden ? 0 : 28)
-            .frame(maxWidth: .infinity, alignment: titleHidden ? .center : .leading)
-            .frame(height: 32)
-            .background {
-                GeometryReader { geo in
-                    Color.clear.preference(key: TabWidthPreferenceKey.self, value: geo.size.width)
-                }
-            }
-            .onPreferenceChange(TabWidthPreferenceKey.self) { measuredWidth = $0 }
-            .overlay(alignment: titleHidden ? .center : .trailing) {
-                if !tab.isPinned {
-                    let visible = titleHidden ? hovered : (active || hovered)
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(MuxyTheme.fgDim)
-                        .padding(.trailing, titleHidden ? 0 : 10)
-                        .opacity(visible ? 1 : 0)
-                        .onTapGesture(perform: onClose)
-                        .accessibilityLabel("Close Tab")
-                        .accessibilityAddTraits(.isButton)
-                }
-            }
-            .overlay {
-                if showBadge, let shortcutIndex,
-                   let action = ShortcutAction.tabAction(for: shortcutIndex)
-                {
-                    ShortcutBadge(label: KeyBindingStore.shared.combo(for: action).displayString)
-                }
-            }
-            .overlay(alignment: .bottom) {
-                if let accentColor = bottomAccentColor {
-                    Rectangle()
-                        .fill(accentColor)
-                        .frame(height: 2)
-                        .accessibilityHidden(true)
-                }
-            }
-            .background(tabBackground)
-            .contentShape(Rectangle())
-            .onHover { hovering in
-                guard !isAnyDragging else { return }
-                hovered = hovering
-            }
-            .onChange(of: isAnyDragging) { _, dragging in
-                if dragging { hovered = false }
-            }
-            .overlay {
-                if !tab.isPinned {
-                    MiddleClickView(action: onClose)
-                        .accessibilityHidden(true)
-                }
-            }
-            .overlay {
-                DoubleClickView(action: startRename)
-                    .accessibilityHidden(true)
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(tabAccessibilityLabel)
-            .accessibilityAddTraits(active ? .isSelected : [])
-            .accessibilityAddTraits(.isButton)
-            .contextMenu {
-                Button("New Tab to the Left") { onCreateLeft() }
-                Button("New Tab to the Right") { onCreateRight() }
-                Divider()
-                Button("Rename Tab") { startRename() }
-                if tab.hasCustomTitle {
-                    Button("Reset Title") { onSetCustomTitle(nil) }
-                }
-                Button("Set Tab Color…") { showColorPicker = true }
-                if tab.colorID != nil {
-                    Button("Reset Tab Color") { onSetColorID(nil) }
-                }
-                Divider()
-                Button(tab.isPinned ? "Unpin Tab" : "Pin Tab") {
-                    onTogglePin()
-                }
-                if !tab.isPinned {
-                    Divider()
-                    Button("Close Tab") { onClose() }
-                    Button("Close Other Tabs") { onCloseOthers() }
-                        .disabled(closableOthersCount == 0)
-                    Button("Close Tabs to the Left") { onCloseLeft() }
-                        .disabled(closableLeftCount == 0)
-                    Button("Close Tabs to the Right") { onCloseRight() }
-                        .disabled(closableRightCount == 0)
-                }
-            }
-            .popover(isPresented: $showColorPicker, arrowEdge: .bottom) {
-                ProjectIconColorPicker(title: "Tab Color", selectedID: tab.colorID) { id in
-                    onSetColorID(id)
-                    showColorPicker = false
-                }
+            if isRenaming {
+                TextField("", text: $renameText)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 12, weight: active ? .medium : .regular))
+                    .foregroundStyle(.white)
+                    .focused($renameFieldFocused)
+                    .onSubmit { commitRename() }
+                    .onExitCommand { cancelRename() }
+                    .onChange(of: renameFieldFocused) { _, focused in
+                        if !focused, isRenaming { commitRename() }
+                    }
+            } else if !titleHidden {
+                Text(tab.title)
+                    .font(.system(size: 12, weight: active ? .medium : .regular))
+                    .foregroundStyle(active ? .white : Color(white: 0.63))
+                    .lineLimit(1)
+                    .truncationMode(.head)
             }
 
-            Rectangle().fill(MuxyTheme.border).frame(width: 1)
+            if !titleHidden && showBadge, let shortcutIndex,
+               let action = ShortcutAction.tabAction(for: shortcutIndex)
+            {
+                Text(KeyBindingStore.shared.combo(for: action).displayString)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(Color(white: 0.5))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Color.black.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
+            }
+        }
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .frame(height: 24)
+        .background {
+            GeometryReader { geo in
+                Color.clear.preference(key: TabWidthPreferenceKey.self, value: geo.size.width)
+            }
+        }
+        .onPreferenceChange(TabWidthPreferenceKey.self) { measuredWidth = $0 }
+        .overlay {
+            DoubleClickView(action: startRename)
+                .accessibilityHidden(true)
+        }
+        .background(tabBackground)
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            guard !isAnyDragging else { return }
+            hovered = hovering
+        }
+        .onChange(of: isAnyDragging) { _, dragging in
+            if dragging { hovered = false }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(tabAccessibilityLabel)
+        .accessibilityAddTraits(active ? .isSelected : [])
+        .accessibilityAddTraits(.isButton)
+        .contextMenu {
+            TabContextMenu(
+                tab: tab,
+                closableOthersCount: closableOthersCount,
+                closableLeftCount: closableLeftCount,
+                closableRightCount: closableRightCount,
+                showColorPicker: $showColorPicker,
+                onCreateLeft: onCreateLeft,
+                onCreateRight: onCreateRight,
+                onRename: startRename,
+                onSetCustomTitle: onSetCustomTitle,
+                onSetColorID: onSetColorID,
+                onTogglePin: onTogglePin,
+                onCloseOthers: onCloseOthers,
+                onCloseLeft: onCloseLeft,
+                onCloseRight: onCloseRight
+            )
+        }
+        .popover(isPresented: $showColorPicker, arrowEdge: .bottom) {
+            ProjectIconColorPicker(title: "Tab Color", selectedID: tab.colorID) { id in
+                onSetColorID(id)
+                showColorPicker = false
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .renameActiveTab)) { _ in
             guard active else { return }
@@ -585,6 +631,54 @@ private struct TabCell: View {
         } else {
             Image(systemName: "terminal")
                 .font(.system(size: 12, weight: .semibold))
+        }
+    }
+}
+
+private struct TabContextMenu: View {
+    let tab: PaneTabStrip.TabSnapshot
+    let closableOthersCount: Int
+    let closableLeftCount: Int
+    let closableRightCount: Int
+    @Binding var showColorPicker: Bool
+    let onCreateLeft: () -> Void
+    let onCreateRight: () -> Void
+    let onRename: () -> Void
+    let onSetCustomTitle: (String?) -> Void
+    let onSetColorID: (String?) -> Void
+    let onTogglePin: () -> Void
+    let onCloseOthers: () -> Void
+    let onCloseLeft: () -> Void
+    let onCloseRight: () -> Void
+
+    var body: some View {
+        Group {
+            Button("New Tab to the Left") { onCreateLeft() }
+            Button("New Tab to the Right") { onCreateRight() }
+            Divider()
+            Button("Rename Tab") { onRename() }
+            if tab.hasCustomTitle {
+                Button("Reset Title") { onSetCustomTitle(nil) }
+            }
+            Button("Set Tab Color…") { showColorPicker = true }
+            if tab.colorID != nil {
+                Button("Reset Tab Color") { onSetColorID(nil) }
+            }
+            Divider()
+            if tab.isPinned {
+                Button("Unpin Tab") { onTogglePin() }
+            } else {
+                Button("Pin Tab") { onTogglePin() }
+            }
+            if !tab.isPinned {
+                Divider()
+                Button("Close Other Tabs") { onCloseOthers() }
+                    .disabled(closableOthersCount == 0)
+                Button("Close Tabs to the Left") { onCloseLeft() }
+                    .disabled(closableLeftCount == 0)
+                Button("Close Tabs to the Right") { onCloseRight() }
+                    .disabled(closableRightCount == 0)
+            }
         }
     }
 }
