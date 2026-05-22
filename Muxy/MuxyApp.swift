@@ -90,6 +90,9 @@ struct MuxyApp: App {
                             appDelegate.handleOpenProjectPath(path)
                         }
                     }
+                    NotificationSocketServer.shared.commandHandler = { [appState] message in
+                        await SocketCommandHandler.handleRequest(message, appState: appState)
+                    }
                     MobileServerService.shared.configure { server in
                         let delegate = RemoteServerDelegate(
                             appState: appState,
