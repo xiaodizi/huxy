@@ -7,8 +7,9 @@ Every shortcut listed here can be remapped in **Settings → Keyboard Shortcuts*
 | Action | Shortcut |
 | --- | --- |
 | New Tab | `Cmd+T` |
+| Reopen Closed Terminal Tab | `Cmd+Shift+T` |
 | Close Tab | `Cmd+W` |
-| Rename Tab | `Cmd+Shift+T` |
+| Rename Tab | `Cmd+Opt+T` |
 | Pin / Unpin Tab | `Cmd+Shift+P` |
 
 ## Panes
@@ -22,6 +23,7 @@ Every shortcut listed here can be remapped in **Settings → Keyboard Shortcuts*
 | Focus Pane Right | `Cmd+Opt+→` |
 | Focus Pane Up | `Cmd+Opt+↑` |
 | Focus Pane Down | `Cmd+Opt+↓` |
+| Toggle Maximize Pane | `Cmd+Opt+Return` |
 
 ## Tab navigation
 
@@ -29,6 +31,8 @@ Every shortcut listed here can be remapped in **Settings → Keyboard Shortcuts*
 | --- | --- |
 | Next Tab | `Cmd+]` |
 | Previous Tab | `Cmd+[` |
+| Cycle Next Tab (All Panes) | `Ctrl+Tab` |
+| Cycle Previous Tab (All Panes) | `Ctrl+Shift+Tab` |
 | Tab 1–9 | `Cmd+1` … `Cmd+9` |
 
 ## Project navigation
@@ -56,6 +60,7 @@ Mouse side buttons (3 / 4) and three‑finger horizontal trackpad swipes also na
 | Open Project… | `Cmd+O` |
 | Source Control | `Cmd+K` |
 | Quick Open | `Cmd+P` |
+| Find in Files | `Cmd+Shift+F` |
 | Toggle Sidebar | `Cmd+B` |
 | Toggle File Tree | `Cmd+E` |
 | Toggle AI Usage | `Cmd+L` |
@@ -68,6 +73,15 @@ Mouse side buttons (3 / 4) and three‑finger horizontal trackpad swipes also na
 | --- | --- |
 | Save File | `Cmd+S` |
 | Find | `Cmd+F` |
+
+## Rich Input
+
+| Action | Shortcut |
+| --- | --- |
+| Toggle Rich Input | `Cmd+I` |
+| Send | `Cmd+Return` |
+| Send Without Enter | `Cmd+Shift+Return` |
+| Voice Recording | `Cmd+Shift+I` |
 
 ## Markdown preview
 

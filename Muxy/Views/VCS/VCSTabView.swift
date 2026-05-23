@@ -10,11 +10,12 @@ struct VCSTabView: View {
     @Environment(WorktreeStore.self) private var worktreeStore
     @State private var showDiscardAllConfirmation = false
     @State private var pendingDiscardPath: String?
-    @State private var showCreateWorktreeSheet = false
     @State private var showCreateBranchSheet = false
-    @State private var showInlinePRForm = false
     @State private var pendingClosePR: GitRepositoryService.PRInfo?
     @State private var pendingCheckoutPR: GitRepositoryService.PRListItem?
+    @State private var pendingCheckoutPRInNewWorktree: GitRepositoryService.PRListItem?
+    @AppStorage(GeneralSettingsKeys.defaultWorktreeParentPath)
+    private var defaultWorktreeParentPath = ""
     private var commitEnabled: Bool {
         state.hasStagedChanges && !state.commitMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -88,6 +89,11 @@ struct VCSTabView: View {
             pendingCheckoutPR = nil
             presentCheckoutPRConfirmation(pr: pr)
         }
+        .onChange(of: pendingCheckoutPRInNewWorktree?.number) { _, number in
+            guard number != nil, let pr = pendingCheckoutPRInNewWorktree else { return }
+            pendingCheckoutPRInNewWorktree = nil
+            checkoutPRInNewWorktree(pr: pr)
+        }
         .alert(
             "Error",
             isPresented: Binding(
@@ -105,17 +111,19 @@ struct VCSTabView: View {
 
     private var header: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 6) {
-                worktreeBranchPicker
+            HStack(spacing: UIMetrics.spacing3) {
+                branchPicker
 
                 PRPill(
                     state: state,
                     onRequestCreate: { requestOpenPR() },
                     onRequestMerge: { prInfo, method in performMerge(prInfo: prInfo, method: method) },
-                    onRequestClose: { prInfo in pendingClosePR = prInfo }
+                    onRequestClose: { prInfo in pendingClosePR = prInfo },
+                    onRequestCleanup: { prInfo in presentManualCleanupConfirmation(prInfo: prInfo) },
+                    canCleanup: state.branchName != nil
                 )
             }
-            .padding(.leading, 8)
+            .padding(.leading, UIMetrics.spacing4)
 
             Spacer(minLength: 0)
 
@@ -132,7 +140,7 @@ struct VCSTabView: View {
                 if state.isRefreshingPullRequest {
                     ProgressView()
                         .controlSize(.small)
-                        .frame(width: 24, height: 24)
+                        .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                 } else {
                     IconButton(symbol: "arrow.clockwise", accessibilityLabel: "Refresh") {
                         state.refresh()
@@ -149,6 +157,8 @@ struct VCSTabView: View {
                 }
             }
         }
+        .frame(height: UIMetrics.scaled(32))
+        .background(MuxyTheme.bg)
         .sheet(isPresented: $showCreateBranchSheet) {
             CreateBranchSheet(
                 currentBranch: state.branchName,
@@ -159,37 +169,24 @@ struct VCSTabView: View {
                 onCancel: { showCreateBranchSheet = false }
             )
         }
-        .onChange(of: state.pullRequestInfo?.number) { _, number in
-            guard number != nil, showInlinePRForm else { return }
-            showInlinePRForm = false
-        }
     }
 
     private func requestOpenPR() {
         state.openPullRequestError = nil
         state.loadBranches()
-        showInlinePRForm = true
+        state.showInlinePRForm = true
     }
 
-    @ViewBuilder
-    private var worktreeBranchPicker: some View {
-        if let project = owningProject {
-            WorktreeBranchPicker(
-                project: project,
-                isGitRepo: state.isGitRepo,
-                currentBranch: state.branchName,
-                branches: state.branches,
-                isLoadingBranches: state.isLoadingBranches,
-                activeWorktree: activeWorktreeForTab,
-                onSelectBranch: { state.switchBranch($0) },
-                onRefreshBranches: { state.loadBranches() },
-                onCreateBranch: { showCreateBranchSheet = true },
-                onDeleteBranch: { branch in presentDeleteBranchConfirmation(branch) },
-                onRequestCreateWorktree: { showCreateWorktreeSheet = true }
-            )
-            .environment(appState)
-            .environment(worktreeStore)
-        }
+    private var branchPicker: some View {
+        BranchPicker(
+            currentBranch: state.branchName,
+            branches: state.branches,
+            isLoading: state.isLoadingBranches,
+            onSelect: { state.switchBranch($0) },
+            onRefresh: { state.loadBranches() },
+            onCreateBranch: { showCreateBranchSheet = true },
+            onDeleteBranch: { branch in presentDeleteBranchConfirmation(branch) }
+        )
     }
 
     private func performMerge(prInfo: GitRepositoryService.PRInfo, method: GitRepositoryService.PRMergeMethod) {
@@ -242,6 +239,7 @@ struct VCSTabView: View {
         let worktree = activeWorktreeForTab
         let defaultBranch = state.defaultBranch
         let isWorktreeMerge = worktree.map { !$0.isPrimary } ?? false
+        let baseBranch = prInfo.baseBranch
         state.mergePullRequest(method: method, deleteBranch: !isWorktreeMerge) { _, mergedBranch in
             ToastState.shared.show("Merged PR #\(prInfo.number)")
             Task { @MainActor in
@@ -249,9 +247,71 @@ struct VCSTabView: View {
                     mergedBranch: mergedBranch,
                     project: project,
                     worktree: worktree,
-                    defaultBranch: defaultBranch
+                    defaultBranch: defaultBranch,
+                    baseBranch: baseBranch
                 )
             }
+        }
+    }
+
+    private func performManualCleanup(prInfo: GitRepositoryService.PRInfo) {
+        guard let mergedBranch = state.branchName, !mergedBranch.isEmpty else { return }
+        let project = owningProject
+        let worktree = activeWorktreeForTab
+        let defaultBranch = state.defaultBranch
+        let baseBranch = prInfo.baseBranch
+        Task { @MainActor in
+            await cleanupAfterMerge(
+                mergedBranch: mergedBranch,
+                project: project,
+                worktree: worktree,
+                defaultBranch: defaultBranch,
+                baseBranch: baseBranch
+            )
+            ToastState.shared.show("Cleaned up PR #\(prInfo.number)")
+        }
+    }
+
+    private func presentManualCleanupConfirmation(prInfo: GitRepositoryService.PRInfo) {
+        guard let window = NSApp.keyWindow ?? NSApp.mainWindow,
+              window.attachedSheet == nil
+        else { return }
+
+        let worktree = activeWorktreeForTab
+        let isWorktreeCleanup = worktree.map(\.canBeRemoved) ?? false
+        let branch = state.branchName ?? ""
+        let hasChanges = state.hasAnyChanges
+
+        let messageText = "Clean up after PR #\(prInfo.number)?"
+        let worktreeWarning = """
+        This will remove the worktree and delete branch "\(branch)". \
+        Uncommitted changes in this worktree will be lost permanently.
+        """
+        let branchWarning = """
+        This will switch to the default branch and delete branch "\(branch)". \
+        Uncommitted changes on this branch will no longer belong to any branch.
+        """
+        let worktreeClean = "This will remove the worktree and delete branch \"\(branch)\"."
+        let branchClean = "This will switch to the default branch and delete branch \"\(branch)\"."
+        let informativeText: String = if isWorktreeCleanup {
+            hasChanges ? worktreeWarning : worktreeClean
+        } else {
+            hasChanges ? branchWarning : branchClean
+        }
+
+        let alert = NSAlert()
+        alert.messageText = messageText
+        alert.informativeText = informativeText
+        alert.alertStyle = hasChanges ? .critical : .warning
+        alert.icon = NSApp.applicationIconImage
+        alert.addButton(withTitle: "Clean Up")
+        alert.addButton(withTitle: "Cancel")
+        alert.buttons.first?.keyEquivalent = ""
+        alert.buttons.last?.keyEquivalent = "\u{1b}"
+
+        alert.beginSheetModal(for: window) { response in
+            guard response == .alertFirstButtonReturn else { return }
+            performManualCleanup(prInfo: prInfo)
         }
     }
 
@@ -292,19 +352,47 @@ struct VCSTabView: View {
         mergedBranch: String,
         project: Project?,
         worktree: Worktree?,
-        defaultBranch: String?
+        defaultBranch: String?,
+        baseBranch: String
     ) async {
         if let project, let worktree, worktree.canBeRemoved {
-            removeWorktreeAfterMerge(project: project, worktree: worktree, mergedBranch: mergedBranch)
+            removeWorktreeAfterMerge(
+                project: project,
+                worktree: worktree,
+                mergedBranch: mergedBranch,
+                defaultBranch: defaultBranch,
+                baseBranch: baseBranch
+            )
             return
         }
 
         if let defaultBranch, defaultBranch != mergedBranch {
             await state.switchBranchAndRefresh(defaultBranch)
         }
+        let repoPath = state.projectPath
+        let branchToDelete = mergedBranch
+        if !branchToDelete.isEmpty, branchToDelete != defaultBranch {
+            try? await GitWorktreeService.shared.deleteBranch(repoPath: repoPath, branch: branchToDelete)
+            try? await GitRepositoryService().deleteRemoteBranch(repoPath: repoPath, branch: branchToDelete)
+            state.loadBranches()
+        }
+        let pulled = await Self.fastForwardAfterMerge(
+            repoPath: repoPath,
+            defaultBranch: defaultBranch,
+            baseBranch: baseBranch
+        )
+        if !pulled.isEmpty {
+            state.refresh()
+        }
     }
 
-    private func removeWorktreeAfterMerge(project: Project, worktree: Worktree, mergedBranch: String) {
+    private func removeWorktreeAfterMerge(
+        project: Project,
+        worktree: Worktree,
+        mergedBranch: String,
+        defaultBranch: String?,
+        baseBranch: String
+    ) {
         let repoPath = project.path
         let remaining = worktreeStore.list(for: project.id).filter { $0.id != worktree.id }
         let replacement = remaining.first(where: { $0.isPrimary }) ?? remaining.first
@@ -323,7 +411,39 @@ struct VCSTabView: View {
                 repoPath: repoPath,
                 branch: mergedBranch
             )
+            await Self.fastForwardAfterMerge(
+                repoPath: repoPath,
+                defaultBranch: defaultBranch,
+                baseBranch: baseBranch
+            )
         }
+    }
+
+    @discardableResult
+    private static func fastForwardAfterMerge(
+        repoPath: String,
+        defaultBranch: String?,
+        baseBranch: String
+    ) async -> [String] {
+        let git = GitRepositoryService()
+        var pulled: [String] = []
+        if let defaultBranch, !defaultBranch.isEmpty,
+           await git.fastForwardBranch(repoPath: repoPath, branch: defaultBranch)
+        {
+            pulled.append(defaultBranch)
+        }
+        let trimmedBase = baseBranch.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedBase.isEmpty, trimmedBase != defaultBranch,
+           await git.fastForwardBranch(repoPath: repoPath, branch: trimmedBase)
+        {
+            pulled.append(trimmedBase)
+        }
+        if !pulled.isEmpty {
+            await MainActor.run {
+                ToastState.shared.show("Pulled \(pulled.joined(separator: ", "))")
+            }
+        }
+        return pulled
     }
 
     private func presentClosePRConfirmation(prInfo: GitRepositoryService.PRInfo) {
@@ -347,25 +467,6 @@ struct VCSTabView: View {
         }
     }
 
-    private func handleCreateWorktreeResult(_ result: CreateWorktreeResult, project: Project) {
-        switch result {
-        case let .created(worktree, runSetup):
-            appState.selectWorktree(projectID: project.id, worktree: worktree)
-            if runSetup,
-               let paneID = appState.focusedArea(for: project.id)?.activeTab?.content.pane?.id
-            {
-                Task {
-                    await WorktreeSetupRunner.run(
-                        sourceProjectPath: project.path,
-                        paneID: paneID
-                    )
-                }
-            }
-        case .cancelled:
-            break
-        }
-    }
-
     @ViewBuilder
     private var content: some View {
         if state.isLoadingFiles {
@@ -373,12 +474,12 @@ struct VCSTabView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if state.files.isEmpty, state.errorMessage != nil {
             Text(state.errorMessage ?? "")
-                .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             VStack(spacing: 0) {
-                if showInlinePRForm {
+                if state.showInlinePRForm {
                     createPRForm
                 } else {
                     commitArea
@@ -389,6 +490,7 @@ struct VCSTabView: View {
                     showDiscardAllConfirmation: $showDiscardAllConfirmation,
                     pendingDiscardPath: $pendingDiscardPath,
                     pendingCheckoutPR: $pendingCheckoutPR,
+                    pendingCheckoutPRInNewWorktree: $pendingCheckoutPRInNewWorktree,
                     onOpenInEditor: openFileInEditor,
                     onOpenDiff: openDiffInTab
                 )
@@ -409,6 +511,7 @@ struct VCSTabView: View {
             ),
             inProgress: state.isOpeningPullRequest,
             errorMessage: state.openPullRequestError,
+            draft: $state.prFormDraft,
             onLoadRemoteBranches: { state.loadRemoteBranches() },
             onSubmit: { base, title, body, branchStrategy, includeMode, draft in
                 ToastState.shared.show("Creating pull request…")
@@ -425,28 +528,37 @@ struct VCSTabView: View {
             },
             onCancel: {
                 state.openPullRequestError = nil
-                showInlinePRForm = false
+                state.resetPRForm()
+            },
+            onGenerateAI: { base in
+                let path = state.projectPath
+                let branch = state.branchName
+                return try await AIAssistantService.generatePullRequest(
+                    repoPath: path,
+                    branch: branch,
+                    baseBranch: base
+                )
             }
         )
     }
 
     private var commitArea: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: UIMetrics.spacing4) {
             ZStack(alignment: .topLeading) {
                 if state.commitMessage.isEmpty {
                     Text("Commit message (⌘↵ to commit on \(state.branchName ?? "branch"))")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                        .font(.system(size: UIMetrics.fontBody))
                         .foregroundStyle(MuxyTheme.fgDim)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, UIMetrics.spacing5)
+                        .padding(.vertical, UIMetrics.spacing5)
                         .allowsHitTesting(false)
                 }
                 TextEditor(text: $state.commitMessage)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                    .font(.system(size: UIMetrics.fontBody))
                     .foregroundStyle(MuxyTheme.fg)
                     .scrollContentBackground(.hidden)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 9)
+                    .padding(.horizontal, UIMetrics.scaled(5))
+                    .padding(.vertical, UIMetrics.scaled(9))
                     .frame(minHeight: 27, maxHeight: 50)
                     .onKeyPress(.return, phases: .down) { keyPress in
                         if keyPress.modifiers.contains(.command) {
@@ -455,42 +567,81 @@ struct VCSTabView: View {
                         }
                         return .ignored
                     }
-            }
-            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 6))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(MuxyTheme.border, lineWidth: 1))
 
-            HStack(spacing: 6) {
+                HStack {
+                    Spacer()
+                    aiCommitButton
+                }
+                .padding(.trailing, UIMetrics.spacing3)
+                .padding(.top, UIMetrics.scaled(4))
+            }
+            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
+            .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusMD).stroke(MuxyTheme.border, lineWidth: 1))
+
+            HStack(spacing: UIMetrics.spacing3) {
                 commitButton
                 pullButton
                 pushButton
             }
         }
         .padding(10)
+        .padding(UIMetrics.spacing5)
+        .background(MuxyTheme.bg)
+    }
+
+    private var aiCommitButton: some View {
+        let isGenerating = state.isGeneratingCommitMessage
+        let canGenerate = !isGenerating && state.hasAnyChanges
+        return Button {
+            if isGenerating {
+                state.cancelCommitMessageGeneration()
+            } else {
+                state.generateCommitMessageWithAI()
+            }
+        } label: {
+            HStack(spacing: UIMetrics.spacing2) {
+                if isGenerating {
+                    ProgressView().controlSize(.mini)
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: UIMetrics.fontCaption))
+                    Text("Cancel")
+                        .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
+                } else {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: UIMetrics.scaled(12), weight: .semibold))
+                }
+            }
+            .foregroundStyle(canGenerate || isGenerating ? MuxyTheme.accent : MuxyTheme.fgDim)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!isGenerating && !canGenerate)
+        .help(isGenerating ? "Cancel generation" : "Generate commit message with AI")
     }
 
     private var commitButton: some View {
         Button {
             state.commit()
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 if state.isCommitting {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "checkmark")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                        .font(.system(size: UIMetrics.fontCaption, weight: .bold))
                 }
                 Text("Commit")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                    .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
             }
             .foregroundStyle(commitEnabled ? MuxyTheme.bg : MuxyTheme.fgDim)
             .frame(maxWidth: .infinity)
             .frame(height: Self.actionButtonHeight)
             .background(
                 commitEnabled ? MuxyTheme.accent : MuxyTheme.surface,
-                in: RoundedRectangle(cornerRadius: 6)
+                in: RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
                     .stroke(MuxyTheme.border, lineWidth: commitEnabled ? 0 : 1)
             )
         }
@@ -503,29 +654,29 @@ struct VCSTabView: View {
         Button {
             state.pull()
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 if state.isPulling {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "arrow.down")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                        .font(.system(size: UIMetrics.fontCaption, weight: .bold))
                 }
                 Text("Pull")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                    .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
                 if state.aheadBehind.behind > 0 {
                     Text("\(state.aheadBehind.behind)")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                        .font(.system(size: UIMetrics.fontCaption, weight: .bold, design: .monospaced))
                         .foregroundStyle(MuxyTheme.bg)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 1)
+                        .padding(.horizontal, UIMetrics.scaled(5))
+                        .padding(.vertical, UIMetrics.scaled(1))
                         .background(MuxyTheme.diffAddFg, in: Capsule())
                 }
             }
             .foregroundStyle(MuxyTheme.fg)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, UIMetrics.spacing5)
             .frame(height: Self.actionButtonHeight)
-            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 6))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(MuxyTheme.border, lineWidth: 1))
+            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
+            .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusMD).stroke(MuxyTheme.border, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .disabled(state.isPulling)
@@ -538,29 +689,29 @@ struct VCSTabView: View {
         Button {
             state.push()
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 if state.isPushing {
                     ProgressView().controlSize(.mini)
                 } else {
                     Image(systemName: "arrow.up")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                        .font(.system(size: UIMetrics.fontCaption, weight: .bold))
                 }
                 Text("Push")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                    .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
                 if state.aheadBehind.ahead > 0 {
                     Text("\(state.aheadBehind.ahead)")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                        .font(.system(size: UIMetrics.fontCaption, weight: .bold, design: .monospaced))
                         .foregroundStyle(MuxyTheme.bg)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 1)
+                        .padding(.horizontal, UIMetrics.scaled(5))
+                        .padding(.vertical, UIMetrics.scaled(1))
                         .background(MuxyTheme.accent, in: Capsule())
                 }
             }
             .foregroundStyle(MuxyTheme.fg)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, UIMetrics.spacing5)
             .frame(height: Self.actionButtonHeight)
-            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 6))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(MuxyTheme.border, lineWidth: 1))
+            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
+            .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusMD).stroke(MuxyTheme.border, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .disabled(state.isPushing)
@@ -569,7 +720,7 @@ struct VCSTabView: View {
             : "Push to origin")
     }
 
-    private static let actionButtonHeight: CGFloat = 28
+    @MainActor private static var actionButtonHeight: CGFloat { UIMetrics.scaled(28) }
 
     private func presentDiscardConfirmation(
         title: String,
@@ -669,6 +820,28 @@ struct VCSTabView: View {
         }
     }
 
+    private func checkoutPRInNewWorktree(pr: GitRepositoryService.PRListItem) {
+        guard let project = owningProject else {
+            state.showStatus("Project not found for this worktree.", isError: true)
+            return
+        }
+        let parentPath = defaultWorktreeParentPath
+        Task { @MainActor in
+            do {
+                let worktree = try await state.checkoutPullRequestInNewWorktree(
+                    pr,
+                    project: project,
+                    defaultParentPath: parentPath,
+                    worktreeStore: worktreeStore
+                )
+                appState.selectWorktree(projectID: project.id, worktree: worktree)
+                ToastState.shared.show("Checked out PR #\(pr.number) in new worktree")
+            } catch {
+                state.showStatus(error.localizedDescription, isError: true)
+            }
+        }
+    }
+
     private func openFileInEditor(_ relativePath: String) {
         guard let projectID = appState.activeProjectID else { return }
         let fullPath = state.projectPath.hasSuffix("/")
@@ -715,9 +888,9 @@ struct VCSSectionVisibilityMenu: View {
             }
         } label: {
             Image(systemName: "sidebar.squares.left")
-                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
                 .foregroundStyle(hovered ? MuxyTheme.fg : MuxyTheme.fgMuted)
-                .frame(width: 24, height: 24)
+                .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -734,6 +907,8 @@ struct PRPill: View {
     let onRequestCreate: () -> Void
     let onRequestMerge: (GitRepositoryService.PRInfo, GitRepositoryService.PRMergeMethod) -> Void
     let onRequestClose: (GitRepositoryService.PRInfo) -> Void
+    let onRequestCleanup: (GitRepositoryService.PRInfo) -> Void
+    let canCleanup: Bool
 
     @State private var showPRPopover = false
 
@@ -766,44 +941,44 @@ struct PRPill: View {
 
     private var createPRPill: some View {
         Button(action: onRequestCreate) {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 Image(systemName: "arrow.triangle.pull")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
+                    .font(.system(size: UIMetrics.fontXS, weight: .bold))
                 Text("Create PR")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                    .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
             }
             .foregroundStyle(MuxyTheme.accent)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
+            .padding(.horizontal, UIMetrics.spacing3)
+            .padding(.vertical, UIMetrics.scaled(3))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(state.isOpeningPullRequest)
         .help("Create a pull request")
-        .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 5))
-        .overlay(RoundedRectangle(cornerRadius: 5).stroke(MuxyTheme.accent.opacity(0.35), lineWidth: 1))
+        .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
+        .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusSM).stroke(MuxyTheme.accent.opacity(0.35), lineWidth: 1))
     }
 
     private func hasPRPill(info: GitRepositoryService.PRInfo) -> some View {
         Button {
             showPRPopover = true
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 Image(systemName: prStateIcon(info))
-                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
+                    .font(.system(size: UIMetrics.fontXS, weight: .bold))
                     .foregroundStyle(prStateColor(info))
                 Text("PR #\(info.number)")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                    .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
                     .foregroundStyle(MuxyTheme.fg.opacity(0.85))
                 Image(systemName: "chevron.down")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 8).weight(.bold))
+                    .font(.system(size: UIMetrics.fontMicro, weight: .bold))
                     .foregroundStyle(MuxyTheme.fgDim)
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 5))
-            .overlay(RoundedRectangle(cornerRadius: 5).stroke(prStateColor(info).opacity(0.35), lineWidth: 1))
-            .contentShape(RoundedRectangle(cornerRadius: 5))
+            .padding(.horizontal, UIMetrics.spacing3)
+            .padding(.vertical, UIMetrics.scaled(3))
+            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
+            .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusSM).stroke(prStateColor(info).opacity(0.35), lineWidth: 1))
+            .contentShape(RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
         }
         .buttonStyle(.plain)
         .help("Pull request #\(info.number)")
@@ -811,6 +986,7 @@ struct PRPill: View {
             PRPopover(
                 state: state,
                 info: info,
+                canCleanup: canCleanup,
                 onMerge: { method in
                     let needsConfirmation = state.hasAnyChanges
                         || info.checks.status == .failure
@@ -824,6 +1000,10 @@ struct PRPill: View {
                     showPRPopover = false
                     onRequestClose(info)
                 },
+                onCleanup: {
+                    showPRPopover = false
+                    onRequestCleanup(info)
+                },
                 onOpenInBrowser: {
                     showPRPopover = false
                     if let url = URL(string: info.url) {
@@ -832,6 +1012,9 @@ struct PRPill: View {
                 },
                 onRefresh: {
                     state.refreshPullRequest()
+                },
+                onUpdateBranch: {
+                    state.updatePullRequestBranch()
                 }
             )
         }
@@ -880,18 +1063,18 @@ struct PRPill: View {
         action: @escaping () -> Void = {}
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 4) {
+            HStack(spacing: UIMetrics.spacing2) {
                 Image(systemName: icon)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
+                    .font(.system(size: UIMetrics.fontXS, weight: .bold))
                 Text(text)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                    .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
             }
             .foregroundStyle(tint)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 5))
-            .overlay(RoundedRectangle(cornerRadius: 5).stroke(tint.opacity(0.35), lineWidth: 1))
-            .contentShape(RoundedRectangle(cornerRadius: 5))
+            .padding(.horizontal, UIMetrics.spacing3)
+            .padding(.vertical, UIMetrics.scaled(3))
+            .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
+            .overlay(RoundedRectangle(cornerRadius: UIMetrics.radiusSM).stroke(tint.opacity(0.35), lineWidth: 1))
+            .contentShape(RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
         }
         .buttonStyle(.plain)
         .disabled(disabled)
@@ -901,24 +1084,27 @@ struct PRPill: View {
 struct PRPopover: View {
     @Bindable var state: VCSTabState
     let info: GitRepositoryService.PRInfo
+    let canCleanup: Bool
     let onMerge: (GitRepositoryService.PRMergeMethod) -> Void
     let onClose: () -> Void
+    let onCleanup: () -> Void
     let onOpenInBrowser: () -> Void
     let onRefresh: () -> Void
+    let onUpdateBranch: () -> Void
 
     @State private var mergeMethod: GitRepositoryService.PRMergeMethod = .squash
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: UIMetrics.spacing5) {
+            HStack(spacing: UIMetrics.spacing4) {
                 Image(systemName: stateIcon)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
+                    .font(.system(size: UIMetrics.fontHeadline, weight: .semibold))
                     .foregroundStyle(stateColor)
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: UIMetrics.scaled(1)) {
                     Text("Pull Request #\(info.number)")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+                        .font(.system(size: UIMetrics.fontBody, weight: .semibold))
                     Text(stateLabel)
-                        .font(.custom("JetBrainsMono Nerd Font", size: 10))
+                        .font(.system(size: UIMetrics.fontCaption))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
                 Spacer(minLength: 0)
@@ -930,20 +1116,20 @@ struct PRPopover: View {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "arrow.clockwise")
-                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
+                                .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
                                 .foregroundStyle(MuxyTheme.fgMuted)
                         }
                     }
-                    .frame(width: 20, height: 20)
+                    .frame(width: UIMetrics.controlSmall, height: UIMetrics.controlSmall)
                 }
                 .buttonStyle(.plain)
                 .disabled(state.isRefreshingPullRequest)
                 .help("Refresh")
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: UIMetrics.spacing2) {
                 infoRow(label: "Base", value: info.baseBranch)
-                if let label = mergeableLabel {
+                if let label = PRMergeabilityPresentation.make(info: info) {
                     infoRow(
                         label: "Mergeable",
                         value: label.text,
@@ -956,46 +1142,89 @@ struct PRPopover: View {
             Divider()
 
             Button(action: onOpenInBrowser) {
-                HStack(spacing: 6) {
+                HStack(spacing: UIMetrics.spacing3) {
                     Image(systemName: "arrow.up.right.square")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
+                        .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
                     Text("Open on GitHub")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                        .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
                     Spacer(minLength: 0)
                 }
                 .foregroundStyle(MuxyTheme.fg)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
+                .padding(.horizontal, UIMetrics.spacing4)
+                .padding(.vertical, UIMetrics.spacing3)
                 .frame(maxWidth: .infinity)
-                .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 5))
+                .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
             }
             .buttonStyle(.plain)
 
+            if info.state == .merged, canCleanup {
+                Button(action: onCleanup) {
+                    HStack(spacing: UIMetrics.spacing3) {
+                        Image(systemName: "trash")
+                            .font(.system(size: UIMetrics.fontFootnote, weight: .bold))
+                        Text("Cleanup")
+                            .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
+                        Spacer(minLength: 0)
+                    }
+                    .foregroundStyle(MuxyTheme.bg)
+                    .padding(.horizontal, UIMetrics.spacing4)
+                    .padding(.vertical, UIMetrics.spacing3)
+                    .frame(maxWidth: .infinity)
+                    .background(MuxyTheme.accent, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
+                }
+                .buttonStyle(.plain)
+                .help("Remove the worktree or delete the local branch for this merged PR")
+            }
+
             if info.state == .open {
+                if info.mergeStateStatus == .behind, !info.isCrossRepository {
+                    Button(action: onUpdateBranch) {
+                        HStack(spacing: UIMetrics.spacing3) {
+                            if state.isUpdatingPullRequestBranch {
+                                ProgressView().controlSize(.mini)
+                            } else {
+                                Image(systemName: "arrow.down.circle")
+                                    .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
+                            }
+                            Text(state.isUpdatingPullRequestBranch ? "Updating…" : "Update branch")
+                                .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
+                            Spacer(minLength: 0)
+                        }
+                        .foregroundStyle(MuxyTheme.fg)
+                        .padding(.horizontal, UIMetrics.spacing4)
+                        .padding(.vertical, UIMetrics.spacing3)
+                        .frame(maxWidth: .infinity)
+                        .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(state.isUpdatingPullRequestBranch)
+                    .help("Merge \(info.baseBranch) into this branch")
+                }
+
                 SegmentedPicker(
                     selection: $mergeMethod,
                     options: GitRepositoryService.PRMergeMethod.allCases.map { ($0, $0.shortLabel) }
                 )
 
                 Button { onMerge(mergeMethod) } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: UIMetrics.spacing3) {
                         if state.isMergingPullRequest {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "arrow.triangle.merge")
-                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.bold))
+                                .font(.system(size: UIMetrics.fontFootnote, weight: .bold))
                         }
                         Text(state.isMergingPullRequest ? "Merging…" : mergeMethod.label)
-                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                            .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
                         Spacer(minLength: 0)
                     }
                     .foregroundStyle(mergeDisabled ? MuxyTheme.fgDim : MuxyTheme.bg)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, UIMetrics.spacing4)
+                    .padding(.vertical, UIMetrics.spacing3)
                     .frame(maxWidth: .infinity)
                     .background(
                         mergeDisabled ? MuxyTheme.surface : MuxyTheme.accent,
-                        in: RoundedRectangle(cornerRadius: 5)
+                        in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM)
                     )
                 }
                 .buttonStyle(.plain)
@@ -1003,29 +1232,29 @@ struct PRPopover: View {
                 .help(mergeHelp)
 
                 Button(action: onClose) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: UIMetrics.spacing3) {
                         if state.isClosingPullRequest {
                             ProgressView().controlSize(.mini)
                         } else {
                             Image(systemName: "xmark.circle")
-                                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
+                                .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
                         }
                         Text("Close PR")
-                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                            .font(.system(size: UIMetrics.fontFootnote, weight: .medium))
                         Spacer(minLength: 0)
                     }
                     .foregroundStyle(MuxyTheme.diffRemoveFg)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, UIMetrics.spacing4)
+                    .padding(.vertical, UIMetrics.spacing3)
                     .frame(maxWidth: .infinity)
-                    .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 5))
+                    .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: UIMetrics.radiusSM))
                 }
                 .buttonStyle(.plain)
                 .disabled(state.isClosingPullRequest)
             }
         }
-        .padding(12)
-        .frame(width: 260)
+        .padding(UIMetrics.spacing6)
+        .frame(width: UIMetrics.scaled(260))
         .task(id: info.number) {
             onRefresh()
         }
@@ -1065,28 +1294,6 @@ struct PRPopover: View {
                 return "Checks are still running. You will be asked to confirm before merging."
             }
             return "Merge PR #\(info.number)"
-        }
-    }
-
-    private var mergeableLabel: (text: String, color: Color)? {
-        switch info.mergeStateStatus {
-        case .dirty:
-            return ("Conflicts", MuxyTheme.diffRemoveFg)
-        case .behind:
-            return ("Behind base", MuxyTheme.diffRemoveFg)
-        case .blocked:
-            return ("Blocked", MuxyTheme.diffRemoveFg)
-        case .draft:
-            return ("Draft", MuxyTheme.fgMuted)
-        case .clean,
-             .hasHooks:
-            return ("Yes", MuxyTheme.diffAddFg)
-        case .unstable:
-            return ("Yes (checks failing)", MuxyTheme.diffAddFg)
-        case .unknown:
-            if info.mergeable == true { return ("Yes", MuxyTheme.diffAddFg) }
-            if info.mergeable == false { return ("Conflicts", MuxyTheme.diffRemoveFg) }
-            return nil
         }
     }
 
@@ -1155,13 +1362,13 @@ struct PRPopover: View {
     }
 
     private func infoRow(label: String, value: String, valueColor: Color = MuxyTheme.fg) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: UIMetrics.spacing3) {
             Text(label)
-                .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                .font(.system(size: UIMetrics.fontFootnote))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 70, alignment: .leading)
+                .frame(width: UIMetrics.scaled(70), alignment: .leading)
             Text(value)
-                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
+                .font(.system(size: UIMetrics.fontFootnote, weight: .medium, design: .monospaced))
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -1176,10 +1383,11 @@ private struct SectionSplitLayout: View {
     @Binding var showDiscardAllConfirmation: Bool
     @Binding var pendingDiscardPath: String?
     @Binding var pendingCheckoutPR: GitRepositoryService.PRListItem?
+    @Binding var pendingCheckoutPRInNewWorktree: GitRepositoryService.PRListItem?
     let onOpenInEditor: (String) -> Void
     let onOpenDiff: (String, Bool) -> Void
 
-    private static let sectionHeaderHeight: CGFloat = 30
+    @MainActor private static var sectionHeaderHeight: CGFloat { UIMetrics.scaled(30) }
 
     private var hasStaged: Bool { !state.stagedFiles.isEmpty }
 
@@ -1293,47 +1501,35 @@ private struct SectionSplitLayout: View {
         totalHeight: CGFloat,
         allSections: [SectionKind]
     ) -> some View {
-        Rectangle().fill(MuxyTheme.border).frame(height: 1)
-            .overlay {
-                Color.clear
-                    .frame(height: 5)
-                    .contentShape(Rectangle())
-                    .gesture(
-                        DragGesture(minimumDistance: 1)
-                            .onChanged { v in
-                                guard totalHeight > 0 else { return }
-                                let delta = v.translation.height / totalHeight
+        ResizeHandle(axis: .vertical) { v in
+            guard totalHeight > 0 else { return }
+            let delta = v.translation.height / totalHeight
 
-                                guard let aboveIdx = allSections.firstIndex(of: above),
-                                      let belowIdx = allSections.firstIndex(of: below)
-                                else { return }
+            guard let aboveIdx = allSections.firstIndex(of: above),
+                  let belowIdx = allSections.firstIndex(of: below)
+            else { return }
 
-                                var ratios = state.sectionRatios
-                                if ratios.count < allSections.count {
-                                    let fill = 1.0 / CGFloat(allSections.count)
-                                    ratios.append(contentsOf: Array(repeating: fill, count: allSections.count - ratios.count))
-                                }
-                                guard aboveIdx < ratios.count, belowIdx < ratios.count else { return }
-                                let minRatio: CGFloat = 0.08
-
-                                ratios[aboveIdx] += delta
-                                ratios[belowIdx] -= delta
-
-                                ratios[aboveIdx] = max(minRatio, ratios[aboveIdx])
-                                ratios[belowIdx] = max(minRatio, ratios[belowIdx])
-
-                                let sum = ratios.reduce(0, +)
-                                if sum > 0 {
-                                    ratios = ratios.map { $0 / sum }
-                                }
-
-                                state.sectionRatios = ratios
-                            }
-                    )
-                    .onHover { on in
-                        if on { NSCursor.resizeUpDown.push() } else { NSCursor.pop() }
-                    }
+            var ratios = state.sectionRatios
+            if ratios.count < allSections.count {
+                let fill = 1.0 / CGFloat(allSections.count)
+                ratios.append(contentsOf: Array(repeating: fill, count: allSections.count - ratios.count))
             }
+            guard aboveIdx < ratios.count, belowIdx < ratios.count else { return }
+            let minRatio: CGFloat = 0.08
+
+            ratios[aboveIdx] += delta
+            ratios[belowIdx] -= delta
+
+            ratios[aboveIdx] = max(minRatio, ratios[aboveIdx])
+            ratios[belowIdx] = max(minRatio, ratios[belowIdx])
+
+            let sum = ratios.reduce(0, +)
+            if sum > 0 {
+                ratios = ratios.map { $0 / sum }
+            }
+
+            state.sectionRatios = ratios
+        }
     }
 
     @ViewBuilder
@@ -1356,7 +1552,7 @@ private struct SectionSplitLayout: View {
                 sectionHeader(for: .changes, collapsed: false)
                 if state.files.isEmpty {
                     Text("No changes")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                        .font(.system(size: UIMetrics.fontBody))
                         .foregroundStyle(MuxyTheme.fgMuted)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -1382,7 +1578,8 @@ private struct SectionSplitLayout: View {
                 sectionHeader(for: .pullRequests, collapsed: false)
                 PullRequestsListView(
                     state: state,
-                    onCheckout: { pr in pendingCheckoutPR = pr }
+                    onCheckout: { pr in pendingCheckoutPR = pr },
+                    onCheckoutInNewWorktree: { pr in pendingCheckoutPRInNewWorktree = pr }
                 )
             }
             .frame(height: height)
@@ -1393,31 +1590,31 @@ private struct SectionSplitLayout: View {
         let isCollapsedState = collapsed
 
         return HStack(spacing: 0) {
-            HStack(spacing: 6) {
+            HStack(spacing: UIMetrics.spacing3) {
                 Button {
                     toggleCollapsed(section)
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: UIMetrics.spacing3) {
                         Image(systemName: isCollapsedState ? "chevron.right" : "chevron.down")
-                            .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.bold))
+                            .font(.system(size: UIMetrics.fontXS, weight: .bold))
                             .foregroundStyle(MuxyTheme.fgDim)
-                            .frame(width: 10)
+                            .frame(width: UIMetrics.scaled(10))
 
                         Text(section.title)
-                            .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
+                            .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
                             .foregroundStyle(MuxyTheme.fgMuted)
                     }
                 }
                 .buttonStyle(.plain)
 
                 Text("\(sectionCount(for: section))")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.bold))
+                    .font(.system(size: UIMetrics.fontCaption, weight: .bold))
                     .foregroundStyle(MuxyTheme.bg)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 1)
+                    .padding(.horizontal, UIMetrics.spacing3)
+                    .padding(.vertical, UIMetrics.scaled(1))
                     .background(MuxyTheme.fgMuted, in: Capsule())
             }
-            .padding(.leading, 8)
+            .padding(.leading, UIMetrics.spacing4)
 
             Spacer(minLength: 0)
 
@@ -1487,9 +1684,9 @@ private struct SectionSplitLayout: View {
             state.mode = state.mode == .unified ? .split : .unified
         } label: {
             Image(systemName: state.mode == .unified ? "rectangle.split.2x1" : "rectangle")
-                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 24, height: 24)
+                .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -1501,9 +1698,9 @@ private struct SectionSplitLayout: View {
             state.fileListMode = state.fileListMode == .flat ? .folders : .flat
         } label: {
             Image(systemName: state.fileListMode == .flat ? "folder" : "list.bullet")
-                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 24, height: 24)
+                .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -1517,9 +1714,9 @@ private struct SectionSplitLayout: View {
             state.setExpanded(files: files, expanded: !anyExpanded)
         } label: {
             Image(systemName: anyExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
-                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.semibold))
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 24, height: 24)
+                .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -1675,23 +1872,23 @@ private struct FileRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIMetrics.spacing4) {
             Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgDim)
-                .frame(width: 12)
+                .frame(width: UIMetrics.iconSM)
 
             Text(statusText)
-                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.bold))
+                .font(.system(size: UIMetrics.fontFootnote, weight: .bold, design: .monospaced))
                 .foregroundStyle(statusColor)
-                .frame(width: 14)
+                .frame(width: UIMetrics.iconMD)
 
             FileDiffIcon()
                 .stroke(statusColor, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
-                .frame(width: 11, height: 11)
+                .frame(width: UIMetrics.scaled(11), height: UIMetrics.scaled(11))
 
             Text(displayPath)
-                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+                .font(.system(size: UIMetrics.fontBody, weight: .medium))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -1703,17 +1900,17 @@ private struct FileRow: View {
 
             if stats.binary {
                 Text("Binary")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+                    .font(.system(size: UIMetrics.fontBody, weight: .medium))
                     .foregroundStyle(MuxyTheme.fgMuted)
             } else {
                 if let additions = stats.additions {
                     Text("+\(additions)")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+                        .font(.system(size: UIMetrics.fontBody, weight: .semibold, design: .monospaced))
                         .foregroundStyle(MuxyTheme.diffAddFg)
                 }
                 if let deletions = stats.deletions {
                     Text("-\(deletions)")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+                        .font(.system(size: UIMetrics.fontBody, weight: .semibold, design: .monospaced))
                         .foregroundStyle(MuxyTheme.diffRemoveFg)
                 }
             }
@@ -1721,6 +1918,10 @@ private struct FileRow: View {
         .padding(.leading, 10 + CGFloat(depth) * 14)
         .padding(.trailing, 10)
         .frame(height: 34)
+        .padding(.leading, UIMetrics.spacing5 + CGFloat(depth) * UIMetrics.iconMD)
+        .padding(.trailing, UIMetrics.spacing5)
+        .frame(height: UIMetrics.scaled(34))
+        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .onHover { hovered = $0 }
         .onTapGesture(perform: onToggle)
@@ -1753,25 +1954,25 @@ private struct FolderRow: View {
     let onToggle: () -> Void
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIMetrics.spacing4) {
             Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgDim)
-                .frame(width: 12)
+                .frame(width: UIMetrics.iconSM)
 
             Image(systemName: "folder")
-                .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.semibold))
+                .font(.system(size: UIMetrics.fontFootnote, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 11, height: 11)
+                .frame(width: UIMetrics.scaled(11), height: UIMetrics.scaled(11))
 
             Text(name)
-                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+                .font(.system(size: UIMetrics.fontBody, weight: .medium))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
             Text("\(fileCount) \(fileCount == 1 ? "file" : "files")")
-                .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.regular))
+                .font(.system(size: UIMetrics.fontCaption, weight: .regular))
                 .foregroundStyle(MuxyTheme.fgDim)
                 .lineLimit(1)
 
@@ -1780,6 +1981,10 @@ private struct FolderRow: View {
         .padding(.leading, 10 + CGFloat(depth) * 14)
         .padding(.trailing, 10)
         .frame(height: 30)
+        .padding(.leading, UIMetrics.spacing5 + CGFloat(depth) * UIMetrics.iconMD)
+        .padding(.trailing, UIMetrics.spacing5)
+        .frame(height: UIMetrics.scaled(30))
+        .background(MuxyTheme.bg)
         .contentShape(Rectangle())
         .onTapGesture(perform: onToggle)
     }

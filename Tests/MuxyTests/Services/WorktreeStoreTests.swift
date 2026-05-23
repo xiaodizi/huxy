@@ -360,8 +360,39 @@ struct WorktreeStoreTests {
         #expect(worktrees[0].branch == "feat/worktree-refresh")
     }
 
-    @Test("remove does not delete externally managed worktrees")
-    func removeDoesNotDeleteExternalWorktree() {
+    @Test("remove evicts cached VCS state for the removed worktree")
+    func removeEvictsCachedVCSState() {
+        let project = Project(name: "Repo", path: "/tmp/repo-\(UUID().uuidString)")
+        let removable = Worktree(
+            name: "feature-a",
+            path: project.path + "-feature-a",
+            branch: "feature-a",
+            source: .muxy,
+            isPrimary: false
+        )
+        let persistence = WorktreePersistenceStub(
+            initial: [
+                project.id: [
+                    Worktree(name: project.name, path: project.path, isPrimary: true),
+                    removable,
+                ]
+            ]
+        )
+        let store = WorktreeStore(
+            persistence: persistence,
+            listGitWorktrees: GitWorktreeListingStub(recordsByRepoPath: [:]).listWorktrees,
+            projects: [project]
+        )
+        _ = VCSStateStore.shared.state(for: removable.path)
+        #expect(VCSStateStore.shared.cachedState(for: removable.path) != nil)
+
+        store.remove(worktreeID: removable.id, from: project.id)
+
+        #expect(VCSStateStore.shared.cachedState(for: removable.path) == nil)
+    }
+
+    @Test("remove deletes externally managed worktrees")
+    func removeDeletesExternalWorktree() {
         let project = Project(name: "Repo", path: "/tmp/repo")
         let external = Worktree(
             name: "feature-b",
@@ -386,8 +417,8 @@ struct WorktreeStoreTests {
 
         store.remove(worktreeID: external.id, from: project.id)
 
-        #expect(store.list(for: project.id).contains(external))
-        #expect(external.canBeRemoved == false)
+        #expect(!store.list(for: project.id).contains(external))
+        #expect(external.canBeRemoved)
     }
 
     @Test("WorktreeDTO preserves removal capability")
@@ -409,7 +440,7 @@ struct WorktreeStoreTests {
         )
 
         #expect(primary.toDTO().canBeRemoved == false)
-        #expect(external.toDTO().canBeRemoved == false)
+        #expect(external.toDTO().canBeRemoved)
         #expect(managed.toDTO().canBeRemoved)
     }
 }

@@ -7,10 +7,12 @@ enum EditorSearchNavigationDirection {
     case previous
 }
 
-enum EditorMarkdownViewMode: String, CaseIterable {
+enum EditorMarkdownViewMode: String, Codable, CaseIterable, Identifiable {
     case code
     case preview
     case split
+
+    var id: String { rawValue }
 
     var title: String {
         switch self {
@@ -38,6 +40,8 @@ enum EditorMarkdownScrollDriver {
 @Observable
 final class EditorTabState: Identifiable {
     private static let markdownExtensions: Set<String> = ["md", "markdown", "mdown", "mkd"]
+    private static let htmlExtensions: Set<String> = ["html", "htm"]
+    private static let svgExtensions: Set<String> = ["svg"]
 
     let id = UUID()
     let projectPath: String
@@ -77,9 +81,12 @@ final class EditorTabState: Identifiable {
     var largeFileSize: Int64 = 0
     var backingStore: TextBackingStore?
     var markdownViewMode: EditorMarkdownViewMode = .code
+    var htmlViewMode: EditorMarkdownViewMode = .code
     var markdownScrollPosition: CGFloat = 0
     var markdownScrollSyncEnabled = true
     var markdownScrollDriver: EditorMarkdownScrollDriver = .editor
+    var markdownFragmentTarget: String?
+    var markdownFragmentRequestVersion = 0
 
     var markdownPreviewScrollRequestVersion: Int = 0
     var markdownPreviewScrollRequest: CGFloat?
@@ -127,6 +134,23 @@ final class EditorTabState: Identifiable {
         Self.markdownExtensions.contains(fileExtension)
     }
 
+    var isHTMLFile: Bool {
+        Self.htmlExtensions.contains(fileExtension)
+    }
+
+    var isSVGFile: Bool {
+        Self.svgExtensions.contains(fileExtension)
+    }
+
+    var usesHTMLPreview: Bool {
+        isHTMLFile || isSVGFile
+    }
+
+    static func usesHTMLPreview(filePath: String) -> Bool {
+        let ext = URL(fileURLWithPath: filePath).pathExtension.lowercased()
+        return htmlExtensions.contains(ext) || svgExtensions.contains(ext)
+    }
+
     @ObservationIgnored private var loadTask: Task<Void, Never>?
 
     private enum FileLoadEvent {
@@ -149,11 +173,21 @@ final class EditorTabState: Identifiable {
         }
     }
 
-    init(projectPath: String, filePath: String) {
+    init(
+        projectPath: String,
+        filePath: String,
+        defaultHTMLViewMode: EditorMarkdownViewMode = EditorSettings.defaultHTMLViewMode
+    ) {
         self.projectPath = projectPath
         self.filePath = filePath
         if isMarkdownFile {
             markdownViewMode = .preview
+        }
+        if isHTMLFile {
+            htmlViewMode = defaultHTMLViewMode
+        }
+        if isSVGFile {
+            htmlViewMode = .preview
         }
         syntaxHighlighter = Self.makeSyntaxHighlighter(for: filePath)
         installFileWatcher()
@@ -190,6 +224,14 @@ final class EditorTabState: Identifiable {
             markdownEditorScrollRequestY = scrollY
             markdownEditorScrollRequestVersion += 1
         }
+    }
+
+    func requestMarkdownFragment(_ fragment: String?) {
+        guard let fragment = fragment?.trimmingCharacters(in: .whitespacesAndNewlines), !fragment.isEmpty else {
+            return
+        }
+        markdownFragmentTarget = fragment
+        markdownFragmentRequestVersion += 1
     }
 
     func currentMarkdownSyncMap() -> MarkdownSyncMap {
@@ -308,6 +350,7 @@ final class EditorTabState: Identifiable {
                         store.loadFromText(text)
                         backingStore = store
                         backingStoreVersion += 1
+                        previewRefreshVersion += 1
                         refreshReadOnlyStatus()
                         isModified = false
                         isLoading = false
@@ -319,6 +362,7 @@ final class EditorTabState: Identifiable {
                         if let backingStore {
                             backingStore.appendText(text)
                             backingStoreVersion += 1
+                            previewRefreshVersion += 1
                         }
                         if isLoading {
                             isLoading = false
@@ -330,6 +374,7 @@ final class EditorTabState: Identifiable {
                         if let backingStore {
                             backingStore.finishLoading()
                             backingStoreVersion += 1
+                            previewRefreshVersion += 1
                         }
                         refreshReadOnlyStatus()
                         if isLoading {
@@ -516,7 +561,8 @@ final class EditorTabState: Identifiable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             DispatchQueue.global(qos: .utility).async {
                 do {
-                    try text.write(toFile: path, atomically: true, encoding: .utf8)
+                    let destination = URL(fileURLWithPath: path).resolvingSymlinksInPath().path
+                    try text.write(toFile: destination, atomically: true, encoding: .utf8)
                     continuation.resume()
                 } catch {
                     continuation.resume(throwing: error)

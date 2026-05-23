@@ -7,6 +7,7 @@ struct MuxyCommands: Commands {
     let appState: AppState
     let projectStore: ProjectStore
     let worktreeStore: WorktreeStore
+    let projectGroupStore: ProjectGroupStore
     let keyBindings: KeyBindingStore
     let commandShortcuts: CommandShortcutStore
     let config: MuxyConfig
@@ -50,8 +51,20 @@ struct MuxyCommands: Commands {
             appState: appState,
             projectStore: projectStore,
             worktreeStore: worktreeStore,
+            projectGroupStore: projectGroupStore,
             ghostty: ghostty
         )
+    }
+
+    private func refreshActiveProjectWorktrees() {
+        guard let project = activeProject else { return }
+        Task { @MainActor in
+            await WorktreeRefreshHelper.refresh(
+                project: project,
+                appState: appState,
+                worktreeStore: worktreeStore
+            )
+        }
     }
 
     private func performShortcutAction(_ action: ShortcutAction) {
@@ -83,6 +96,15 @@ struct MuxyCommands: Commands {
     }
 
     var body: some Commands {
+        CommandGroup(replacing: .appSettings) {
+            Button {
+                NotificationCenter.default.post(name: .openSettingsModal, object: nil)
+            } label: {
+                Label("Settings...", systemImage: "gearshape")
+            }
+            .keyboardShortcut(",", modifiers: .command)
+        }
+
         CommandGroup(after: .appSettings) {
             Button {
                 NSWorkspace.shared.open(
@@ -100,6 +122,13 @@ struct MuxyCommands: Commands {
                 Label("Reload Configuration", systemImage: "arrow.clockwise")
             }
             .shortcut(for: .reloadConfig, store: keyBindings)
+
+            Button {
+                refreshActiveProjectWorktrees()
+            } label: {
+                Label("Refresh Worktrees", systemImage: "arrow.triangle.2.circlepath")
+            }
+            .disabled(activeProject == nil)
 
             Divider()
 
@@ -292,6 +321,18 @@ struct MuxyCommands: Commands {
                 performShortcutAction(.focusPaneDown)
             }
             .shortcut(for: .focusPaneDown, store: keyBindings)
+
+            Button("Cycle Next Tab (All Panes)") {
+                guard isMainWindowFocused else { return }
+                performShortcutAction(.cycleNextTabAcrossPanes)
+            }
+            .shortcut(for: .cycleNextTabAcrossPanes, store: keyBindings)
+
+            Button("Cycle Previous Tab (All Panes)") {
+                guard isMainWindowFocused else { return }
+                performShortcutAction(.cyclePreviousTabAcrossPanes)
+            }
+            .shortcut(for: .cyclePreviousTabAcrossPanes, store: keyBindings)
         }
 
         CommandGroup(after: .toolbar) {
@@ -349,6 +390,12 @@ struct MuxyCommands: Commands {
                 performShortcutAction(.toggleSidebar)
             }
             .shortcut(for: .toggleSidebar, store: keyBindings)
+
+            Button("Toggle Rich Input") {
+                guard isMainWindowFocused else { return }
+                performShortcutAction(.toggleRichInput)
+            }
+            .shortcut(for: .toggleRichInput, store: keyBindings)
 
             Divider()
 

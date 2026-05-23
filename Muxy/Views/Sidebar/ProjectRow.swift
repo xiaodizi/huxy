@@ -58,6 +58,7 @@ struct ProjectRow: View {
 
     @Environment(AppState.self) private var appState
     @Environment(WorktreeStore.self) private var worktreeStore
+    @Environment(ProjectGroupStore.self) private var projectGroupStore
 
     @State private var hovered = false
     @State private var isRenaming = false
@@ -84,7 +85,7 @@ struct ProjectRow: View {
     var body: some View {
         projectIcon
             .help(project.name)
-            .contentShape(RoundedRectangle(cornerRadius: 8))
+            .contentShape(RoundedRectangle(cornerRadius: UIMetrics.radiusLG))
             .accessibilityElement(children: .combine)
             .accessibilityLabel(project.name)
             .accessibilityValue(isActive ? "Active" : "")
@@ -123,6 +124,10 @@ struct ProjectRow: View {
                         Button("Switch Worktree…") { showWorktreePopover = true }
                     }
                 }
+                if !projectGroupStore.groups.isEmpty {
+                    Divider()
+                    ProjectGroupMembershipMenu(project: project)
+                }
                 Divider()
                 Button("Remove Project", role: .destructive, action: onRemove)
             }
@@ -159,6 +164,80 @@ struct ProjectRow: View {
                     onCancel: { logoCropImage = nil }
                 )
             }
+=======
+            .overlay {
+                if showShortcutBadge, let shortcutIndex,
+                   let action = ShortcutAction.projectAction(for: shortcutIndex)
+                {
+                    ShortcutBadge(label: KeyBindingStore.shared.combo(for: action).displayString)
+                }
+            }
+            .popover(isPresented: $isRenaming, arrowEdge: .trailing) {
+                RenamePopover(
+                    text: $renameText,
+                    onCommit: { commitRename() },
+                    onCancel: { cancelRename() }
+                )
+            }
+            .popover(isPresented: $showColorPicker, arrowEdge: .trailing) {
+                ProjectIconColorPicker(selectedID: project.iconColor) { id in
+                    onSetIconColor(id)
+                    showColorPicker = false
+                }
+            }
+    }
+
+    private var resolvedLogo: NSImage? {
+        guard let filename = project.logo else { return nil }
+        return NSImage(contentsOfFile: ProjectLogoStorage.logoPath(for: filename))
+    }
+
+    private var projectIcon: some View {
+        let logo = resolvedLogo
+        let unread = NotificationStore.shared.unreadCount(for: project.id)
+        let hasCompletion = TerminalProgressStore.shared.hasCompletionPending(for: project.id)
+        return ZStack {
+            RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
+                .fill(iconBackground(hasLogo: logo != nil))
+
+            if let logo {
+                Image(nsImage: logo)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIMetrics.iconXXL, height: UIMetrics.iconXXL)
+                    .clipShape(RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
+            } else {
+                Text(displayLetter)
+                    .font(.system(size: UIMetrics.fontEmphasis, weight: .bold))
+                    .foregroundStyle(letterForeground)
+            }
+        }
+        .frame(width: UIMetrics.iconXXL, height: UIMetrics.iconXXL)
+        .padding(UIMetrics.scaled(3))
+        .overlay(alignment: .topTrailing) {
+            if unread > 0 {
+                NotificationBadge(count: unread)
+                    .offset(x: UIMetrics.spacing2, y: -UIMetrics.spacing2)
+            } else if hasCompletion {
+                Circle()
+                    .fill(MuxyTheme.accent)
+                    .frame(width: UIMetrics.scaled(8), height: UIMetrics.scaled(8))
+                    .offset(x: UIMetrics.spacing1, y: -UIMetrics.spacing1)
+            }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: UIMetrics.scaled(11))
+                .strokeBorder(isActive ? MuxyTheme.accent : .clear, lineWidth: 1.5)
+                .animation(.easeInOut(duration: 0.15), value: isActive)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if isRefreshingWorktrees {
+                ProgressView()
+                    .controlSize(.mini)
+                    .padding(UIMetrics.spacing2)
+            }
+        }
+>>>>>>> 39aac594430dda14cc0a49ea7f20993e3192a871
     }
 
     private func iconBackground(hasLogo: Bool) -> AnyShapeStyle {
@@ -254,19 +333,25 @@ private struct RenamePopover: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: UIMetrics.spacing4) {
             Text("Rename Project")
+<<<<<<< HEAD
                 .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
                 .foregroundStyle(MuxyTheme.fg)
             TextField("Project name", text: $text)
                 .textFieldStyle(.roundedBorder)
                 .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody, weight: .semibold))
+                .foregroundStyle(MuxyTheme.fg)
+            TextField("Project name", text: $text)
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: UIMetrics.fontBody))
                 .focused($isFocused)
                 .onSubmit { onCommit() }
                 .onExitCommand { onCancel() }
         }
-        .padding(12)
-        .frame(width: 200)
+        .padding(UIMetrics.spacing6)
+        .frame(width: UIMetrics.scaled(200))
         .onAppear { isFocused = true }
     }
 }

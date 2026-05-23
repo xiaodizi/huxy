@@ -11,6 +11,7 @@ struct FileTreeView: View {
     @State private var commands: FileTreeCommands
     @State private var hasKeyboardFocus = false
     @State private var focusToken = 0
+    @State private var hasRequestedInitialFocus = false
 
     init(
         state: FileTreeState,
@@ -38,33 +39,37 @@ struct FileTreeView: View {
                     ZStack(alignment: .top) {
                         emptySpaceTarget
                         LazyVStack(alignment: .leading, spacing: 0) {
-                            ForEach(state.visibleRootEntries(), id: \.absolutePath) { entry in
-                                FileTreeRowGroup(
-                                    entry: entry,
-                                    depth: 0,
-                                    state: state,
-                                    commands: commands,
-                                    onOpenFile: onOpenFile,
-                                    requestFocus: requestKeyboardFocus
-                                )
-                            }
-                            if let pending = state.pendingNewEntry, pending.parentPath == normalizedRootPath {
-                                FileTreeNewEntryRow(
-                                    kind: pending.kind,
-                                    depth: 0,
-                                    commands: commands
-                                )
-                                .id(pending.token)
+                            ForEach(state.flatVisibleRows()) { item in
+                                switch item {
+                                case let .entry(entry, depth):
+                                    FileTreeRow(
+                                        entry: entry,
+                                        depth: depth,
+                                        state: state,
+                                        commands: commands,
+                                        onOpenFile: onOpenFile,
+                                        requestFocus: requestKeyboardFocus
+                                    )
+                                    .id(entry.absolutePath)
+                                case let .pendingNew(pending, depth):
+                                    FileTreeNewEntryRow(
+                                        kind: pending.kind,
+                                        depth: depth,
+                                        commands: commands
+                                    )
+                                    .id(pending.token)
+                                }
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, UIMetrics.spacing2)
                     }
                     .frame(maxWidth: .infinity, minHeight: 0, alignment: .top)
                 }
                 .background(rootDropTarget)
-                .onChange(of: state.selectedFilePath) { _, newValue in
+                .onChange(of: state.pendingScrollTarget) { _, newValue in
                     guard let newValue else { return }
                     proxy.scrollTo(newValue, anchor: .center)
+                    state.consumeScrollTarget()
                 }
                 .onChange(of: state.pendingRenamePath) { _, newValue in
                     if newValue == nil { requestKeyboardFocus() }
@@ -80,7 +85,10 @@ struct FileTreeView: View {
         .contentShape(Rectangle())
         .task(id: state.rootPath) {
             state.loadRootIfNeeded()
-            requestKeyboardFocus()
+            if !hasRequestedInitialFocus {
+                hasRequestedInitialFocus = true
+                requestKeyboardFocus()
+            }
         }
         .alert(
             "Move \(commands.deleteAlertKind()) to Trash?",
@@ -120,34 +128,17 @@ struct FileTreeView: View {
     private var header: some View {
         HStack(spacing: 0) {
             Text((state.rootPath as NSString).lastPathComponent)
-                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.semibold))
+                .font(.system(size: UIMetrics.fontBody, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fg)
                 .lineLimit(1)
                 .truncationMode(.head)
-                .padding(.leading, 10)
+                .padding(.leading, UIMetrics.spacing5)
             Spacer(minLength: 0)
             ToolbarIconStrip {
-                IconButton(
-                    symbol: "arrow.clockwise",
-                    color: MuxyTheme.fgMuted,
-                    hoverColor: MuxyTheme.fg,
-                    accessibilityLabel: "Refresh"
-                ) {
-                    state.refresh()
-                }
-                .help("Refresh")
-                IconButton(
-                    symbol: state.showOnlyChanges ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle",
-                    color: state.showOnlyChanges ? MuxyTheme.accent : MuxyTheme.fgMuted,
-                    hoverColor: state.showOnlyChanges ? MuxyTheme.accent : MuxyTheme.fg,
-                    accessibilityLabel: "Show Only Changes"
-                ) {
-                    state.showOnlyChanges.toggle()
-                }
-                .help(state.showOnlyChanges ? "Show All Files" : "Show Only Changed Files")
+                FileTreeOptionsMenu(state: state)
             }
         }
-        .frame(height: 32)
+        .frame(height: UIMetrics.scaled(32))
         .contextMenu {
             FileTreeContextMenuContents(
                 path: state.rootPath,
@@ -258,45 +249,51 @@ struct FileTreeView: View {
     private func requestKeyboardFocus() {
         focusToken &+= 1
     }
-
-    private var normalizedRootPath: String {
-        state.rootPath.hasSuffix("/") ? String(state.rootPath.dropLast()) : state.rootPath
-    }
 }
 
-private struct FileTreeRowGroup: View {
-    let entry: FileTreeEntry
-    let depth: Int
+private struct FileTreeOptionsMenu: View {
     @Bindable var state: FileTreeState
-    let commands: FileTreeCommands
-    let onOpenFile: (String) -> Void
-    let requestFocus: () -> Void
+    @State private var hovered = false
 
     var body: some View {
-        FileTreeRow(
-            entry: entry,
-            depth: depth,
-            state: state,
-            commands: commands,
-            onOpenFile: onOpenFile,
-            requestFocus: requestFocus
-        )
-        if entry.isDirectory, state.isExpanded(entry), let children = state.visibleChildren(of: entry) {
-            ForEach(children, id: \.absolutePath) { child in
-                FileTreeRowGroup(
-                    entry: child,
-                    depth: depth + 1,
-                    state: state,
-                    commands: commands,
-                    onOpenFile: onOpenFile,
-                    requestFocus: requestFocus
-                )
+        Menu {
+            Button {
+                state.refresh()
+            } label: {
+                Label("Refresh", systemImage: "arrow.clockwise")
             }
-            if let pending = state.pendingNewEntry, pending.parentPath == entry.absolutePath {
-                FileTreeNewEntryRow(kind: pending.kind, depth: depth + 1, commands: commands)
-                    .id(pending.token)
-            }
+
+            Divider()
+
+            Toggle("Show Only Changed Files", isOn: showOnlyChangedFiles)
+            Toggle("Hide Ignored Files", isOn: hideIgnoredFiles)
+        } label: {
+            Image(systemName: "gearshape")
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
+                .foregroundStyle(hovered ? MuxyTheme.fg : MuxyTheme.fgMuted)
+                .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .onHover { hovered = $0 }
+        .accessibilityLabel("File Tree Options")
+        .help("File tree options")
+    }
+
+    private var showOnlyChangedFiles: Binding<Bool> {
+        Binding(
+            get: { state.showOnlyChanges },
+            set: { state.showOnlyChanges = $0 }
+        )
+    }
+
+    private var hideIgnoredFiles: Binding<Bool> {
+        Binding(
+            get: { state.hideIgnoredFiles },
+            set: { state.hideIgnoredFiles = $0 }
+        )
     }
 }
 
@@ -326,8 +323,8 @@ private struct FileTreeRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
-            Color.clear.frame(width: CGFloat(depth) * 12)
+        HStack(spacing: UIMetrics.spacing2) {
+            Color.clear.frame(width: CGFloat(depth) * UIMetrics.spacing6)
             icon
             if isRenaming {
                 FileTreeRenameField(
@@ -337,15 +334,15 @@ private struct FileTreeRow: View {
                 )
             } else {
                 Text(entry.name)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                    .font(.system(size: UIMetrics.fontBody))
                     .foregroundStyle(textColor)
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 6)
-        .frame(height: 22)
+        .padding(.horizontal, UIMetrics.spacing3)
+        .frame(height: UIMetrics.scaled(22))
         .opacity(rowOpacity)
         .background(rowBackground)
         .overlay(dropOverlay)
@@ -385,17 +382,17 @@ private struct FileTreeRow: View {
     @ViewBuilder
     private var dropOverlay: some View {
         if isDropHighlighted {
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: UIMetrics.scaled(3))
                 .stroke(MuxyTheme.accent, lineWidth: 1)
-                .padding(.horizontal, 4)
+                .padding(.horizontal, UIMetrics.spacing2)
         }
     }
 
     private var icon: some View {
         Image(systemName: iconSymbol)
-            .font(.custom("JetBrainsMono Nerd Font", size: 11))
+            .font(.system(size: UIMetrics.fontFootnote))
             .foregroundStyle(iconColor)
-            .frame(width: 14)
+            .frame(width: UIMetrics.iconMD)
     }
 
     private var iconSymbol: String {
@@ -477,12 +474,12 @@ private struct FileTreeNewEntryRow: View {
     let commands: FileTreeCommands
 
     var body: some View {
-        HStack(spacing: 4) {
-            Color.clear.frame(width: CGFloat(depth) * 12)
+        HStack(spacing: UIMetrics.spacing2) {
+            Color.clear.frame(width: CGFloat(depth) * UIMetrics.spacing6)
             Image(systemName: kind == .folder ? "folder" : "doc")
-                .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                .font(.system(size: UIMetrics.fontFootnote))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 14)
+                .frame(width: UIMetrics.iconMD)
             FileTreeRenameField(
                 initialName: "",
                 commit: { commands.commitNewEntry(name: $0) },
@@ -490,8 +487,8 @@ private struct FileTreeNewEntryRow: View {
             )
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 6)
-        .frame(height: 22)
+        .padding(.horizontal, UIMetrics.spacing3)
+        .frame(height: UIMetrics.scaled(22))
     }
 }
 
@@ -508,7 +505,7 @@ private struct FileTreeRenameField: View {
     var body: some View {
         TextField("", text: $text)
             .textFieldStyle(.plain)
-            .font(.custom("JetBrainsMono Nerd Font", size: 12))
+            .font(.system(size: UIMetrics.fontBody))
             .foregroundStyle(MuxyTheme.fg)
             .focused($focused)
             .onAppear {

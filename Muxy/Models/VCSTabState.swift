@@ -55,6 +55,18 @@ final class VCSTabState {
         let draft: Bool
     }
 
+    struct PRFormDraft: Equatable {
+        var title: String = ""
+        var body: String = ""
+        var baseBranch: String = ""
+        var newBranchName: String = ""
+        var userEditedBranchName: Bool = false
+        var includeAll: Bool = true
+        var draft: Bool = false
+        var advanced: Bool = false
+        var initialCurrentBranch: String?
+    }
+
     let projectPath: String
     var files: [GitStatusFile] = []
     var mode: ViewMode = .unified
@@ -83,15 +95,19 @@ final class VCSTabState {
     var isMergingPullRequest = false
     var isClosingPullRequest = false
     var isRefreshingPullRequest = false
+    var isUpdatingPullRequestBranch = false
     var hasFetchedPullRequestInfo = false
     private(set) var isGitRepo = false
     private(set) var remoteWebURL: URL?
 
     var commitMessage = ""
+    var prFormDraft = PRFormDraft()
+    var showInlinePRForm = false
     var branches: [String] = []
     var isCommitting = false
     var isPushing = false
     var isPulling = false
+    var isGeneratingCommitMessage = false
     var isSwitchingBranch = false
     var isLoadingBranches = false
     var statusMessage: String?
@@ -182,11 +198,14 @@ final class VCSTabState {
     @ObservationIgnored private var commitLogTask: Task<Void, Never>?
     @ObservationIgnored private var prListTask: Task<Void, Never>?
     @ObservationIgnored private var prAutoSyncTask: Task<Void, Never>?
+    @ObservationIgnored private var aiGenerationTask: Task<Void, Never>?
     @ObservationIgnored private var watcher: FileSystemWatcher?
     @ObservationIgnored nonisolated(unsafe) private var remoteChangeObserver: NSObjectProtocol?
     @ObservationIgnored private var isRefreshing = false
     @ObservationIgnored private var pendingRefresh = false
+    @ObservationIgnored private var refreshAndWaitTask: Task<Void, Never>?
     @ObservationIgnored private var lastFetchedHeadSha: String?
+    @ObservationIgnored private var pendingPRFetchBranch: String?
     private(set) var hasCompletedInitialLoad = false
     @ObservationIgnored private static let commitsPerPage = 100
 
@@ -228,8 +247,6 @@ final class VCSTabState {
     }
 
     private func startWatching() {
-        let gitPath = (projectPath as NSString).appendingPathComponent(".git")
-        guard FileManager.default.fileExists(atPath: gitPath) else { return }
         watcher = FileSystemWatcher(directoryPath: projectPath) { [weak self] in
             Task { @MainActor [weak self] in
                 self?.watcherDidFire()
@@ -265,6 +282,25 @@ final class VCSTabState {
         performRefresh(incremental: false)
     }
 
+    func refreshAndWait() async {
+        if let existing = refreshAndWaitTask {
+            await existing.value
+            return
+        }
+        let task = Task { @MainActor [weak self] in
+            guard let self else { return }
+            performRefresh(incremental: false, forcePRFetch: true)
+            loadBranches()
+            await branchTask?.value
+            await loadFilesTask?.value
+            await loadBranchesTask?.value
+            await prInfoTask?.value
+        }
+        refreshAndWaitTask = task
+        await task.value
+        refreshAndWaitTask = nil
+    }
+
     private func performRefresh(incremental: Bool, forcePRFetch: Bool = false) {
         loadFilesTask?.cancel()
         if !incremental, files.isEmpty {
@@ -272,12 +308,10 @@ final class VCSTabState {
         }
         isRefreshing = true
         pendingRefresh = false
-        errorMessage = nil
 
         let refreshSignpost = GitSignpost.begin("performRefresh", incremental ? "incremental" : "full")
 
         branchTask?.cancel()
-        prInfoTask?.cancel()
         let shouldForcePR = forcePRFetch || !incremental
         if shouldForcePR {
             isRefreshingPullRequest = true
@@ -307,6 +341,8 @@ final class VCSTabState {
                 let neverFetched = !hasFetchedPullRequestInfo
                 if shouldForcePR || branchChanged || headChanged || neverFetched {
                     fetchPRInfo(branch: branch, headSha: head, forceFresh: shouldForcePR)
+                } else if isRefreshingPullRequest {
+                    isRefreshingPullRequest = false
                 }
 
                 let counts = await git.aheadBehind(repoPath: projectPath, branch: branch)
@@ -314,11 +350,13 @@ final class VCSTabState {
                 aheadBehind = counts
             } catch {
                 guard !Task.isCancelled else { return }
-                branchName = nil
-                pullRequestInfo = nil
-                hasFetchedPullRequestInfo = false
-                lastFetchedHeadSha = nil
-                aheadBehind = .init(ahead: 0, behind: 0, hasUpstream: false)
+                if error is GitRepositoryService.GitError {
+                    branchName = nil
+                    pullRequestInfo = nil
+                    hasFetchedPullRequestInfo = false
+                    lastFetchedHeadSha = nil
+                    aheadBehind = .init(ahead: 0, behind: 0, hasUpstream: false)
+                }
                 isRefreshingPullRequest = false
             }
         }
@@ -375,11 +413,22 @@ final class VCSTabState {
                 if listChanged {
                     files = newFiles
                 }
+                if errorMessage != nil {
+                    errorMessage = nil
+                }
                 isLoadingFiles = false
                 hasCompletedInitialLoad = true
 
-                for path in expandedFilePaths where validPaths.contains(path) {
+                for path in expandedFilePaths where validPaths.contains(path) && changedPaths.contains(path) {
                     loadDiff(filePath: path, forceFull: false)
+                }
+
+                if !incremental {
+                    NotificationCenter.default.post(
+                        name: .vcsDidRefresh,
+                        object: nil,
+                        userInfo: ["repoPath": projectPath]
+                    )
                 }
             } catch {
                 guard !Task.isCancelled else { return }
@@ -625,12 +674,48 @@ final class VCSTabState {
                 commitMessage = ""
                 commits = []
                 showStatus("Committed \(hash)", isError: false)
-                performRefresh(incremental: false)
+                performRefresh(incremental: false, forcePRFetch: true)
             } catch {
                 guard !Task.isCancelled else { return }
                 showStatus(errorText(error), isError: true)
             }
         }
+    }
+
+    func generateCommitMessageWithAI() {
+        guard hasAnyChanges else {
+            showStatus("No changes to summarize.", isError: true)
+            return
+        }
+        if isGeneratingCommitMessage { return }
+        isGeneratingCommitMessage = true
+        let path = projectPath
+        let branch = branchName
+        aiGenerationTask?.cancel()
+        aiGenerationTask = Task { [weak self] in
+            do {
+                let message = try await AIAssistantService.generateCommitMessage(
+                    repoPath: path,
+                    branch: branch
+                )
+                guard let self, !Task.isCancelled else { return }
+                commitMessage = message
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                showStatus(errorText(error), isError: true)
+            }
+            guard let self else { return }
+            isGeneratingCommitMessage = false
+            aiGenerationTask = nil
+        }
+    }
+
+    func cancelCommitMessageGeneration() {
+        aiGenerationTask?.cancel()
+        aiGenerationTask = nil
+        isGeneratingCommitMessage = false
     }
 
     func push() {
@@ -680,7 +765,7 @@ final class VCSTabState {
                 try await git.pull(repoPath: projectPath)
                 guard !Task.isCancelled else { return }
                 showStatus("Pulled", isError: false)
-                performRefresh(incremental: false)
+                performRefresh(incremental: false, forcePRFetch: true)
             } catch {
                 guard !Task.isCancelled else { return }
                 showStatus(errorText(error), isError: true)
@@ -734,7 +819,7 @@ final class VCSTabState {
                 guard !Task.isCancelled else { return }
                 commits = []
                 showStatus("Cherry-picked \(String(hash.prefix(7)))", isError: false)
-                performRefresh(incremental: false)
+                performRefresh(incremental: false, forcePRFetch: true)
             } catch {
                 guard !Task.isCancelled else { return }
                 showStatus(errorText(error), isError: true)
@@ -750,7 +835,7 @@ final class VCSTabState {
                 guard !Task.isCancelled else { return }
                 commitMessage = "Revert: \(subject)"
                 showStatus("Reverted \(String(hash.prefix(7)))", isError: false)
-                performRefresh(incremental: false)
+                performRefresh(incremental: false, forcePRFetch: true)
             } catch {
                 guard !Task.isCancelled else { return }
                 showStatus(errorText(error), isError: true)
@@ -822,15 +907,24 @@ final class VCSTabState {
     }
 
     private func fetchPRInfo(branch: String, headSha: String?, forceFresh: Bool) {
-        prInfoTask?.cancel()
+        if !forceFresh, let pendingBranch = pendingPRFetchBranch, pendingBranch == branch {
+            return
+        }
+        if forceFresh {
+            prInfoTask?.cancel()
+        }
+        pendingPRFetchBranch = branch
         prInfoTask = Task { [weak self] in
             guard let self else { return }
-            defer { if forceFresh { isRefreshingPullRequest = false } }
+            defer {
+                self.isRefreshingPullRequest = false
+                self.pendingPRFetchBranch = nil
+            }
             async let ghInstalledValue = git.isGhInstalled()
             async let defaultBranchValue = git.defaultBranch(repoPath: projectPath)
             let ghInstalled = await ghInstalledValue
             let defaultBranchResult = await defaultBranchValue
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, branchName == branch else { return }
             isGhInstalled = ghInstalled
             defaultBranch = defaultBranchResult
 
@@ -842,21 +936,31 @@ final class VCSTabState {
             }
 
             guard let headSha else {
-                pullRequestInfo = nil
                 hasFetchedPullRequestInfo = true
                 return
             }
 
-            let prInfo = await git.cachedPullRequestInfo(
+            let result = await git.cachedPullRequestInfo(
                 repoPath: projectPath,
                 branch: branch,
                 headSha: headSha,
                 forceFresh: forceFresh
             )
-            guard !Task.isCancelled else { return }
-            pullRequestInfo = prInfo
-            hasFetchedPullRequestInfo = true
-            lastFetchedHeadSha = headSha
+            guard !Task.isCancelled, branchName == branch else { return }
+            switch result {
+            case let .found(info):
+                pullRequestInfo = info
+                hasFetchedPullRequestInfo = true
+                lastFetchedHeadSha = headSha
+            case .noPR:
+                pullRequestInfo = nil
+                hasFetchedPullRequestInfo = true
+                lastFetchedHeadSha = headSha
+            case .failed:
+                if !hasFetchedPullRequestInfo {
+                    hasFetchedPullRequestInfo = true
+                }
+            }
         }
     }
 
@@ -879,17 +983,23 @@ final class VCSTabState {
 
     func refreshPullRequest() {
         guard let branch = branchName else { return }
-        guard !isRefreshingPullRequest else { return }
+        if isRefreshingPullRequest { return }
         isRefreshingPullRequest = true
         Task { [weak self] in
             guard let self else { return }
             let head = await git.headSha(repoPath: projectPath)
-            guard !Task.isCancelled else {
+            guard !Task.isCancelled, branchName == branch else {
                 isRefreshingPullRequest = false
                 return
             }
+            pendingPRFetchBranch = nil
             fetchPRInfo(branch: branch, headSha: head, forceFresh: true)
         }
+    }
+
+    func resetPRForm() {
+        prFormDraft = PRFormDraft()
+        showInlinePRForm = false
     }
 
     func openPullRequest(_ request: PRCreateRequest) {
@@ -962,6 +1072,7 @@ final class VCSTabState {
 
         pullRequestInfo = info
         commits = []
+        resetPRForm()
         ToastState.shared.show("Pull request #\(info.number) opened")
         loadBranches()
         performRefresh(incremental: false)
@@ -1058,6 +1169,29 @@ final class VCSTabState {
         }
     }
 
+    func updatePullRequestBranch() {
+        guard let info = pullRequestInfo, !isUpdatingPullRequestBranch else { return }
+        guard !info.isCrossRepository else {
+            showStatus("Branch lives on a fork — update it locally.", isError: true)
+            return
+        }
+        guard let branch = branchName else { return }
+        isUpdatingPullRequestBranch = true
+        Task { [weak self] in
+            guard let self else { return }
+            defer { isUpdatingPullRequestBranch = false }
+            do {
+                try await git.mergeBaseIntoCurrentBranch(repoPath: projectPath, baseBranch: info.baseBranch)
+                guard !Task.isCancelled, branchName == branch else { return }
+                ToastState.shared.show("Merged \(info.baseBranch) into \(branch)")
+                refreshPullRequest()
+            } catch {
+                guard !Task.isCancelled else { return }
+                showStatus(errorText(error), isError: true)
+            }
+        }
+    }
+
     func switchBranchAndRefresh(_ name: String) async {
         do {
             try await git.switchBranch(repoPath: projectPath, branch: name)
@@ -1079,7 +1213,7 @@ final class VCSTabState {
         }
     }
 
-    private func showStatus(_ message: String, isError: Bool) {
+    func showStatus(_ message: String, isError: Bool) {
         if isError {
             statusMessage = message
             statusIsError = true
@@ -1180,17 +1314,101 @@ final class VCSTabState {
             guard let self else { return }
             defer { checkingOutPRNumber = nil }
             do {
-                try await git.checkoutPullRequest(repoPath: projectPath, number: item.number)
+                try await git.checkoutPullRequest(
+                    repoPath: projectPath,
+                    number: item.number,
+                    headBranch: item.headBranch
+                )
                 guard !Task.isCancelled else { return }
                 ToastState.shared.show("Checked out PR #\(item.number)")
                 commits = []
-                performRefresh(incremental: false, forcePRFetch: true)
-                loadBranches()
+                await refreshAndWait()
             } catch {
                 guard !Task.isCancelled else { return }
                 showStatus(errorText(error), isError: true)
             }
         }
+    }
+
+    func checkoutPullRequestInNewWorktree(
+        _ item: GitRepositoryService.PRListItem,
+        project: Project,
+        defaultParentPath: String?,
+        worktreeStore: WorktreeStore
+    ) async throws -> Worktree {
+        guard checkingOutPRNumber == nil else {
+            throw PRCheckoutError.alreadyInProgress
+        }
+        checkingOutPRNumber = item.number
+        defer { checkingOutPRNumber = nil }
+
+        let localBranch = item.headBranch.isEmpty ? "pr-\(item.number)" : "pr/\(item.number)/\(item.headBranch)"
+        let slug = Self.directorySlug(from: localBranch)
+        let worktreeDirectory = WorktreeLocationResolver.worktreeDirectory(
+            for: project,
+            slug: slug,
+            defaultParentPath: defaultParentPath
+        )
+        let parentDirectory = URL(fileURLWithPath: worktreeDirectory)
+            .deletingLastPathComponent()
+            .path
+
+        try await GitProcessRunner.offMainThrowing {
+            if FileManager.default.fileExists(atPath: worktreeDirectory) {
+                throw PRCheckoutError.worktreeExists(path: worktreeDirectory)
+            }
+            try FileManager.default.createDirectory(
+                atPath: parentDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+        }
+
+        var worktree = Worktree(
+            name: localBranch,
+            path: worktreeDirectory,
+            branch: localBranch,
+            ownsBranch: true,
+            isPrimary: false
+        )
+
+        do {
+            let branch = try await git.createPullRequestWorktree(
+                repoPath: project.path,
+                path: worktreeDirectory,
+                number: item.number
+            )
+            worktree.name = branch
+            worktree.branch = branch
+            worktreeStore.add(worktree, to: project.id)
+        } catch {
+            throw error
+        }
+
+        return worktree
+    }
+
+    enum PRCheckoutError: LocalizedError {
+        case alreadyInProgress
+        case worktreeExists(path: String)
+
+        var errorDescription: String? {
+            switch self {
+            case .alreadyInProgress:
+                "Another PR checkout is already in progress."
+            case let .worktreeExists(path):
+                "A worktree already exists at \(path)."
+            }
+        }
+    }
+
+    private static func directorySlug(from name: String) -> String {
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "._-"))
+        let scalars = name.unicodeScalars.map { allowed.contains($0) ? Character($0) : "-" }
+        let collapsed = String(scalars)
+            .split(separator: "-", omittingEmptySubsequences: true)
+            .joined(separator: "-")
+        return collapsed.isEmpty ? UUID().uuidString : collapsed
     }
 
     private func rescheduleAutoSync() {

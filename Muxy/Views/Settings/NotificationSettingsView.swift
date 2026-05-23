@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 struct NotificationSettingsView: View {
@@ -40,8 +39,8 @@ struct NotificationSettingsView: View {
     }
 
     private func previewSound(_ value: String) {
-        guard let sound = NotificationSound(rawValue: value), sound != .none else { return }
-        NSSound(named: .init(sound.rawValue))?.play()
+        guard let sound = NotificationSound.playableSound(for: value) else { return }
+        NotificationSoundPlayer.shared.play(sound)
     }
 }
 
@@ -60,6 +59,8 @@ private struct ProviderToggleRow: View {
             Image(systemName: provider.iconName)
                 .font(.custom("JetBrainsMono Nerd Font", size: 10))
                 .foregroundStyle(.secondary)
+                .font(.system(size: 10))
+                .foregroundStyle(SettingsStyle.mutedForeground)
                 .frame(width: 16)
             Text(provider.displayName)
                 .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.labelFontSize))
@@ -82,6 +83,8 @@ private struct ProviderToggleRow: View {
                 .buttonStyle(.plain)
                 .font(.custom("JetBrainsMono Nerd Font", size: SettingsMetrics.footnoteFontSize))
                 .foregroundStyle(refreshed ? .green : Color.accentColor)
+                .font(.system(size: SettingsMetrics.footnoteFontSize))
+                .foregroundStyle(refreshed ? MuxyTheme.diffAddFg : SettingsStyle.accent)
                 .disabled(refreshed)
             }
             Toggle("", isOn: $enabled)

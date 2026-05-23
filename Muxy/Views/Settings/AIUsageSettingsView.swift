@@ -34,15 +34,15 @@ struct AIUsageSettingsView: View {
             .padding(.top, 8)
             .padding(.bottom, 6)
 
-            Divider().padding(.horizontal, 12)
+            SettingsDivider().padding(.horizontal, 12)
 
-            if usageEnabled {
-                enabledSettings
-            } else {
-                disabledSettings
+            ScrollView {
+                if usageEnabled {
+                    enabledSettings
+                } else {
+                    disabledSettings
+                }
             }
-
-            Spacer(minLength: 0)
         }
         .onChange(of: usageEnabled) { _, enabled in
             AIUsageSettingsStore.setUsageEnabled(enabled)
@@ -66,6 +66,8 @@ struct AIUsageSettingsView: View {
             Text("Enable AI Usage to show the usage board in the sidebar.")
                 .font(.custom("JetBrainsMono Nerd Font", size: 12))
                 .foregroundStyle(.secondary)
+                .font(.system(size: 12))
+                .foregroundStyle(SettingsStyle.mutedForeground)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
         }
@@ -91,7 +93,7 @@ struct AIUsageSettingsView: View {
             .padding(.top, 8)
             .padding(.bottom, 6)
 
-            Divider().padding(.horizontal, 12)
+            SettingsDivider().padding(.horizontal, 12)
 
             HStack(spacing: 8) {
                 Text("Auto Refresh")
@@ -112,7 +114,7 @@ struct AIUsageSettingsView: View {
             .padding(.top, 8)
             .padding(.bottom, 6)
 
-            Divider().padding(.horizontal, 12)
+            SettingsDivider().padding(.horizontal, 12)
 
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -121,6 +123,8 @@ struct AIUsageSettingsView: View {
                     Text("Display weekly and monthly quotas alongside the primary session usage.")
                         .font(.custom("JetBrainsMono Nerd Font", size: 10))
                         .foregroundStyle(.secondary)
+                        .font(.system(size: 10))
+                        .foregroundStyle(SettingsStyle.mutedForeground)
                 }
 
                 Spacer()
@@ -134,12 +138,14 @@ struct AIUsageSettingsView: View {
             .padding(.top, 8)
             .padding(.bottom, 6)
 
-            Divider().padding(.horizontal, 12)
+            SettingsDivider().padding(.horizontal, 12)
 
             HStack(spacing: 8) {
                 Text("Choose which providers appear on the usage board.")
                     .font(.custom("JetBrainsMono Nerd Font", size: 12))
                     .foregroundStyle(.secondary)
+                    .font(.system(size: 12))
+                    .foregroundStyle(SettingsStyle.mutedForeground)
 
                 Spacer()
 
@@ -159,23 +165,21 @@ struct AIUsageSettingsView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
 
-            Divider().padding(.horizontal, 12)
+            SettingsDivider().padding(.horizontal, 12)
 
-            ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: 8) {
-                    ForEach(providers) { provider in
-                        providerCell(provider)
-                    }
+            LazyVGrid(columns: gridColumns, spacing: 8) {
+                ForEach(providers) { provider in
+                    providerCell(provider)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
         }
     }
 
     private func providerCell(_ provider: AIUsageProviderCatalogEntry) -> some View {
         HStack(spacing: 8) {
-            ProviderIconView(iconName: provider.iconName, size: 16, style: .monochrome(.primary))
+            ProviderIconView(iconName: provider.iconName, size: 16, style: .monochrome(SettingsStyle.foreground))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(provider.displayName)
@@ -186,6 +190,8 @@ struct AIUsageSettingsView: View {
                     Text("Integrated")
                         .font(.custom("JetBrainsMono Nerd Font", size: 9).weight(.semibold))
                         .foregroundStyle(.secondary)
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(SettingsStyle.mutedForeground)
                 }
             }
 
@@ -198,7 +204,7 @@ struct AIUsageSettingsView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
+        .background(SettingsStyle.surface, in: RoundedRectangle(cornerRadius: 8))
     }
 
     private func providerToggleBinding(for provider: AIUsageProviderCatalogEntry) -> Binding<Bool> {

@@ -10,6 +10,9 @@ struct MuxyApp: App {
     @State private var appState: AppState
     @State private var projectStore: ProjectStore
     @State private var worktreeStore: WorktreeStore
+    @State private var projectGroupStore: ProjectGroupStore
+    @State private var projectCommandStore: ProjectCommandStore
+    @State private var vcsWorktreeAutoRefresher: VCSWorktreeAutoRefresher
     private let updateService = UpdateService.shared
 
     init() {
@@ -29,9 +32,24 @@ struct MuxyApp: App {
             projects: projectStore.projects,
             worktrees: worktreeStore.worktrees
         )
+        let projectGroupStore = ProjectGroupStore(
+            persistence: environment.projectGroupPersistence
+        )
+        let projectCommandStore = ProjectCommandStore(
+            persistence: environment.projectCommandPersistence
+        )
+        let vcsWorktreeAutoRefresher = VCSWorktreeAutoRefresher(
+            appState: appState,
+            projectStore: projectStore,
+            worktreeStore: worktreeStore
+        )
         _appState = State(initialValue: appState)
         _projectStore = State(initialValue: projectStore)
         _worktreeStore = State(initialValue: worktreeStore)
+        _projectGroupStore = State(initialValue: projectGroupStore)
+        _projectCommandStore = State(initialValue: projectCommandStore)
+        _vcsWorktreeAutoRefresher = State(initialValue: vcsWorktreeAutoRefresher)
+        SettingsJSONStore.beginAutomaticUserSettingsSync()
     }
 
     var body: some Scene {
@@ -40,6 +58,8 @@ struct MuxyApp: App {
                 .environment(appState)
                 .environment(projectStore)
                 .environment(worktreeStore)
+                .environment(projectGroupStore)
+                .environment(projectCommandStore)
                 .environment(GhosttyService.shared)
                 .environment(MuxyConfig.shared)
                 .environment(ThemeService.shared)
@@ -48,7 +68,10 @@ struct MuxyApp: App {
                     NotificationStore.shared.appState = appState
                     NotificationStore.shared.worktreeStore = worktreeStore
                     NotificationStore.shared.markAllAsRead()
+                    MemoryDiagnostics.shared.configure(appState: appState)
+                    TerminalProgressStore.shared.appState = appState
                     appDelegate.onTerminate = { [appState] in
+                        appState.saveTerminalSessions()
                         appState.saveWorkspaces()
                     }
                     appDelegate.hasUnsavedEditorTabs = { [appState] in
@@ -63,10 +86,8 @@ struct MuxyApp: App {
                         )
                     }
                     appDelegate.flushPendingOpens()
-                    NotificationSocketServer.shared.openProjectHandler = { [appDelegate] path in
-                        Task { @MainActor in
-                            appDelegate.handleOpenProjectPath(path)
-                        }
+                    NotificationSocketServer.shared.commandHandler = { [appState] message in
+                        await SocketCommandHandler.handleRequest(message, appState: appState)
                     }
                     MobileServerService.shared.configure { server in
                         let delegate = RemoteServerDelegate(
@@ -92,6 +113,12 @@ struct MuxyApp: App {
                             worktreeStore.removeProject(id)
                         }
                     }
+                    appState.onPaneClosed = { [projectCommandStore] paneID in
+                        projectCommandStore.removeRun(paneID: paneID)
+                    }
+                    projectStore.onProjectRemoved = { [projectGroupStore] projectID in
+                        projectGroupStore.removeProjectFromAllGroups(projectID: projectID)
+                    }
                 }
         }
         .windowStyle(HiddenTitleBarWindowStyle())
@@ -101,6 +128,7 @@ struct MuxyApp: App {
                 appState: appState,
                 projectStore: projectStore,
                 worktreeStore: worktreeStore,
+                projectGroupStore: projectGroupStore,
                 keyBindings: .shared,
                 commandShortcuts: .shared,
                 config: .shared,
@@ -114,6 +142,7 @@ struct MuxyApp: App {
                 .environment(appState)
                 .environment(projectStore)
                 .environment(worktreeStore)
+                .environment(projectGroupStore)
                 .environment(GhosttyService.shared)
                 .preferredColorScheme(MuxyTheme.colorScheme)
         }
@@ -124,22 +153,20 @@ struct MuxyApp: App {
                 .preferredColorScheme(MuxyTheme.colorScheme)
         }
         .defaultSize(width: 820, height: 580)
-
-        Settings {
-            SettingsView()
-                .preferredColorScheme(MuxyTheme.colorScheme)
-        }
     }
 }
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var onTerminate: (() -> Void)?
     var hasUnsavedEditorTabs: (() -> [EditorTabState])?
     var openProjectFromPath: ((String) -> Void)?
 
     private var pendingOpenPaths: [String] = []
     private var systemAppearanceObserver: NSObjectProtocol?
+    private var settingsObserver: NSObjectProtocol?
+    private var settingsThemeObserver: NSObjectProtocol?
+    private weak var settingsWindow: NSWindow?
 
 
 
@@ -215,6 +242,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @MainActor
     func applicationDidFinishLaunching(_ notification: Notification) {
+        SentryService.shared.start()
+        NSWindow.allowsAutomaticWindowTabbing = false
         NSApp.setActivationPolicy(.regular)
         NSApp.activate()
         setAppIcon()
@@ -225,9 +254,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         observeSystemAppearanceChanges()
         UpdateService.shared.start()
         ModifierKeyMonitor.shared.start()
+        NotificationSocketServer.shared.openProjectHandler = { [weak self] path in
+            Task { @MainActor [weak self] in
+                self?.handleOpenProjectPath(path)
+            }
+        }
         NotificationSocketServer.shared.start()
         AIProviderRegistry.shared.installAll()
         _ = AIUsageSettingsStore.isUsageEnabled()
+        DiagnosticsMenuController.shared.install()
+        observeSettingsRequests()
 
         // 延迟到主线程，遍历所有窗口设置透明和隐藏标题栏
         DispatchQueue.main.async {
@@ -238,7 +274,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 window.titleVisibility = .hidden
             }
         }
-
         consumeLaunchArguments()
     }
 
@@ -342,12 +377,73 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DistributedNotificationCenter.default().removeObserver(observer)
             systemAppearanceObserver = nil
         }
+        if let settingsObserver {
+            NotificationCenter.default.removeObserver(settingsObserver)
+            self.settingsObserver = nil
+        }
+        if let settingsThemeObserver {
+            NotificationCenter.default.removeObserver(settingsThemeObserver)
+            self.settingsThemeObserver = nil
+        }
         onTerminate?()
         NotificationStore.shared.saveToDisk()
         NotificationSocketServer.shared.stop()
         MainActor.assumeIsolated {
             MobileServerService.shared.stopForTermination()
+            RichInputDraftStore.shared.flush()
         }
+    }
+
+    @MainActor
+    private func observeSettingsRequests() {
+        settingsObserver = NotificationCenter.default.addObserver(
+            forName: .openSettingsModal,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.presentSettingsModal()
+            }
+        }
+        settingsThemeObserver = NotificationCenter.default.addObserver(
+            forName: .themeDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.settingsWindow?.backgroundColor = MuxyTheme.nsBg
+            }
+        }
+    }
+
+    @MainActor
+    private func presentSettingsModal() {
+        if let settingsWindow {
+            settingsWindow.makeKeyAndOrderFront(nil)
+            return
+        }
+        guard let parent = NSApp.keyWindow ?? NSApp.mainWindow else { return }
+        let host = NSHostingController(
+            rootView: SettingsView()
+                .frame(width: 980, height: 680)
+                .preferredColorScheme(MuxyTheme.colorScheme)
+        )
+        let window = SettingsModalWindow(contentViewController: host)
+        window.title = "Settings"
+        window.styleMask = [.titled, .closable]
+        window.isOpaque = true
+        window.backgroundColor = MuxyTheme.nsBg
+        window.delegate = self
+        settingsWindow = window
+        parent.beginSheet(window) { [weak self, weak window] _ in
+            guard self?.settingsWindow === window else { return }
+            self?.settingsWindow = nil
+        }
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        guard notification.object as? NSWindow === settingsWindow else { return }
+        settingsWindow = nil
     }
 
     @MainActor
@@ -382,8 +478,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+private final class SettingsModalWindow: NSWindow {
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+           event.charactersIgnoringModifiers?.lowercased() == "w"
+        {
+            close()
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
+    override func cancelOperation(_ sender: Any?) {
+        close()
+    }
+
+    override func close() {
+        guard let sheetParent else {
+            super.close()
+            return
+        }
+        sheetParent.endSheet(self)
+    }
+}
+
 struct WindowConfigurator: NSViewRepresentable {
     let configVersion: Int
+    let uiScalePreset: UIScale.Preset
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
@@ -399,6 +520,7 @@ struct WindowConfigurator: NSViewRepresentable {
             w.styleMask.insert(.fullSizeContentView)
             w.isMovable = false
             w.isMovableByWindowBackground = false
+            Self.disableWindowTabbing(for: w)
             Self.applyWindowBackground(w)
             Self.repositionTrafficLights(in: w)
             Self.hideTitlebarDecorationView(in: w)
@@ -412,6 +534,7 @@ struct WindowConfigurator: NSViewRepresentable {
     func updateNSView(_ nsView: NSView, context: Context) {
         guard let w = nsView.window else { return }
         Self.applyWindowBackground(w)
+        Self.repositionTrafficLights(in: w)
     }
 
     private static func applyWindowBackground(_ window: NSWindow) {
@@ -419,6 +542,10 @@ struct WindowConfigurator: NSViewRepresentable {
         window.backgroundColor = .clear
         window.contentView?.wantsLayer = true
         window.contentView?.layer?.backgroundColor = MuxyTheme.nsBg.cgColor
+    }
+
+    static func disableWindowTabbing(for window: NSWindow) {
+        window.tabbingMode = .disallowed
     }
 
     static func neutralizeSafeAreaInsets(in window: NSWindow) {
@@ -467,17 +594,23 @@ struct WindowConfigurator: NSViewRepresentable {
     }
 
     static let trafficLightY: CGFloat = 3.5
+    static let baselineTitleBarHeight: CGFloat = 32
 
-    static func repositionTrafficLights(in window: NSWindow) {
-        let y: CGFloat
+    static func desiredTrafficLightY() -> CGFloat {
+        let scaledTitleBarHeight = UIMetrics.scaled(baselineTitleBarHeight)
+        let extraVerticalSpace = scaledTitleBarHeight - baselineTitleBarHeight
         if #available(macOS 26.0, *) {
             let buttonHeight: CGFloat = 14
-            y = (32 - buttonHeight) / 2
-        } else {
-            y = trafficLightY
+            return (baselineTitleBarHeight - buttonHeight - extraVerticalSpace) / 2
         }
+        return trafficLightY - extraVerticalSpace / 2
+    }
+
+    static func repositionTrafficLights(in window: NSWindow) {
+        let y = desiredTrafficLightY()
         for button in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
             guard let btn = window.standardWindowButton(button) else { continue }
+            guard abs(btn.frame.origin.y - y) > 0.5 else { continue }
             var frame = btn.frame
             frame.origin.y = y
             btn.frame = frame
@@ -486,6 +619,7 @@ struct WindowConfigurator: NSViewRepresentable {
 
     final class Coordinator: NSObject {
         private var observations: [NSObjectProtocol] = []
+        private var buttonFrameObservations: [NSObjectProtocol] = []
 
         @objc
         func handleCloseButton(_: Any?) {
@@ -504,6 +638,9 @@ struct WindowConfigurator: NSViewRepresentable {
                 NSWindow.didChangeBackingPropertiesNotification,
                 NSWindow.didExitFullScreenNotification,
                 NSWindow.didEnterFullScreenNotification,
+                NSWindow.didUpdateNotification,
+                NSWindow.didBecomeKeyNotification,
+                NSWindow.didBecomeMainNotification,
             ]
             for name in names {
                 let token = NotificationCenter.default.addObserver(
@@ -535,10 +672,35 @@ struct WindowConfigurator: NSViewRepresentable {
                 }
                 observations.append(token)
             }
+
+            observeButtonFrames(window: window)
+        }
+
+        private func observeButtonFrames(window: NSWindow) {
+            buttonFrameObservations.forEach { NotificationCenter.default.removeObserver($0) }
+            buttonFrameObservations.removeAll()
+            for type in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
+                guard let button = MainActor.assumeIsolated({ window.standardWindowButton(type) }) else { continue }
+                MainActor.assumeIsolated { button.postsFrameChangedNotifications = true }
+                let token = NotificationCenter.default.addObserver(
+                    forName: NSView.frameDidChangeNotification,
+                    object: button,
+                    queue: .main
+                ) { [weak window] _ in
+                    guard let window else { return }
+                    DispatchQueue.main.async {
+                        MainActor.assumeIsolated {
+                            WindowConfigurator.repositionTrafficLights(in: window)
+                        }
+                    }
+                }
+                buttonFrameObservations.append(token)
+            }
         }
 
         deinit {
             observations.forEach { NotificationCenter.default.removeObserver($0) }
+            buttonFrameObservations.forEach { NotificationCenter.default.removeObserver($0) }
         }
     }
 }

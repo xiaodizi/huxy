@@ -81,9 +81,13 @@ final class WorktreeStore {
 
     func remove(worktreeID: UUID, from projectID: UUID) {
         guard var list = worktrees[projectID] else { return }
+        let removed = list.filter { $0.id == worktreeID && $0.canBeRemoved }
         list.removeAll { $0.id == worktreeID && $0.canBeRemoved }
         setWorktrees(list, for: projectID)
         save(projectID: projectID)
+        for worktree in removed {
+            VCSStateStore.shared.remove(path: worktree.path)
+        }
     }
 
     func refreshFromGit(project: Project) async throws -> [Worktree] {
@@ -180,11 +184,12 @@ final class WorktreeStore {
         }
 
         try? FileManager.default.removeItem(atPath: worktree.path)
+        guard !worktree.isExternallyManaged else { return }
         removeParentDirectoryIfEmpty(for: worktree.path)
     }
 
     static func cleanupOnDisk(for project: Project, knownWorktrees: [Worktree]) async {
-        let secondaryWorktrees = knownWorktrees.filter(\.canBeRemoved)
+        let secondaryWorktrees = knownWorktrees.filter { $0.canBeRemoved && !$0.isExternallyManaged }
         for worktree in secondaryWorktrees {
             await cleanupOnDisk(worktree: worktree, repoPath: project.path)
         }
@@ -230,6 +235,11 @@ final class WorktreeStore {
     }
 
     func removeProject(_ projectID: UUID) {
+        let removedPaths: [String] = if let existing = worktrees[projectID] {
+            existing.map(\.path)
+        } else {
+            []
+        }
         if let existing = worktrees[projectID] {
             for worktree in existing where projectIDByPath[worktree.path] == projectID {
                 projectIDByPath.removeValue(forKey: worktree.path)
@@ -240,6 +250,9 @@ final class WorktreeStore {
             try persistence.removeWorktrees(projectID: projectID)
         } catch {
             logger.error("Failed to remove worktrees file for project \(projectID): \(error)")
+        }
+        for path in removedPaths {
+            VCSStateStore.shared.remove(path: path)
         }
     }
 

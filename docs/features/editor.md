@@ -7,6 +7,7 @@ Muxy includes a lightweight built-in code editor that opens files as tabs. Desig
 | How | Notes |
 | --- | --- |
 | `⌘P` (Quick Open) | Fuzzy file search over the active worktree |
+| `⌘⇧F` (Find in Files) | Search text across the active project |
 | File tree → click / right-click → Open | Editor tab for the file |
 | File menu → Open File… | Standard open panel |
 | Drag a file from Finder | Drop on the tab bar |
@@ -40,14 +41,18 @@ flowchart TB
   Preview --> Edit
 ```
 
-Preview features: GitHub-flavoured Markdown, Mermaid diagrams, local + remote images, clickable heading anchors.
+Preview features: GitHub-flavoured Markdown, Mermaid diagrams, local + remote images, clickable heading anchors, internal file links that open in markdown preview tabs, and external links that open in the browser.
+
+Remote images can be disabled in **Settings -> Editor -> Markdown Preview**.
 
 Zoom: `⌘=`, `⌘-`, `⌘0`.
 
 ## Line wrapping
 
-Opt-in line wrapping is available in the editor toolbar. The editor uses a virtualized HeightMap so wrapped long files stay smooth at large sizes — see [Editor Geometry](../developer/architecture/editor-geometry.md) for the internals.
+Opt-in line wrapping is available in the editor toolbar. The editor uses a virtualized HeightMap so wrapped long files stay smooth at large sizes — see [Editor Geometry](../architecture/editor-geometry.md) for the internals.
 
 ## External editor
 
 If you prefer your own editor, **Settings → Editor** lets you set a default external editor command. Quick Open and file-tree double-click then route to that command instead of the built-in editor.
+
+Terminal Command launches through the user's login interactive shell, matching commands typed into a normal Muxy terminal tab.

@@ -10,6 +10,11 @@ private final class CodeEditorTextView: NSTextView {
     var onRedoRequest: (() -> Bool)?
     var canUndoRequest: (() -> Bool)?
     var canRedoRequest: (() -> Bool)?
+    var usesNativeUndo = true
+
+    override var undoManager: UndoManager? {
+        usesNativeUndo ? super.undoManager : nil
+    }
 
     override func paste(_ sender: Any?) {
         pasteAsPlainText(sender)
@@ -119,6 +124,70 @@ private final class CodeEditorLayoutManager: NSLayoutManager {
     }
 }
 
+final class EditorScrollContainer: NSView {
+    let scrollView: NSScrollView
+    private(set) var gutterView: LineNumberGutterView?
+
+    init(scrollView: NSScrollView) {
+        self.scrollView = scrollView
+        super.init(frame: .zero)
+        wantsLayer = true
+        layer?.masksToBounds = true
+        autoresizesSubviews = false
+        addSubview(scrollView)
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var isFlipped: Bool { true }
+
+    override func resizeSubviews(withOldSize _: NSSize) {
+        layoutChildren()
+    }
+
+    override func layout() {
+        super.layout()
+        layoutChildren()
+    }
+
+    func setGutter(_ gutter: LineNumberGutterView?) {
+        guard gutter !== gutterView else { return }
+        gutterView?.removeFromSuperview()
+        gutterView = gutter
+        if let gutter {
+            addSubview(gutter)
+        }
+        layoutChildren()
+    }
+
+    func gutterWidthDidChange() {
+        layoutChildren()
+    }
+
+    private func layoutChildren() {
+        let bounds = self.bounds
+        let gutterWidth = gutterView?.preferredWidth ?? 0
+        if let gutterView {
+            let gutterFrame = NSRect(x: 0, y: 0, width: gutterWidth, height: bounds.height)
+            if gutterView.frame != gutterFrame {
+                gutterView.frame = gutterFrame
+            }
+        }
+        let scrollFrame = NSRect(
+            x: gutterWidth,
+            y: 0,
+            width: max(0, bounds.width - gutterWidth),
+            height: bounds.height
+        )
+        if scrollView.frame != scrollFrame {
+            scrollView.frame = scrollFrame
+        }
+    }
+}
+
 final class ViewportContainerView: NSView {
     override var isFlipped: Bool { true }
 
@@ -180,14 +249,18 @@ struct CodeEditorView: NSViewRepresentable {
         Coordinator(state: state, editorSettings: editorSettings)
     }
 
-    func makeNSView(context: Context) -> NSScrollView {
+    func makeNSView(context: Context) -> EditorScrollContainer {
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = showsVerticalScroller
         scrollView.hasHorizontalScroller = !lineWrapping
-        scrollView.autoresizingMask = [.width, .height]
+        scrollView.autoresizingMask = []
 
         let textStorage = NSTextStorage()
         let layoutManager = CodeEditorLayoutManager()
+        layoutManager.usesFontLeading = false
+        let lineHeightDelegate = LineHeightLayoutDelegate(fallbackFont: editorSettings.resolvedFont)
+        lineHeightDelegate.lineHeightMultiplier = editorSettings.lineHeightMultiplier
+        layoutManager.delegate = lineHeightDelegate
         textStorage.addLayoutManager(layoutManager)
 
         let textContainer = NSTextContainer(containerSize: NSSize(
@@ -248,9 +321,13 @@ struct CodeEditorView: NSViewRepresentable {
         scrollView.contentView.postsFrameChangedNotifications = true
 
         let coordinator = context.coordinator
+        let container = EditorScrollContainer(scrollView: scrollView)
+        container.autoresizingMask = [.width, .height]
         textView.delegate = coordinator
         coordinator.textView = textView
         coordinator.scrollView = scrollView
+        coordinator.scrollContainer = container
+        coordinator.lineHeightDelegate = lineHeightDelegate
         textView.onUndoRequest = { [weak coordinator] in
             coordinator?.performUndoRequest() ?? false
         }
@@ -268,10 +345,10 @@ struct CodeEditorView: NSViewRepresentable {
 
         coordinator.applyLineWrapping(lineWrapping)
 
-        return scrollView
+        return container
     }
 
-    static func dismantleNSView(_ scrollView: NSScrollView, coordinator: Coordinator) {
+    static func dismantleNSView(_: EditorScrollContainer, coordinator: Coordinator) {
         if let textView = coordinator.textView {
             textView.undoManager?.removeAllActions()
             if let window = textView.window, window.firstResponder === textView {
@@ -299,7 +376,8 @@ struct CodeEditorView: NSViewRepresentable {
         }
     }
 
-    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+    func updateNSView(_ container: EditorScrollContainer, context: Context) {
+        let scrollView = container.scrollView
         guard let textView = context.coordinator.textView else { return }
         let coordinator = context.coordinator
 
@@ -312,7 +390,7 @@ struct CodeEditorView: NSViewRepresentable {
             coordinator.enterViewportMode(scrollView: scrollView)
         }
 
-        coordinator.reconcileLineNumberGutter()
+        coordinator.reconcileLineNumberGutter(showLineNumbers)
         coordinator.reconcileCurrentLineHighlight()
         coordinator.reconcileLineWrapping(lineWrapping)
         updateNSViewViewportMode(scrollView: scrollView, textView: textView, coordinator: coordinator)
@@ -359,15 +437,32 @@ struct CodeEditorView: NSViewRepresentable {
         let themeChanged = coordinator.lastThemeVersion != themeVersion
         let font = editorSettings.resolvedFont
         let fontChanged = textView.font != font
+        let lineHeightMultiplier = editorSettings.lineHeightMultiplier
+        let lineHeightChanged = coordinator.lastLineHeightMultiplier != lineHeightMultiplier
 
         applyThemeAndFont(scrollView: scrollView, textView: textView, font: font)
 
         if fontChanged {
-            viewport.updateEstimatedLineHeight(font: font)
+            coordinator.lineHeightDelegate?.fallbackFont = font
+        }
+
+        if lineHeightChanged {
+            coordinator.lineHeightDelegate?.lineHeightMultiplier = lineHeightMultiplier
+            if let layoutManager = textView.layoutManager, let textContainer = textView.textContainer {
+                let storage = textView.textStorage
+                let fullRange = NSRange(location: 0, length: storage?.length ?? 0)
+                layoutManager.invalidateLayout(forCharacterRange: fullRange, actualCharacterRange: nil)
+                layoutManager.ensureLayout(for: textContainer)
+            }
+        }
+
+        if fontChanged || lineHeightChanged {
+            viewport.updateEstimatedLineHeight(font: font, lineHeightMultiplier: lineHeightMultiplier)
             viewport.updateDocumentPadding(
                 topInset: textView.textContainerInset.height,
                 bottomInset: textView.textContainerInset.height
             )
+            coordinator.lastLineHeightMultiplier = lineHeightMultiplier
             coordinator.updateContainerHeight()
             coordinator.updateMarkdownEditorScrollMetrics()
             coordinator.refreshViewport(force: true)
@@ -501,16 +596,17 @@ struct CodeEditorView: NSViewRepresentable {
 
     @MainActor
     final class Coordinator: NSObject, NSTextViewDelegate, SyntaxHighlightCoordinator, SearchControllerHost, ViewportEditHistoryHost,
-        LineNumberGutterHost, CurrentLineHighlightHost
+        CurrentLineHighlightHost, LineNumberGutterHost
     {
         let state: EditorTabState
         let editorSettings: EditorSettings
         weak var textView: NSTextView?
 
         weak var scrollView: NSScrollView?
+        weak var scrollContainer: EditorScrollContainer?
+        var lineHeightDelegate: LineHeightLayoutDelegate?
         var viewportState: ViewportState?
         var containerView: ViewportContainerView?
-        var leadingGutterWidth: CGFloat = 0
         private(set) var lineWrappingEnabled: Bool = false
         private var pendingWrapResizeWorkItem: DispatchWorkItem?
 
@@ -521,6 +617,7 @@ struct CodeEditorView: NSViewRepresentable {
         private var isWritingScrollProgrammatically = false
         var hasAppliedInitialContent = false
         var lastThemeVersion = -1
+        var lastLineHeightMultiplier: CGFloat = -1
         var lastSearchVisible = false
         var lastSearchNeedle = ""
         var lastSearchNavigationVersion = -1
@@ -580,18 +677,18 @@ struct CodeEditorView: NSViewRepresentable {
             extensions = loaded
         }
 
-        func reconcileLineNumberGutter() {
+        func reconcileLineNumberGutter(_ showLineNumbers: Bool) {
             let hasGutter = extensions.contains(where: { $0 is LineNumberGutterExtension })
-            if editorSettings.showLineNumbers, !hasGutter {
+            if showLineNumbers, !hasGutter {
                 let ext = LineNumberGutterExtension(host: self)
                 extensions.append(ext)
                 if let context = makeRenderContext() {
                     ext.didMount(context: context)
-                    refreshViewport(force: true)
+                    refreshViewportPinningAnchor()
                 }
                 return
             }
-            if !editorSettings.showLineNumbers, hasGutter {
+            if !showLineNumbers, hasGutter {
                 let context = makeRenderContext()
                 let removed = extensions.filter { $0 is LineNumberGutterExtension }
                 extensions.removeAll { $0 is LineNumberGutterExtension }
@@ -600,7 +697,7 @@ struct CodeEditorView: NSViewRepresentable {
                         ext.willUnmount(context: context)
                     }
                 }
-                refreshViewport(force: true)
+                refreshViewportPinningAnchor()
             }
         }
 
@@ -677,7 +774,7 @@ struct CodeEditorView: NSViewRepresentable {
             guard let scrollView else { return 0 }
             let total = scrollView.contentSize.width
             let inset = textView?.textContainerInset.width ?? 0
-            return max(1, total - leadingGutterWidth - inset * 2)
+            return max(1, total - inset * 2)
         }
 
         private func makeRenderContext() -> EditorRenderContext? {
@@ -741,13 +838,19 @@ struct CodeEditorView: NSViewRepresentable {
 
         func enterViewportMode(scrollView: NSScrollView) {
             guard let store = state.backingStore, let textView else { return }
-            textView.allowsUndo = false
             textView.undoManager?.removeAllActions()
+            textView.allowsUndo = false
+            if let codeTextView = textView as? CodeEditorTextView {
+                codeTextView.usesNativeUndo = false
+            }
             textView.usesFindBar = false
             clearViewportHistory()
 
             let viewport = ViewportState(backingStore: store)
-            viewport.updateEstimatedLineHeight(font: editorSettings.resolvedFont)
+            viewport.updateEstimatedLineHeight(
+                font: editorSettings.resolvedFont,
+                lineHeightMultiplier: editorSettings.lineHeightMultiplier
+            )
             viewport.lineWrappingEnabled = lineWrappingEnabled
             viewportState = viewport
             invalidateRenderedViewportText()
@@ -1149,11 +1252,11 @@ struct CodeEditorView: NSViewRepresentable {
             let estimatedHeight = viewport.estimatedLineHeight * CGFloat(max(1, visibleLineCount))
                 + textView.textContainerInset.height * 2
             let viewportWidth = viewportContentWidth(for: textView, scrollView: scrollView)
-            let targetTextWidth = max(0, viewportWidth - leadingGutterWidth)
+            let targetTextWidth = max(0, viewportWidth)
 
             if lineWrappingEnabled, textView.frame.width != targetTextWidth, targetTextWidth > 0 {
                 textView.frame = NSRect(
-                    x: leadingGutterWidth,
+                    x: 0,
                     y: textView.frame.origin.y,
                     width: targetTextWidth,
                     height: textView.frame.height
@@ -1184,7 +1287,7 @@ struct CodeEditorView: NSViewRepresentable {
             }
             let resolvedYOffset = viewport.viewportYOffset()
             let newTextFrame = NSRect(
-                x: leadingGutterWidth,
+                x: 0,
                 y: resolvedYOffset,
                 width: targetTextWidth,
                 height: max(estimatedHeight, laidOutHeight, 100)
@@ -1765,7 +1868,9 @@ struct CodeEditorView: NSViewRepresentable {
             guard lineCount > 0 else { return }
             let targetLine = max(0, min(globalLine, lineCount - 1))
 
-            setScrollAnchor(ScrollAnchor(line: targetLine, deltaPixels: -visibleHeight / 3))
+            if !isGlobalLineFullyVisible(targetLine, viewport: viewport, scrollView: scrollView) {
+                setScrollAnchor(ScrollAnchor(line: targetLine, deltaPixels: -visibleHeight / 3))
+            }
 
             for _ in 0 ..< 5 {
                 let pixelBefore = scrollAnchor.pixelY(in: viewport.heightMap)
@@ -1793,6 +1898,14 @@ struct CodeEditorView: NSViewRepresentable {
             let cursorLineStart = lineStartOffsets[safeLocalLine]
             state.cursorColumn = max(1, safeCursor - cursorLineStart + 1)
             notifySelectionDidChange()
+        }
+
+        private func isGlobalLineFullyVisible(_ line: Int, viewport: ViewportState, scrollView: NSScrollView) -> Bool {
+            let lineTop = viewport.heightMap.heightAbove(line: line)
+            let lineHeight = viewport.heightMap.heightOfLine(line)
+            let visibleTop = scrollView.contentView.bounds.origin.y
+            let visibleBottom = visibleTop + scrollView.contentView.bounds.height
+            return lineTop >= visibleTop && lineTop + lineHeight <= visibleBottom
         }
 
         private func updateCurrentSelection(in textView: NSTextView, range: NSRange) {

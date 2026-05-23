@@ -7,6 +7,7 @@ struct TabAreaView: View {
     let showTabStrip: Bool
     let showVCSButton: Bool
     let projectID: UUID
+    let shortcutIndexOffset: Int
     let onFocus: () -> Void
     let onSelectTab: (UUID) -> Void
     let onCreateTab: () -> Void
@@ -15,6 +16,9 @@ struct TabAreaView: View {
     let onForceCloseTab: (UUID) -> Void
     let onSplit: (SplitDirection) -> Void
     let onDropAction: (TabDragCoordinator.DropResult) -> Void
+    var showMaximizeButton = false
+    var isMaximized = false
+    var onToggleMaximize: (() -> Void)?
     @Environment(TabDragCoordinator.self) private var dragCoordinator
     @Environment(AppState.self) private var appState
     @State private var isExternalDragHovering = false
@@ -38,6 +42,7 @@ struct TabAreaView: View {
                     isFocused: isFocused,
                     showVCSButton: showVCSButton,
                     projectID: projectID,
+                    shortcutIndexOffset: shortcutIndexOffset,
                     onSelectTab: onSelectTab,
                     onCreateTab: onCreateTab,
                     onCreateVCSTab: onCreateVCSTab,
@@ -55,6 +60,9 @@ struct TabAreaView: View {
                     },
                     onSplit: onSplit,
                     onDropAction: onDropAction,
+                    showMaximizeButton: showMaximizeButton,
+                    isMaximized: isMaximized,
+                    onToggleMaximize: onToggleMaximize,
                     onCreateTabAdjacent: { tabID, side in
                         area.createTabAdjacent(to: tabID, side: side)
                     },
@@ -214,6 +222,8 @@ private struct TabContentView: View {
             EditorPane(state: editorState, focused: focused, onFocus: onFocus)
         case let .diffViewer(diffState):
             DiffViewerPane(state: diffState, focused: focused, onFocus: onFocus)
+        case let .imageViewer(imageState):
+            ImageViewerPane(state: imageState, focused: focused, onFocus: onFocus)
         }
     }
 }

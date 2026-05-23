@@ -45,25 +45,25 @@ private struct FileResultRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIMetrics.spacing4) {
             Image(systemName: fileIcon)
-                .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody))
                 .foregroundStyle(MuxyTheme.fgMuted)
-                .frame(width: 16)
-            VStack(alignment: .leading, spacing: 1) {
+                .frame(width: UIMetrics.iconLG)
+            VStack(alignment: .leading, spacing: UIMetrics.scaled(1)) {
                 Text(result.fileName)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+                    .font(.system(size: UIMetrics.fontBody, weight: .medium))
                     .foregroundStyle(MuxyTheme.fg)
                     .lineLimit(1)
                 Text(result.relativePath)
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10))
-                    .foregroundStyle(MuxyTheme.fgMuted)
+                    .font(.system(size: UIMetrics.fontCaption))
+                    .foregroundStyle(MuxyTheme.fgDim)
                     .lineLimit(1)
             }
             Spacer()
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, UIMetrics.spacing6)
+        .padding(.vertical, UIMetrics.spacing3)
         .background(isHighlighted ? MuxyTheme.surface : hovered ? MuxyTheme.hover : .clear)
         .onHover { isHovered in
             hovered = isHovered

@@ -1,9 +1,10 @@
 import SwiftUI
 
+@MainActor
 enum SidebarLayout {
-    static let collapsedWidth: CGFloat = 44
-    static let expandedWidth: CGFloat = 220
-    static let width: CGFloat = 44
+    static var collapsedWidth: CGFloat { UIMetrics.sidebarCollapsedWidth }
+    static var expandedWidth: CGFloat { UIMetrics.sidebarExpandedWidth }
+    static var width: CGFloat { UIMetrics.sidebarCollapsedWidth }
 
     static func resolvedWidth(
         expanded: Bool,
@@ -28,9 +29,10 @@ enum SidebarLayout {
 struct Sidebar: View {
     @Environment(AppState.self) private var appState
     @Environment(ProjectStore.self) private var projectStore
+    @Environment(ProjectGroupStore.self) private var projectGroupStore
     @Environment(WorktreeStore.self) private var worktreeStore
     @State private var dragState = ProjectDragState()
-    @State private var expanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
+    let expanded: Bool
     @AppStorage(SidebarCollapsedStyle.storageKey) private var collapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var expandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
 
@@ -56,7 +58,7 @@ struct Sidebar: View {
                 .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
                 .clipped()
 
-            SidebarFooter(expanded: isWide)
+            SidebarFooter(isWide: isWide, sidebarExpanded: expanded)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
@@ -65,21 +67,11 @@ struct Sidebar: View {
         .background(SidebarBlurView())
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Sidebar")
-        .onReceive(NotificationCenter.default.publisher(for: .toggleSidebar)) { _ in
-            toggleExpanded()
-        }
-    }
-
-    private func toggleExpanded() {
-        withAnimation(.easeInOut(duration: 0.2)) {
-            expanded.toggle()
-        }
-        UserDefaults.standard.set(expanded, forKey: "muxy.sidebarExpanded")
     }
 
     private var addButton: some View {
         AddProjectButton(expanded: isWide) {
-            ProjectOpenService.openProject(
+            ProjectOpenService.openProjectViaPicker(
                 appState: appState,
                 projectStore: projectStore,
                 worktreeStore: worktreeStore
@@ -88,15 +80,21 @@ struct Sidebar: View {
         .help(shortcutTooltip("Add Project", for: .openProject))
     }
 
+    private var displayedProjects: [Project] {
+        projectGroupStore.filteredProjects(from: projectStore.projects)
+    }
+
     private var projectList: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 4) {
-                ForEach(Array(projectStore.projects.enumerated()), id: \.element.id) { index, project in
+            LazyVStack(spacing: UIMetrics.spacing3) {
+                WorkspaceSwitcher(isWide: isWide)
+
+                ForEach(Array(displayedProjects.enumerated()), id: \.element.id) { offset, project in
                     Group {
                         if isWide {
                             ExpandedProjectRow(
                                 project: project,
-                                shortcutIndex: index < 9 ? index + 1 : nil,
+                                shortcutIndex: offset < 9 ? offset + 1 : nil,
                                 isAnyDragging: dragState.draggedID != nil,
                                 onSelect: { select(project) },
                                 onRemove: { remove(project) },
@@ -107,7 +105,7 @@ struct Sidebar: View {
                         } else {
                             ProjectRow(
                                 project: project,
-                                shortcutIndex: index < 9 ? index + 1 : nil,
+                                shortcutIndex: offset < 9 ? offset + 1 : nil,
                                 isAnyDragging: dragState.draggedID != nil,
                                 onSelect: { select(project) },
                                 onRemove: { remove(project) },
@@ -129,10 +127,11 @@ struct Sidebar: View {
                     }
                     .gesture(projectDragGesture(for: project))
                 }
+
                 addButton
             }
-            .padding(.horizontal, isWide ? 6 : 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, isWide ? UIMetrics.spacing3 : UIMetrics.spacing4)
+            .padding(.vertical, UIMetrics.spacing2)
             .onPreferenceChange(UUIDFramePreferenceKey<SidebarFrameTag>.self) { frames in
                 guard dragState.draggedID != nil else { return }
                 dragState.frames = frames
@@ -239,40 +238,41 @@ private struct AddProjectButton: View {
 
     private var collapsedLayout: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
                 .fill(MuxyTheme.hover)
             Image(systemName: "plus")
-                .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
+                .font(.system(size: UIMetrics.fontEmphasis, weight: .bold))
                 .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
         }
-        .frame(width: 28, height: 28)
-        .padding(3)
+        .frame(width: UIMetrics.iconXXL, height: UIMetrics.iconXXL)
+        .padding(UIMetrics.scaled(3))
     }
 
     private var expandedLayout: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIMetrics.spacing4) {
             ZStack {
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
                     .fill(MuxyTheme.surface)
                 Image(systemName: "plus")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 13).weight(.bold))
+                    .font(.system(size: UIMetrics.fontEmphasis, weight: .bold))
                     .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
             }
-            .frame(width: 28, height: 28)
+            .frame(width: UIMetrics.iconXXL, height: UIMetrics.iconXXL)
 
             Text("Add Project")
-                .font(.custom("JetBrainsMono Nerd Font", size: 12).weight(.medium))
+                .font(.system(size: UIMetrics.fontBody, weight: .medium))
                 .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
                 .lineLimit(1)
             Spacer()
         }
-        .padding(4)
-        .background(hovered ? MuxyTheme.hover : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+        .padding(UIMetrics.spacing2)
+        .background(hovered ? MuxyTheme.hover : Color.clear, in: RoundedRectangle(cornerRadius: UIMetrics.radiusLG))
     }
 }
 
 struct SidebarFooter: View {
-    var expanded: Bool = false
+    var isWide = false
+    var sidebarExpanded = false
     @AppStorage(AIUsageSettingsStore.usageEnabledKey) private var usageEnabled = false
     @AppStorage(AIUsageSettingsStore.usageDisplayModeKey) private var usageDisplayModeRaw = AIUsageSettingsStore.defaultUsageDisplayMode
         .rawValue
@@ -292,7 +292,7 @@ struct SidebarFooter: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if expanded {
+            if isWide {
                 expandedFooter
             } else {
                 collapsedFooter
@@ -328,7 +328,7 @@ struct SidebarFooter: View {
     }
 
     private var sidebarToggleLabel: String {
-        expanded ? "Collapse Sidebar" : "Expand Sidebar"
+        sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"
     }
 
     private var sidebarToggleIcon: String {
@@ -366,7 +366,7 @@ struct SidebarFooter: View {
         AIUsagePreviewButton(
             display: previewProviderDisplay,
             percentLabel: previewProviderPercentLabel,
-            expanded: expanded,
+            expanded: isWide,
             onTap: { showAIUsagePopover.toggle() }
         )
         .popover(isPresented: $showAIUsagePopover) {
@@ -381,7 +381,7 @@ struct SidebarFooter: View {
     }
 
     private var collapsedFooter: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: UIMetrics.spacing2) {
             if usageEnabled {
                 aiUsageButton
             }
@@ -396,11 +396,11 @@ struct SidebarFooter: View {
             IconButton(symbol: sidebarToggleIcon, accessibilityLabel: sidebarToggleLabel) { postToggleSidebar() }
                 .help("\(sidebarToggleLabel) (\(KeyBindingStore.shared.combo(for: .toggleSidebar).displayString))")
         }
-        .padding(.bottom, 8)
+        .padding(.bottom, UIMetrics.spacing4)
     }
 
     private var expandedFooter: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: UIMetrics.spacing2) {
             IconButton(symbol: sidebarToggleIcon, accessibilityLabel: sidebarToggleLabel) { postToggleSidebar() }
                 .help("\(sidebarToggleLabel) (\(KeyBindingStore.shared.combo(for: .toggleSidebar).displayString))")
 
@@ -418,8 +418,8 @@ struct SidebarFooter: View {
                 .help("Theme Picker (\(KeyBindingStore.shared.combo(for: .toggleThemePicker).displayString))")
                 .popover(isPresented: $showThemePicker) { ThemePicker(mode: .sidebar) }
         }
-        .padding(.horizontal, 10)
-        .padding(.bottom, 8)
+        .padding(.horizontal, UIMetrics.spacing5)
+        .padding(.bottom, UIMetrics.spacing4)
     }
 }
 

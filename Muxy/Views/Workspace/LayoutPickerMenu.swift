@@ -22,6 +22,8 @@ struct LayoutPickerMenu: View {
                         RoundedRectangle(cornerRadius: 7, style: .continuous)
                             .fill(hovered ? Color.white.opacity(0.08) : Color.clear)
                     )
+                    .font(.system(size: UIMetrics.fontEmphasis, weight: .semibold))
+                    .frame(width: UIMetrics.controlMedium, height: UIMetrics.controlMedium)
                     .contentShape(Rectangle())
             }
             .menuStyle(.borderlessButton)

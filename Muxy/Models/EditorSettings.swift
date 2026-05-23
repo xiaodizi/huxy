@@ -31,6 +31,15 @@ final class EditorSettings {
     static let maxMarkdownPreviewFontScale: CGFloat = 2.5
     static let markdownPreviewBaseFontSize: CGFloat = 14
     static let markdownPreviewZoomStep: CGFloat = 0.1
+    static let defaultHTMLViewMode: EditorMarkdownViewMode = .code
+
+    static let defaultLineHeightMultiplier: CGFloat = 1.2
+    static let minLineHeightMultiplier: CGFloat = 1.1
+    static let maxLineHeightMultiplier: CGFloat = 2.0
+    static let lineHeightMultiplierStep: CGFloat = 0.1
+
+    static let defaultRichInputFontFamily = "SF Mono"
+    static let defaultRichInputLineHeightMultiplier: CGFloat = 1.2
 
     var fontSize: CGFloat = 13 { didSet { save() } }
     var fontFamily: String = "JetBrainsMono Nerd Font" { didSet { save() } }
@@ -38,19 +47,36 @@ final class EditorSettings {
     var externalEditorCommand: String = "vim" { didSet { save() } }
     var markdownPreviewFontFamily: String = EditorSettings.defaultMarkdownPreviewFontFamily { didSet { save() } }
     var markdownPreviewFontScale: CGFloat = EditorSettings.defaultMarkdownPreviewFontScale { didSet { save() } }
-    var showLineNumbers: Bool = true { didSet { save() } }
+    var htmlDefaultViewMode: EditorMarkdownViewMode = EditorSettings.defaultHTMLViewMode { didSet { save() } }
     var highlightCurrentLine: Bool = true { didSet { save() } }
     var lineWrapping: Bool = false { didSet { save() } }
+    var showLineNumbers: Bool = true { didSet { save() } }
+
+    var lineHeightMultiplier: CGFloat = EditorSettings.defaultLineHeightMultiplier {
+        didSet { save() }
+    }
+
+    var richInputFontFamily: String = EditorSettings.defaultRichInputFontFamily { didSet { save() } }
+    var richInputLineHeightMultiplier: CGFloat = EditorSettings.defaultRichInputLineHeightMultiplier {
+        didSet { save() }
+    }
+
+    var richInputImageStrategy: RichInputImageStrategy = .clipboard { didSet { save() } }
 
     @ObservationIgnored private let store: CodableFileStore<Snapshot>
     @ObservationIgnored private var isBatchLoading = false
 
     var resolvedFont: NSFont {
-        if let font = NSFont(name: fontFamily, size: fontSize) {
-            return font
+        if let cached = cachedResolvedFont, cached.fontName == fontFamily, cached.pointSize == fontSize {
+            return cached
         }
-        return NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+        let font = NSFont(name: fontFamily, size: fontSize)
+            ?? NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+        cachedResolvedFont = font
+        return font
     }
+
+    @ObservationIgnored private var cachedResolvedFont: NSFont?
 
     var resolvedMarkdownPreviewFontFamilyCSS: String {
         if markdownPreviewFontFamily == Self.systemFontFamilyToken {
@@ -74,12 +100,16 @@ final class EditorSettings {
         "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif"
 
     static var availableMarkdownPreviewFonts: [String] {
+        if let cached = cachedMarkdownPreviewFonts { return cached }
         let families = NSFontManager.shared.availableFontFamilies.sorted()
-        return [systemFontFamilyToken] + families
+        let result = [systemFontFamilyToken] + families
+        cachedMarkdownPreviewFonts = result
+        return result
     }
 
     static var availableMonospacedFonts: [String] {
-        NSFontManager.shared
+        if let cached = cachedMonospacedFonts { return cached }
+        let result = NSFontManager.shared
             .availableFontFamilies
             .filter { family in
                 guard let font = NSFont(name: family, size: 13) else { return false }
@@ -89,7 +119,12 @@ final class EditorSettings {
                     || family.localizedCaseInsensitiveContains("consolas")
             }
             .sorted()
+        cachedMonospacedFonts = result
+        return result
     }
+
+    private static var cachedMarkdownPreviewFonts: [String]?
+    private static var cachedMonospacedFonts: [String]?
 
     private init() {
         store = CodableFileStore(
@@ -111,9 +146,14 @@ final class EditorSettings {
         externalEditorCommand = "vim"
         markdownPreviewFontFamily = Self.defaultMarkdownPreviewFontFamily
         markdownPreviewFontScale = Self.defaultMarkdownPreviewFontScale
-        showLineNumbers = true
+        htmlDefaultViewMode = Self.defaultHTMLViewMode
         highlightCurrentLine = true
         lineWrapping = false
+        showLineNumbers = true
+        lineHeightMultiplier = Self.defaultLineHeightMultiplier
+        richInputFontFamily = Self.defaultRichInputFontFamily
+        richInputLineHeightMultiplier = Self.defaultRichInputLineHeightMultiplier
+        richInputImageStrategy = .clipboard
         isBatchLoading = false
         save()
     }
@@ -127,14 +167,28 @@ final class EditorSettings {
             defaultEditor = snapshot.defaultEditor ?? snapshot.quickOpenEditor ?? .builtIn
             externalEditorCommand = snapshot.externalEditorCommand ?? "vim"
             markdownPreviewFontFamily = snapshot.markdownPreviewFontFamily ?? Self.defaultMarkdownPreviewFontFamily
+            htmlDefaultViewMode = snapshot.htmlDefaultViewMode ?? Self.defaultHTMLViewMode
             let loadedScale = snapshot.markdownPreviewFontScale ?? Self.defaultMarkdownPreviewFontScale
             markdownPreviewFontScale = min(
                 max(loadedScale, Self.minMarkdownPreviewFontScale),
                 Self.maxMarkdownPreviewFontScale
             )
-            showLineNumbers = snapshot.showLineNumbers ?? true
             highlightCurrentLine = snapshot.highlightCurrentLine ?? true
             lineWrapping = snapshot.lineWrapping ?? false
+            showLineNumbers = snapshot.showLineNumbers ?? true
+            let loadedMultiplier = snapshot.lineHeightMultiplier ?? Self.defaultLineHeightMultiplier
+            lineHeightMultiplier = min(
+                max(loadedMultiplier, Self.minLineHeightMultiplier),
+                Self.maxLineHeightMultiplier
+            )
+            richInputFontFamily = snapshot.richInputFontFamily ?? Self.defaultRichInputFontFamily
+            let loadedRichInputMultiplier = snapshot.richInputLineHeightMultiplier
+                ?? Self.defaultRichInputLineHeightMultiplier
+            richInputLineHeightMultiplier = min(
+                max(loadedRichInputMultiplier, Self.minLineHeightMultiplier),
+                Self.maxLineHeightMultiplier
+            )
+            richInputImageStrategy = snapshot.richInputImageStrategy ?? .clipboard
             isBatchLoading = false
         } catch {
             logger.error("Failed to load editor settings: \(error.localizedDescription)")
@@ -152,10 +206,16 @@ final class EditorSettings {
                 externalEditorCommand: externalEditorCommand,
                 markdownPreviewFontFamily: markdownPreviewFontFamily,
                 markdownPreviewFontScale: markdownPreviewFontScale,
-                showLineNumbers: showLineNumbers,
+                htmlDefaultViewMode: htmlDefaultViewMode,
                 highlightCurrentLine: highlightCurrentLine,
-                lineWrapping: lineWrapping
+                lineWrapping: lineWrapping,
+                showLineNumbers: showLineNumbers,
+                lineHeightMultiplier: lineHeightMultiplier,
+                richInputFontFamily: richInputFontFamily,
+                richInputLineHeightMultiplier: richInputLineHeightMultiplier,
+                richInputImageStrategy: richInputImageStrategy
             ))
+            SettingsJSONStore.syncUserSettingsFileWithCurrentSettings()
         } catch {
             logger.error("Failed to save editor settings: \(error.localizedDescription)")
         }
@@ -170,7 +230,12 @@ private struct Snapshot: Codable {
     let externalEditorCommand: String?
     let markdownPreviewFontFamily: String?
     let markdownPreviewFontScale: CGFloat?
-    let showLineNumbers: Bool?
+    let htmlDefaultViewMode: EditorMarkdownViewMode?
     let highlightCurrentLine: Bool?
     let lineWrapping: Bool?
+    let showLineNumbers: Bool?
+    let lineHeightMultiplier: CGFloat?
+    let richInputFontFamily: String?
+    let richInputLineHeightMultiplier: CGFloat?
+    let richInputImageStrategy: RichInputImageStrategy?
 }

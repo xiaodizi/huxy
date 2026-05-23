@@ -28,6 +28,25 @@ struct EmptyProjectPlaceholder: View {
                             .font(.custom("JetBrainsMono Nerd Font", size: 11).weight(.medium))
                             .opacity(0.72)
                     }
+        VStack(spacing: UIMetrics.spacing7) {
+            Spacer()
+            Image(systemName: "macwindow.badge.plus")
+                .font(.system(size: UIMetrics.fontMega))
+                .foregroundStyle(MuxyTheme.fgMuted)
+            Text("No tabs in \(project.name)")
+                .font(.system(size: UIMetrics.fontHeadline, weight: .semibold))
+                .foregroundStyle(MuxyTheme.fg)
+            Text("Open a new terminal tab to start working in this project.")
+                .font(.system(size: UIMetrics.fontBody))
+                .foregroundStyle(MuxyTheme.fgMuted)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: UIMetrics.scaled(360))
+            Button(action: onCreateTab) {
+                HStack(spacing: UIMetrics.spacing4) {
+                    Text("New Tab")
+                    Text(KeyBindingStore.shared.combo(for: .newTab).displayString)
+                        .font(.system(size: UIMetrics.fontFootnote, weight: .medium, design: .rounded))
+                        .opacity(0.72)
                 }
                 .buttonStyle(.borderedProminent)
                 Spacer()

@@ -1,12 +1,15 @@
+import AppKit
 import SwiftUI
 
 struct EditorPane: View {
     @Bindable var state: EditorTabState
     let focused: Bool
     let onFocus: () -> Void
+    @Environment(AppState.self) private var appState
     @Environment(GhosttyService.self) private var ghostty
     @State private var editorSettings = EditorSettings.shared
     @FocusState private var markdownPreviewFocused: Bool
+    @FocusState private var htmlPreviewFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -33,6 +36,9 @@ struct EditorPane: View {
             if state.isMarkdownFile, state.markdownViewMode == .preview {
                 state.markdownViewMode = .code
             }
+            if state.usesHTMLPreview, state.htmlViewMode == .preview {
+                state.htmlViewMode = .code
+            }
             if !state.currentSelection.isEmpty {
                 state.searchNeedle = state.currentSelection
             }
@@ -46,22 +52,22 @@ struct EditorPane: View {
             editorMainContent
 
             if state.isIncrementalLoading {
-                HStack(spacing: 6) {
+                HStack(spacing: UIMetrics.spacing3) {
                     ProgressView().controlSize(.mini)
                     Text("Loading full file...")
-                        .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                        .font(.system(size: UIMetrics.fontFootnote))
                         .foregroundStyle(MuxyTheme.fgMuted)
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
+                .padding(.horizontal, UIMetrics.spacing4)
+                .padding(.vertical, UIMetrics.spacing3)
                 .background(MuxyTheme.bg.opacity(0.92))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
                         .stroke(MuxyTheme.border, lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .padding(.top, 6)
-                .padding(.trailing, state.searchVisible && showsCodeEditor ? 260 : 8)
+                .clipShape(RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
+                .padding(.top, UIMetrics.spacing3)
+                .padding(.trailing, state.searchVisible && showsCodeEditor ? UIMetrics.scaled(260) : UIMetrics.spacing4)
             }
 
             if state.searchVisible, showsCodeEditor {
@@ -102,9 +108,39 @@ struct EditorPane: View {
                     markdownPreviewContainer
                 }
             }
+        } else if state.usesHTMLPreview {
+            switch state.htmlViewMode {
+            case .code:
+                codeEditorContainer
+            case .preview:
+                htmlPreviewContainer
+            case .split:
+                HSplitView {
+                    codeEditorContainer
+                    htmlPreviewContainer
+                }
+            }
         } else {
             codeEditorContainer
         }
+    }
+
+    private var htmlPreviewContainer: some View {
+        HTMLPreviewWebView(filePath: state.filePath, backgroundColor: EditorThemePalette.active.background)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .focusable(focused)
+            .focusEffectDisabled()
+            .focused($htmlPreviewFocused)
+            .onKeyPress(keys: ["e", "E"]) { press in
+                guard state.usesHTMLPreview, state.htmlViewMode == .preview else { return .ignored }
+                let disallowed: EventModifiers = [.command, .control, .option]
+                guard press.modifiers.isDisjoint(with: disallowed) else { return .ignored }
+                state.htmlViewMode = press.modifiers.contains(.shift) ? .split : .code
+                return .handled
+            }
+            .onAppear { acquireHTMLPreviewFocusIfNeeded() }
+            .onChange(of: focused) { _, _ in acquireHTMLPreviewFocusIfNeeded() }
+            .onChange(of: state.htmlViewMode) { _, _ in acquireHTMLPreviewFocusIfNeeded() }
     }
 
     private var codeEditorContainer: some View {
@@ -140,9 +176,12 @@ struct EditorPane: View {
                     html: renderedMarkdownHTML,
                     content: renderedMarkdownContent,
                     filePath: state.filePath,
+                    projectPath: state.projectPath,
                     palette: markdownPalette,
                     syncScrollRequest: $state.markdownPreviewScrollRequest,
                     syncScrollRequestVersion: state.markdownPreviewScrollRequestVersion,
+                    fragmentTarget: state.markdownFragmentTarget,
+                    fragmentRequestVersion: state.markdownFragmentRequestVersion,
                     scrollSyncEnabled: usesMarkdownAnchorSync,
                     onScrollReport: { report in
                         state.markdownPreviewMaxScrollTop = report.maxScrollTop
@@ -158,7 +197,12 @@ struct EditorPane: View {
                     },
                     onAnchorGeometryChanged: { geometries in
                         state.markdownPreviewGeometries = geometries
-                    }
+                    },
+                    onOpenInternalLink: { path, fragment in
+                        guard let projectID = appState.activeProjectID else { return }
+                        appState.openMarkdownLinkTarget(path, projectID: projectID, fragment: fragment)
+                    },
+                    onReloadFromDisk: { reloadMarkdownFromDisk() }
                 )
             }
         }
@@ -166,7 +210,7 @@ struct EditorPane: View {
         .focusable(focused)
         .focusEffectDisabled()
         .focused($markdownPreviewFocused)
-        .onKeyPress(keys: ["e"]) { press in
+        .onKeyPress(keys: ["e", "E"]) { press in
             guard state.markdownViewMode == .preview else { return .ignored }
             let disallowed: EventModifiers = [.command, .control, .option]
             guard press.modifiers.isDisjoint(with: disallowed) else { return .ignored }
@@ -178,6 +222,30 @@ struct EditorPane: View {
         .onChange(of: state.markdownViewMode) { _, _ in acquireMarkdownPreviewFocusIfNeeded() }
     }
 
+    private func reloadMarkdownFromDisk() {
+        guard state.isModified, !state.hasExternalChange else {
+            state.reloadFromDisk()
+            return
+        }
+        guard let window = NSApp.keyWindow ?? NSApp.mainWindow else {
+            state.reloadFromDisk()
+            return
+        }
+        let alert = NSAlert()
+        alert.messageText = "Discard Unsaved Changes?"
+        alert.informativeText = "Reloading \(state.fileName) from disk will discard your unsaved changes."
+        alert.alertStyle = .warning
+        alert.icon = NSApp.applicationIconImage
+        alert.addButton(withTitle: "Reload from Disk")
+        alert.addButton(withTitle: "Cancel")
+        alert.buttons[0].keyEquivalent = "\r"
+        alert.buttons[1].keyEquivalent = "\u{1b}"
+        alert.beginSheetModal(for: window) { response in
+            guard response == .alertFirstButtonReturn else { return }
+            state.reloadFromDisk()
+        }
+    }
+
     private func acquireMarkdownPreviewFocusIfNeeded() {
         guard focused, state.isMarkdownFile, state.markdownViewMode == .preview else { return }
         if state.suppressInitialFocus {
@@ -185,6 +253,15 @@ struct EditorPane: View {
             return
         }
         markdownPreviewFocused = true
+    }
+
+    private func acquireHTMLPreviewFocusIfNeeded() {
+        guard focused, state.usesHTMLPreview, state.htmlViewMode == .preview else { return }
+        if state.suppressInitialFocus {
+            state.suppressInitialFocus = false
+            return
+        }
+        htmlPreviewFocused = true
     }
 
     private var renderedMarkdownContent: String {
@@ -216,27 +293,29 @@ struct EditorPane: View {
     }
 
     private var markdownPreviewLoadingView: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: UIMetrics.spacing5) {
             ProgressView()
                 .controlSize(.small)
             Text("Loading full markdown preview...")
-                .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody))
                 .foregroundStyle(MuxyTheme.fgMuted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var showsCodeEditor: Bool {
-        !state.isMarkdownFile || state.markdownViewMode != .preview
+        if state.isMarkdownFile { return state.markdownViewMode != .preview }
+        if state.usesHTMLPreview { return state.htmlViewMode != .preview }
+        return true
     }
 
     private var externalChangeBanner: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIMetrics.spacing4) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                .font(.system(size: UIMetrics.fontFootnote))
                 .foregroundStyle(MuxyTheme.diffHunkFg)
             Text("This file changed on disk. You have unsaved changes.")
-                .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                .font(.system(size: UIMetrics.fontFootnote))
                 .foregroundStyle(MuxyTheme.fg)
             Spacer()
             Button("Reload from Disk") {
@@ -248,8 +327,8 @@ struct EditorPane: View {
             }
             .controlSize(.small)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, UIMetrics.spacing5)
+        .padding(.vertical, UIMetrics.spacing3)
         .background(MuxyTheme.surface)
     }
 
@@ -262,20 +341,20 @@ struct EditorPane: View {
     }
 
     private var largeFileConfirmation: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIMetrics.spacing7) {
             Spacer()
             Image(systemName: "exclamationmark.triangle")
-                .font(.custom("JetBrainsMono Nerd Font", size: 28))
+                .font(.system(size: UIMetrics.fontMega))
                 .foregroundStyle(MuxyTheme.fgMuted)
             Text("Large File")
-                .font(.custom("JetBrainsMono Nerd Font", size: 14).weight(.semibold))
+                .font(.system(size: UIMetrics.fontHeadline, weight: .semibold))
                 .foregroundStyle(MuxyTheme.fg)
             Text("This file is \(formattedLargeFileSize). Large files may slow down the editor.")
-                .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 360)
-            HStack(spacing: 8) {
+            HStack(spacing: UIMetrics.spacing4) {
                 Button("Cancel") {
                     state.cancelLargeFileOpen()
                 }
@@ -301,7 +380,7 @@ struct EditorPane: View {
         VStack {
             Spacer()
             Text(error)
-                .font(.custom("JetBrainsMono Nerd Font", size: 12))
+                .font(.system(size: UIMetrics.fontBody))
                 .foregroundStyle(MuxyTheme.diffRemoveFg)
             Spacer()
         }
@@ -310,32 +389,39 @@ struct EditorPane: View {
 
 private struct EditorMarkdownModePicker: View {
     @Binding var mode: EditorMarkdownViewMode
-    @Binding var scrollSyncEnabled: Bool
+    var scrollSyncEnabled: Binding<Bool>?
+    let fileTypeLabel: String
+    var supportsKeyboardShortcut = true
 
     var body: some View {
-        HStack(spacing: 2) {
-            if mode == .split {
+        HStack(spacing: UIMetrics.spacing1) {
+            if mode == .split, let scrollSyncEnabled {
                 Button {
-                    scrollSyncEnabled.toggle()
+                    scrollSyncEnabled.wrappedValue.toggle()
                 } label: {
                     Image(systemName: "arrow.up.and.down")
                         .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                         .foregroundStyle(scrollSyncEnabled ? MuxyTheme.accent : MuxyTheme.fg)
                         .frame(width: 22, height: 20)
+                        .font(.system(size: UIMetrics.fontCaption, weight: .medium))
+                        .foregroundStyle(scrollSyncEnabled.wrappedValue ? MuxyTheme.accent : MuxyTheme.fg)
+                        .frame(width: UIMetrics.scaled(22), height: UIMetrics.controlSmall)
                         .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(scrollSyncEnabled ? MuxyTheme.surface : Color.clear)
+                            RoundedRectangle(cornerRadius: UIMetrics.radiusSM)
+                                .fill(scrollSyncEnabled.wrappedValue ? MuxyTheme.surface : Color.clear)
                         )
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .help(scrollSyncEnabled ? "Disable Scroll Sync" : "Enable Scroll Sync")
-                .accessibilityLabel(scrollSyncEnabled ? "Disable Markdown Scroll Sync" : "Enable Markdown Scroll Sync")
+                .help(scrollSyncEnabled.wrappedValue ? "Disable Scroll Sync" : "Enable Scroll Sync")
+                .accessibilityLabel(
+                    scrollSyncEnabled.wrappedValue ? "Disable Markdown Scroll Sync" : "Enable Markdown Scroll Sync"
+                )
 
                 Rectangle()
                     .fill(MuxyTheme.border)
-                    .frame(width: 1, height: 14)
-                    .padding(.horizontal, 2)
+                    .frame(width: 1, height: UIMetrics.scaled(14))
+                    .padding(.horizontal, UIMetrics.spacing1)
             }
             ForEach(EditorMarkdownViewMode.allCases, id: \.self) { candidate in
                 Button {
@@ -344,27 +430,31 @@ private struct EditorMarkdownModePicker: View {
                     Image(systemName: candidate.symbol)
                         .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.medium))
                         .frame(width: 22, height: 20)
+                        .font(.system(size: UIMetrics.fontCaption, weight: .medium))
+                        .frame(width: UIMetrics.scaled(22), height: UIMetrics.controlSmall)
                         .background(
-                            RoundedRectangle(cornerRadius: 4)
+                            RoundedRectangle(cornerRadius: UIMetrics.radiusSM)
                                 .fill(mode == candidate ? MuxyTheme.surface : Color.clear)
                         )
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .help(helpText(for: candidate, currentMode: mode))
-                .accessibilityLabel("Markdown \(candidate.title) View")
+                .accessibilityLabel("\(fileTypeLabel) \(candidate.title) View")
             }
         }
         .padding(2)
+        .padding(UIMetrics.spacing1)
+        .background(MuxyTheme.bg)
         .overlay(
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: UIMetrics.radiusMD)
                 .stroke(MuxyTheme.border, lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: UIMetrics.radiusMD))
     }
 
     private func helpText(for candidate: EditorMarkdownViewMode, currentMode: EditorMarkdownViewMode) -> String {
-        guard currentMode == .preview else { return candidate.title }
+        guard supportsKeyboardShortcut, currentMode == .preview else { return candidate.title }
         switch candidate {
         case .code: return "\(candidate.title) (E)"
         case .split: return "\(candidate.title) (⇧E)"
@@ -386,12 +476,12 @@ private struct EditorBreadcrumb: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: UIMetrics.spacing2) {
             Image(systemName: "doc.text")
-                .font(.custom("JetBrainsMono Nerd Font", size: 10))
+                .font(.system(size: UIMetrics.fontCaption))
                 .foregroundStyle(MuxyTheme.fgDim)
             Text(relativePath)
-                .font(.custom("JetBrainsMono Nerd Font", size: 11))
+                .font(.system(size: UIMetrics.fontFootnote))
                 .foregroundStyle(MuxyTheme.fgMuted)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -399,27 +489,37 @@ private struct EditorBreadcrumb: View {
             if state.isModified {
                 Circle()
                     .fill(MuxyTheme.fg)
-                    .frame(width: 6, height: 6)
+                    .frame(width: UIMetrics.scaled(6), height: UIMetrics.scaled(6))
             }
             if state.isReadOnly {
                 Label("Read-only", systemImage: "lock.fill")
-                    .font(.custom("JetBrainsMono Nerd Font", size: 10).weight(.semibold))
+                    .font(.system(size: UIMetrics.fontCaption, weight: .semibold))
                     .foregroundStyle(MuxyTheme.diffHunkFg)
             }
             Spacer()
             if state.isMarkdownFile {
                 EditorMarkdownModePicker(
                     mode: $state.markdownViewMode,
-                    scrollSyncEnabled: $state.markdownScrollSyncEnabled
+                    scrollSyncEnabled: $state.markdownScrollSyncEnabled,
+                    fileTypeLabel: "Markdown"
                 )
-                .padding(.trailing, 6)
+                .padding(.trailing, UIMetrics.spacing3)
+            } else if state.usesHTMLPreview {
+                EditorMarkdownModePicker(
+                    mode: $state.htmlViewMode,
+                    scrollSyncEnabled: nil,
+                    fileTypeLabel: state.isSVGFile ? "SVG" : "HTML",
+                    supportsKeyboardShortcut: true
+                )
+                .padding(.trailing, UIMetrics.spacing3)
             }
             Text("Ln \(state.cursorLine), Col \(state.cursorColumn)")
-                .font(.custom("JetBrainsMono Nerd Font", size: 10))
+                .font(.system(size: UIMetrics.fontCaption, design: .monospaced))
                 .foregroundStyle(MuxyTheme.fgDim)
         }
-        .padding(.horizontal, 10)
-        .frame(height: 32)
+        .padding(.horizontal, UIMetrics.spacing5)
+        .frame(height: UIMetrics.scaled(32))
+        .background(MuxyTheme.bg)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(breadcrumbAccessibilityLabel)
     }

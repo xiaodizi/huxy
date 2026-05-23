@@ -10,6 +10,7 @@ flowchart TB
   Add --> Tabs[Open tabs / splits]
   Tabs --> Worktree[Switch worktree<br/>⌘⇧O]
   Tabs --> VCS[Source Control<br/>⌘K]
+  Tabs --> Rich[Rich Input<br/>⌘I]
 ```
 
 ## Requirements
@@ -37,8 +38,10 @@ Projects persist in `~/Library/Application Support/Muxy/projects.json`.
 | Action | Shortcut |
 | --- | --- |
 | New tab | `⌘T` |
+| Rich input | `⌘I` |
 | Split right / down | `⌘D` / `⌘⇧D` |
 | Focus pane | `⌘⌥←/→/↑/↓` |
+| Maximize pane | `⌘⌥↩` |
 | Close pane / tab | `⌘⇧W` / `⌘W` |
 | Switch tabs | `⌘1…9`, `⌘]` / `⌘[` |
 
@@ -60,5 +63,5 @@ Muxy renders terminals through libghostty. Edit `~/.config/ghostty/config` from 
 ## Next steps
 
 - [Keyboard Shortcuts](keyboard-shortcuts.md)
-- [Layouts](../features/layouts/README.md) — reproducible per-project workspaces
+- [Layouts](../layouts/overview.md) — reproducible per-project workspaces
 - [Settings](settings.md) — every preference explained

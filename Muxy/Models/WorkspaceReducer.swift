@@ -12,8 +12,14 @@ struct WorkspaceState {
 
 @MainActor
 struct WorkspaceSideEffects {
+    struct DeferredAreaCollapse {
+        let key: WorktreeKey
+        let areaID: UUID
+    }
+
     var paneIDsToRemove: [UUID] = []
     var projectIDsToRemove: [UUID] = []
+    var deferredAreaCollapses: [DeferredAreaCollapse] = []
 }
 
 @MainActor
@@ -120,6 +126,22 @@ enum WorkspaceReducer {
                 state: &state
             )
 
+        case let .createImageViewerTab(projectID, areaID, filePath):
+            TabReducer.createImageViewerTab(
+                projectID: projectID,
+                areaID: areaID,
+                filePath: filePath,
+                state: &state
+            )
+
+        case let .restoreClosedTerminalTab(projectID, areaID, snapshot):
+            TabReducer.restoreClosedTerminalTab(
+                projectID: projectID,
+                areaID: areaID,
+                snapshot: snapshot,
+                state: &state
+            )
+
         case let .closeTab(projectID, areaID, tabID):
             guard let key = WorkspaceReducerShared.activeKey(projectID: projectID, state: state) else { break }
             TabReducer.closeTab(tabID, areaID: areaID, key: key, state: &state, effects: &effects)
@@ -127,8 +149,8 @@ enum WorkspaceReducer {
         case let .selectTab(projectID, areaID, tabID):
             TabReducer.selectTab(projectID: projectID, areaID: areaID, tabID: tabID, state: &state)
 
-        case let .selectTabByIndex(projectID, areaID, index):
-            TabReducer.selectTabByIndex(projectID: projectID, areaID: areaID, index: index, state: &state)
+        case let .selectTabByIndex(projectID, index):
+            TabReducer.selectTabByIndex(projectID: projectID, index: index, state: &state)
 
         case let .selectNextTab(projectID):
             TabReducer.selectNextTab(projectID: projectID, state: state)
@@ -161,6 +183,12 @@ enum WorkspaceReducer {
 
         case let .focusPaneDown(projectID):
             FocusReducer.focusPane(projectID: projectID, direction: .down, state: &state)
+
+        case let .cycleNextTabAcrossPanes(projectID):
+            FocusReducer.cycleTabAcrossPanes(projectID: projectID, forward: true, state: &state)
+
+        case let .cyclePreviousTabAcrossPanes(projectID):
+            FocusReducer.cycleTabAcrossPanes(projectID: projectID, forward: false, state: &state)
 
         case let .applyLayout(projectID, worktreePath, config):
             applyLayout(

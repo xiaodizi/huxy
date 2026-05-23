@@ -129,6 +129,8 @@ jobs:
           echo "public_key=$SPARKLE_PUBLIC_KEY" >> "$GITHUB_OUTPUT"
 
       - name: Build and package
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           chmod +x scripts/build-release.sh scripts/create-icns.sh
           scripts/build-release.sh \
@@ -137,6 +139,20 @@ jobs:
             --sign-identity "${{ steps.identity.outputs.name }}" \
             --sparkle-public-key "${{ steps.sparkle.outputs.public_key }}" \
             --sparkle-feed-url "https://github.com/muxy-app/muxy/releases/latest/download/appcast-${{ matrix.arch }}.xml"
+
+      - name: Upload dSYM to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          if [[ -z "${SENTRY_AUTH_TOKEN:-}" ]]; then
+            echo "SENTRY_AUTH_TOKEN is not set; skipping Sentry dSYM upload"
+            exit 0
+          fi
+          npm install --global @sentry/cli
+          sentry-cli debug-files upload \
+            --org muxy-4d \
+            --project muxy-desktop \
+            "build/Muxy-${{ needs.validate.outputs.version }}-${{ matrix.arch }}.app.dSYM"
 
       - name: Notarize DMG
         env:
@@ -167,7 +183,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dmg-${{ matrix.arch }}
-          path: build/Muxy-${{ needs.validate.outputs.version }}-${{ matrix.arch }}.dmg
+          path: |
+            build/Muxy-${{ needs.validate.outputs.version }}-${{ matrix.arch }}.dmg
+            build/Muxy-${{ needs.validate.outputs.version }}-${{ matrix.arch }}.app.dSYM
 
   release:
     needs: [validate, build]
@@ -179,7 +197,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ inputs.from_beta_tag }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_RELEASE_PAT }}
 
       - name: Resolve Sparkle dependency
         run: swift package resolve
@@ -226,19 +244,49 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ needs.validate.outputs.version }}
         run: |
-          gh release create "v${{ needs.validate.outputs.version }}" \
-            --repo "${{ github.repository }}" \
-            --title "Muxy v${{ needs.validate.outputs.version }}" \
-            --draft \
-            --generate-notes \
-            artifacts/dmg-arm64/*.dmg \
-            artifacts/dmg-x86_64/*.dmg \
-            appcast-arm64.xml \
-            appcast-x86_64.xml \
-            appcast.xml
+          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              --repo "${{ github.repository }}" \
+              --clobber \
+              artifacts/dmg-arm64/*.dmg \
+              artifacts/dmg-x86_64/*.dmg \
+              appcast-arm64.xml \
+              appcast-x86_64.xml \
+              appcast.xml
+          else
+            gh release create "$TAG" \
+              --repo "${{ github.repository }}" \
+              --title "Muxy $TAG" \
+              --generate-notes \
+              artifacts/dmg-arm64/*.dmg \
+              artifacts/dmg-x86_64/*.dmg \
+              appcast-arm64.xml \
+              appcast-x86_64.xml \
+              appcast.xml
+          fi
+
+      - name: Bump BETA_VERSION
+        env:
+          NEXT: ${{ needs.validate.outputs.next_beta_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull --rebase origin main
+          echo "$NEXT" > BETA_VERSION
+          git add BETA_VERSION
+          if git diff --cached --quiet; then
+            echo "BETA_VERSION already at $NEXT, nothing to commit"
+            exit 0
+          fi
+          git commit -m "Bump BETA_VERSION to $NEXT"
+          git push origin main
 
       - name: Notify Discord
+        continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -251,7 +299,7 @@ jobs:
           fi
           TAG="v${VERSION}"
           NOTES=$(gh release view "$TAG" --repo "$REPO" --json body --jq .body \
-            | sed -E 's# in https://github\.com/[^ ]+/pull/[0-9]+##g')
+            | sed -E 's# by @[A-Za-z0-9_-]+ in https://github\.com/[^ ]+/pull/[0-9]+##g')
           if [[ ${#NOTES} -gt 3800 ]]; then
             NOTES="${NOTES:0:3800}…"
           fi
@@ -272,28 +320,10 @@ jobs:
                 timestamp: (now | todate)
               }]
             }')
-          curl -fsSL -H "Content-Type: application/json" \
-            -X POST -d "$PAYLOAD" "$DISCORD_WEBHOOK_URL"
-
-      - name: Bump BETA_VERSION
-        env:
-          NEXT: ${{ needs.validate.outputs.next_beta_version }}
-          GH_RELEASE_PAT: ${{ secrets.GH_RELEASE_PAT }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GH_RELEASE_PAT}@github.com/${{ github.repository }}.git"
-          git fetch origin main
-          git checkout main
-          git pull --rebase origin main
-          echo "$NEXT" > BETA_VERSION
-          git add BETA_VERSION
-          if git diff --cached --quiet; then
-            echo "BETA_VERSION already at $NEXT, nothing to commit"
-            exit 0
+          if ! curl -fsSL -H "Content-Type: application/json" \
+            -X POST -d "$PAYLOAD" "$DISCORD_WEBHOOK_URL"; then
+            echo "Discord notification failed; release succeeded regardless"
           fi
-          git commit -m "Bump BETA_VERSION to $NEXT"
-          git push origin main
 
   update-homebrew-tap:
     needs: [validate, release]

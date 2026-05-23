@@ -17,6 +17,20 @@ final class TabArea: Identifiable {
         activeTabID = tab.id
     }
 
+    init(projectPath: String, command: String?) {
+        id = UUID()
+        self.projectPath = projectPath
+        let wrappedCommand = command.map { "(\($0)); exec \"$0\" -l" }
+        let pane = TerminalPaneState(
+            projectPath: projectPath,
+            startupCommand: wrappedCommand,
+            startupCommandInteractive: wrappedCommand != nil
+        )
+        let tab = TerminalTab(pane: pane)
+        tabs.append(tab)
+        activeTabID = tab.id
+    }
+
     init(projectPath: String, existingTab tab: TerminalTab) {
         id = UUID()
         self.projectPath = projectPath
@@ -24,10 +38,15 @@ final class TabArea: Identifiable {
         activeTabID = tab.id
     }
 
-    init(restoring snapshot: TabAreaSnapshot) {
+    init(restoring snapshot: TabAreaSnapshot, sessionsByPaneID: [UUID: TerminalSessionSnapshot] = [:]) {
         id = snapshot.id
         projectPath = snapshot.projectPath
-        tabs = snapshot.tabs.map { TerminalTab(restoring: $0) }
+        tabs = snapshot.tabs.map { tabSnapshot in
+            TerminalTab(
+                restoring: tabSnapshot,
+                restoredSession: tabSnapshot.paneID.flatMap { sessionsByPaneID[$0] }
+            )
+        }
         if let index = snapshot.activeTabIndex, index >= 0, index < tabs.count {
             activeTabID = tabs[index].id
         } else {
@@ -76,8 +95,24 @@ final class TabArea: Identifiable {
         insertTab(TerminalTab(pane: pane))
     }
 
+    func restoreClosedTerminalTab(_ snapshot: ClosedTerminalTabSnapshot) {
+        let command = snapshot.commandToRestore
+        let safeCommand = command.flatMap { TerminalSessionRestorePolicy.isSafeToRestore($0) ? $0 : nil }
+        let pane = TerminalPaneState(
+            projectPath: snapshot.projectPath,
+            title: snapshot.title,
+            initialWorkingDirectory: snapshot.workingDirectory,
+            startupCommand: safeCommand,
+            startupCommandInteractive: safeCommand != nil
+        )
+        let tab = TerminalTab(pane: pane)
+        tab.customTitle = snapshot.customTitle
+        tab.colorID = snapshot.colorID
+        insertTab(tab)
+    }
+
     func createVCSTab() {
-        insertTab(TerminalTab(vcsState: VCSTabState(projectPath: projectPath)))
+        insertTab(TerminalTab(vcsState: VCSStateStore.shared.state(for: projectPath)))
     }
 
     func createEditorTab(filePath: String, suppressInitialFocus: Bool = false) {
@@ -85,7 +120,11 @@ final class TabArea: Identifiable {
             selectTab(existing.id)
             return
         }
-        let editorState = EditorTabState(projectPath: projectPath, filePath: filePath)
+        let editorState = EditorTabState(
+            projectPath: projectPath,
+            filePath: filePath,
+            defaultHTMLViewMode: EditorSettings.shared.htmlDefaultViewMode
+        )
         editorState.suppressInitialFocus = suppressInitialFocus
         insertTab(TerminalTab(editorState: editorState))
     }
@@ -105,6 +144,17 @@ final class TabArea: Identifiable {
         )))
     }
 
+    func createImageViewerTab(filePath: String) {
+        if let existing = tabs.first(where: { $0.content.imageViewerState?.filePath == filePath }) {
+            selectTab(existing.id)
+            return
+        }
+        insertTab(TerminalTab(imageViewerState: ImageViewerTabState(
+            projectPath: projectPath,
+            filePath: filePath
+        )))
+    }
+
     func createExternalEditorTab(filePath: String, command: String) {
         if let existing = tabs.first(where: { $0.content.pane?.externalEditorFilePath == filePath }) {
             selectTab(existing.id)
@@ -115,6 +165,7 @@ final class TabArea: Identifiable {
             projectPath: projectPath,
             title: title,
             startupCommand: Self.editorLaunchCommand(command: command, filePath: filePath),
+            startupCommandInteractive: true,
             externalEditorFilePath: filePath
         )
         insertTab(TerminalTab(pane: pane))

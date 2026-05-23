@@ -22,7 +22,19 @@ final class FileTreeState {
         let token: UUID
     }
 
-    let rootPath: String
+    private static let builtInNoiseNames: Set<String> = [
+        "node_modules",
+        "package-lock.json",
+        "yarn.lock",
+        "pnpm-lock.yaml",
+        "bun.lockb",
+        "Cargo.lock",
+        "Package.resolved",
+    ]
+
+    private static let hideIgnoredFilesDefaultsKey = "muxy.fileTreeHideIgnoredFiles"
+
+    private(set) var rootPath: String
     private(set) var rootEntries: [FileTreeEntry] = []
     private(set) var children: [String: [FileTreeEntry]] = [:]
     private(set) var expanded: Set<String> = []
@@ -31,6 +43,12 @@ final class FileTreeState {
     private(set) var statuses: [String: FileStatus] = [:]
     private(set) var dirHasChange: Set<String> = []
     var showOnlyChanges = false
+    var hideIgnoredFiles: Bool {
+        didSet {
+            defaults.set(hideIgnoredFiles, forKey: Self.hideIgnoredFilesDefaultsKey)
+        }
+    }
+
     var selectedFilePath: String?
     var selectedPaths: Set<String> = []
     var selectionAnchorPath: String?
@@ -39,14 +57,18 @@ final class FileTreeState {
     var pendingDeletePaths: [String] = []
     var cutPaths: Set<String> = []
     var dropHighlightPath: String?
+    private(set) var pendingScrollTarget: String?
 
+    @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var watcher: FileSystemWatcher?
     @ObservationIgnored nonisolated(unsafe) private var remoteChangeObserver: NSObjectProtocol?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
     @ObservationIgnored private var statusTask: Task<Void, Never>?
 
-    init(rootPath: String) {
+    init(rootPath: String, defaults: UserDefaults = .standard) {
         self.rootPath = rootPath
+        self.defaults = defaults
+        hideIgnoredFiles = defaults.bool(forKey: Self.hideIgnoredFilesDefaultsKey)
         observeRepoChanges()
         installWatcher()
     }
@@ -62,6 +84,24 @@ final class FileTreeState {
         hasLoadedRoot = true
         reloadRoot()
         refreshStatuses()
+    }
+
+    func setRootPath(_ newPath: String) {
+        guard newPath != rootPath else { return }
+        rootPath = newPath
+        rootEntries = []
+        children = [:]
+        expanded = []
+        loadingPaths = []
+        statuses = [:]
+        dirHasChange = []
+        selectedFilePath = nil
+        selectedPaths = []
+        selectionAnchorPath = nil
+        pendingScrollTarget = nil
+        hasLoadedRoot = false
+        installWatcher()
+        loadRootIfNeeded()
     }
 
     func refresh() {
@@ -114,19 +154,37 @@ final class FileTreeState {
     }
 
     func visibleRootEntries() -> [FileTreeEntry] {
-        guard showOnlyChanges else { return rootEntries }
-        return rootEntries.filter { entryHasChanges($0) }
+        filterVisible(rootEntries)
     }
 
     func visibleChildren(of entry: FileTreeEntry) -> [FileTreeEntry]? {
         guard let entries = children[entry.absolutePath] else { return nil }
-        guard showOnlyChanges else { return entries }
-        return entries.filter { entryHasChanges($0) }
+        return filterVisible(entries)
+    }
+
+    private func isOnSelectedPath(_ entry: FileTreeEntry) -> Bool {
+        guard let selected = selectedFilePath else { return false }
+        return FileSystemOperations.isInside(path: selected, ancestor: entry.absolutePath)
+    }
+
+    private func filterVisible(_ entries: [FileTreeEntry]) -> [FileTreeEntry] {
+        guard showOnlyChanges || hideIgnoredFiles else { return entries }
+        return entries.filter { entry in
+            if showOnlyChanges, !entryHasChanges(entry) { return false }
+            if hideIgnoredFiles, isIgnoredFile(entry), !isOnSelectedPath(entry) { return false }
+            return true
+        }
     }
 
     func entryHasChanges(_ entry: FileTreeEntry) -> Bool {
         if entry.isDirectory { return dirHasChange.contains(entry.absolutePath) }
         return statuses[entry.absolutePath] != nil
+    }
+
+    func isIgnoredFile(_ entry: FileTreeEntry) -> Bool {
+        if entry.isIgnored { return true }
+        if entry.name.hasPrefix(".") { return true }
+        return Self.builtInNoiseNames.contains(entry.name)
     }
 
     func selectOnly(_ path: String) {
@@ -186,6 +244,44 @@ final class FileTreeState {
         return result
     }
 
+    enum FlatRowItem: Identifiable {
+        case entry(FileTreeEntry, depth: Int)
+        case pendingNew(PendingNewEntry, depth: Int)
+
+        var id: String {
+            switch self {
+            case let .entry(entry, _):
+                "e:\(entry.absolutePath)"
+            case let .pendingNew(pending, _):
+                "p:\(pending.token.uuidString)"
+            }
+        }
+    }
+
+    func flatVisibleRows() -> [FlatRowItem] {
+        var result: [FlatRowItem] = []
+        for entry in visibleRootEntries() {
+            appendFlat(entry, depth: 0, into: &result)
+        }
+        if let pending = pendingNewEntry, pending.parentPath == normalizedRootPath {
+            result.append(.pendingNew(pending, depth: 0))
+        }
+        return result
+    }
+
+    private func appendFlat(_ entry: FileTreeEntry, depth: Int, into result: inout [FlatRowItem]) {
+        result.append(.entry(entry, depth: depth))
+        guard entry.isDirectory, expanded.contains(entry.absolutePath),
+              let children = visibleChildren(of: entry)
+        else { return }
+        for child in children {
+            appendFlat(child, depth: depth + 1, into: &result)
+        }
+        if let pending = pendingNewEntry, pending.parentPath == entry.absolutePath {
+            result.append(.pendingNew(pending, depth: depth + 1))
+        }
+    }
+
     func entry(at path: String) -> FileTreeEntry? {
         let parent = parentDirectory(of: path)
         let candidates: [FileTreeEntry]
@@ -210,7 +306,9 @@ final class FileTreeState {
         } else {
             delta >= 0 ? 0 : ordered.count - 1
         }
-        selectOnly(ordered[targetIndex])
+        let target = ordered[targetIndex]
+        selectOnly(target)
+        pendingScrollTarget = target
     }
 
     func collapseOrJumpToParent() {
@@ -223,6 +321,7 @@ final class FileTreeState {
         guard parent != normalizedRootPath else { return }
         guard visiblePathsInOrder().contains(parent) else { return }
         selectOnly(parent)
+        pendingScrollTarget = parent
     }
 
     func expandOrDescend() {
@@ -239,6 +338,7 @@ final class FileTreeState {
         let next = ordered[idx + 1]
         guard next.hasPrefix(path + "/") else { return }
         selectOnly(next)
+        pendingScrollTarget = next
     }
 
     func activateSelection(open: (String) -> Void) {
@@ -261,21 +361,29 @@ final class FileTreeState {
     }
 
     func revealFile(at filePath: String) {
+        let wasAlreadySelected = selectedFilePath == filePath
         selectedFilePath = filePath
         selectedPaths = [filePath]
         selectionAnchorPath = filePath
         guard filePath.hasPrefix(normalizedRootPath + "/") else { return }
         let relative = String(filePath.dropFirst(normalizedRootPath.count + 1))
         let components = relative.split(separator: "/").map(String.init)
-        guard components.count > 1 else { return }
-        var current = normalizedRootPath
-        for component in components.dropLast() {
-            current += "/" + component
-            if !expanded.contains(current) {
-                expanded.insert(current)
-                reloadChildren(of: current)
+        if components.count > 1 {
+            var current = normalizedRootPath
+            for component in components.dropLast() {
+                current += "/" + component
+                if !expanded.contains(current) {
+                    expanded.insert(current)
+                    reloadChildren(of: current)
+                }
             }
         }
+        guard !wasAlreadySelected else { return }
+        pendingScrollTarget = filePath
+    }
+
+    func consumeScrollTarget() {
+        pendingScrollTarget = nil
     }
 
     func status(for absolutePath: String) -> FileStatus? {

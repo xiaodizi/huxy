@@ -9,7 +9,8 @@ enum SplitReducer {
         let (newRoot, newAreaID) = root.splitting(
             areaID: request.areaID,
             direction: request.direction,
-            position: request.position
+            position: request.position,
+            command: request.command
         )
         state.workspaceRoots[key] = newRoot
         guard let newAreaID else { return }
@@ -51,7 +52,7 @@ enum SplitReducer {
             FocusReducer.focusArea(destinationAreaID, key: key, state: &state)
 
             guard sourceArea.tabs.isEmpty else { return }
-            collapseEmptyArea(sourceAreaID, key: key, state: &state, effects: &effects)
+            effects.deferredAreaCollapses.append(.init(key: key, areaID: sourceAreaID))
 
         case let .toNewSplit(tabID, sourceAreaID, targetAreaID, split):
             guard let root = state.workspaceRoots[key],
@@ -60,12 +61,7 @@ enum SplitReducer {
             else { return }
 
             let shouldCollapseSource = sourceArea.tabs.isEmpty
-            if shouldCollapseSource, sourceAreaID != targetAreaID {
-                collapseEmptyArea(sourceAreaID, key: key, state: &state, effects: &effects)
-            }
-
-            guard let currentRoot = state.workspaceRoots[key] else { return }
-            let (newRoot, newAreaID) = currentRoot.splittingWithTab(
+            let (newRoot, newAreaID) = root.splittingWithTab(
                 areaID: targetAreaID,
                 direction: split.direction,
                 position: split.position,
@@ -77,13 +73,9 @@ enum SplitReducer {
                 FocusReducer.focusArea(newAreaID, key: key, state: &state)
             }
 
-            guard shouldCollapseSource, sourceAreaID == targetAreaID else { return }
-            if let updatedRoot = state.workspaceRoots[key],
-               let emptyArea = updatedRoot.findArea(id: targetAreaID),
-               emptyArea.tabs.isEmpty
-            {
-                collapseEmptyArea(targetAreaID, key: key, state: &state, effects: &effects)
-            }
+            guard shouldCollapseSource else { return }
+            let collapseAreaID = (sourceAreaID == targetAreaID) ? targetAreaID : sourceAreaID
+            effects.deferredAreaCollapses.append(.init(key: key, areaID: collapseAreaID))
         }
     }
 
