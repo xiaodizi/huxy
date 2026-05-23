@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Muxy 架构概览</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#222; padding:24px; }
+    h1 { font-size:28px; margin-bottom:6px }
+    h2 { font-size:20px; margin-top:20px }
+    pre { background:#f6f8fa; padding:12px; border-radius:6px; overflow:auto }
+    .module { border-left:4px solid #2d8cf0; padding:8px 12px; margin:12px 0 }
+    .muted { color:#666; font-size:13px }
+    ul { margin:8px 0 8px 18px }
+  </style>
+</head>
+<body>
+
+<h1>Muxy 架构概览</h1>
+<p class="muted">生成时间: 2026-05-15 — 源自仓库根目录 /Users/lei.fu/LLM/claude_code/huxy</p>
+
+<h2>项目简介</h2>
+<p>Muxy 是一款基于 SwiftUI + AppKit 的 macOS 终端应用，使用 libghostty 提供核心终端功能，并通过本地 WebSocket（MuxyServer）提供移动设备集成与远程控制能力。</p>
+
+<h2>核心模块</h2>
+
+<div class="module">
+  <h3>1) Muxy (可执行)</h3>
+  <p class="muted">路径: Muxy/ — 主应用入口，包含 UI、App 入口以及资源</p>
+  <ul>
+    <li>MuxyApp.swift — 应用入口与生命周期</li>
+    <li>Resources/ — 主题、terminfo 与运行时需要的静态资源</li>
+    <li>Views/ — SwiftUI 视图层（tabs、editor、statusbar 等）</li>
+  </ul>
+</div>
+
+<div class="module">
+  <h3>2) MuxyShared (库)</h3>
+  <p class="muted">路径: MuxyShared/ — DTO、协议与共享类型</p>
+  <ul>
+    <li>定义了模块间通信协议 (MuxyProtocol.swift)</li>
+    <li>数据结构: WorkspaceDTO、ProjectDTO、VCSStatusDTO 等</li>
+  </ul>
+</div>
+
+<div class="module">
+  <h3>3) MuxyServer (库)</h3>
+  <p class="muted">路径: MuxyServer/ — 本地 WebSocket 服务，处理移动端连接与客户端控制</p>
+  <ul>
+    <li>MuxyRemoteServer.swift — 服务实现</li>
+    <li>ClientConnection.swift — 单个连接的抽象</li>
+  </ul>
+</div>
+
+<div class="module">
+  <h3>4) GhosttyKit (C wrapper)</h3>
+  <p class="muted">路径: GhosttyKit/ — libghostty 的 C 桥接层，链接到预编译 GhosttyKit.xcframework</p>
+  <ul>
+    <li>ghostty.h / GhosttyKit.c — 辅助导出给 Swift 的接口</li>
+    <li>module.modulemap — Swift Package 的 C 模块映射</li>
+    <li>GhosttyKit.xcframework — 预编译静态库（由 scripts/setup.sh 下载）</li>
+  </ul>
+</div>
+
+<div class="module">
+  <h3>5) Tests</h3>
+  <p class="muted">路径: Tests/MuxyTests — 单元与集成测试目标</p>
+</div>
+
+<h2>依赖与链接</h2>
+<ul>
+  <li>第三方库 (Package.swift): Sparkle@2.9.1 (自动更新/升级)，Yams (YAML 解析)</li>
+  <li>本机框架: AppKit, Carbon, CoreGraphics, CoreText, Foundation, IOKit, Metal, MetalKit, QuartzCore</li>
+  <li>原生库: C++ 标准库 (链接 c++)</li>
+  <li>外部资源: GhosttyKit.xcframework（平台二进制），Muxy/Resources 中的静态文件</li>
+</ul>
+
+<h2>运行与构建</h2>
+<pre>
+# 准备
+scripts/setup.sh    # 下载 GhosttyKit.xcframework
+
+# 构建
+swift build
+
+# 运行
+swift run Muxy
+
+# 检查（格式化、lint、构建、测试）
+scripts/checks.sh
+</pre>
+
+<h2>数据持久化</h2>
+<ul>
+  <li>Project 列表: ~/Library/Application Support/Muxy/projects.json</li>
+  <li>Ghostty 配置: ~/.config/ghostty/config</li>
+</ul>
+
+<h2>关键文件索引</h2>
+<ul>
+  <li>Package.swift — Swift Package 配置（targets、依赖、链接设置）</li>
+  <li>CLAUDE.md — 本仓库的开发指南与注意事项</li>
+  <li>MuxyApp.swift — 应用入口</li>
+  <li>MuxyRemoteServer.swift — 远程服务实现</li>
+  <li>ghostty.h / GhosttyKit.c — C 桥接层</li>
+  <li>scripts/setup.sh — 下载与准备二进制依赖</li>
+</ul>
+
+<h2>架构要点与注意事项</h2>
+<ul>
+  <li>混合 UI 模式: SwiftUI + AppKit（确保在需要时使用 AppKit 的特性）</li>
+  <li>NSViewRepresentable 陷阱: 禁止在 makeNSView 中返回复用的 NSView（见 CLAUDE.md）</li>
+  <li>资源管理: 主题/terminfo/rg 等资源需随发布包一起分发</li>
+  <li>依赖二进制: GhosttyKit.xcframework 是必需的本地二进制依赖，由 setup.sh 下载，不应提交到 git
+</ul>
+
+<h2>下一步建议</h2>
+<ul>
+  <li>如果需要视觉架构图，我可以基于这个 HTML 生成 SVG 图（模块间依赖与资源流向）</li>
+  <li>或我可以把 structure.json 转换为 UML/PlantUML 描述并输出 PNG</li>
+</ul>
+
+</body>
+</html>

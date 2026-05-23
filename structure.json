@@ -1,0 +1,78 @@
+{
+  "name": "Muxy",
+  "path": "/Users/lei.fu/LLM/claude_code/huxy",
+  "platform": "macOS",
+  "language": "Swift",
+  "swift_tools_version": "6.0",
+  "modules": [
+    {
+      "name": "Muxy",
+      "type": "executable",
+      "path": "Muxy",
+      "description": "主应用（SwiftUI + AppKit），包含 UI、视图层、资源与运行时入口",
+      "key_files": ["MuxyApp.swift", "Info.plist", "Muxy.entitlements", "Resources/"]
+    },
+    {
+      "name": "MuxyShared",
+      "type": "library",
+      "path": "MuxyShared",
+      "description": "共享代码与 DTOs，用于不同模块之间的协议与数据交换",
+      "key_files": [
+        "MuxyProtocol.swift",
+        "ProtocolParams.swift",
+        "WorkspaceDTO.swift",
+        "ProjectDTO.swift"
+      ]
+    },
+    {
+      "name": "MuxyServer",
+      "type": "library",
+      "path": "MuxyServer",
+      "description": "本地网络 WebSocket API，用于移动客户端/远程控制与集成",
+      "key_files": ["MuxyRemoteServer.swift", "ClientConnection.swift"]
+    },
+    {
+      "name": "GhosttyKit",
+      "type": "c-wrapper",
+      "path": "GhosttyKit",
+      "description": "C 模块包装 libghostty API，包含头文件与薄桥接层（link 到预编译 xcframework）",
+      "key_files": ["ghostty.h", "GhosttyKit.c", "module.modulemap"]
+    },
+    {
+      "name": "MuxyTests",
+      "type": "test",
+      "path": "Tests/MuxyTests",
+      "description": "单元/集成测试目标，链接到主应用与共享模块"
+    }
+  ],
+  "dependencies": {
+    "package_dependencies": [
+      {"name": "Sparkle", "url": "https://github.com/sparkle-project/Sparkle", "version": "2.9.1"},
+      {"name": "Yams", "url": "https://github.com/jpsim/Yams", "version": ">=5.1.0"}
+    ],
+    "native_links": [
+      "AppKit", "Carbon", "CoreGraphics", "CoreText", "Foundation", "IOKit", "Metal", "MetalKit", "QuartzCore", "c++"
+    ],
+    "xcframework": "GhosttyKit.xcframework (platform-specific static libs)",
+    "resources": ["Muxy/Resources", "Muxy/Resources/ghostty", "Muxy/Resources/terminfo", "Muxy/Resources/rg"]
+  },
+  "build": {
+    "commands": [
+      "scripts/setup.sh  # 下载 GhosttyKit.xcframework",
+      "swift build",
+      "swift run Muxy",
+      "scripts/checks.sh  # format → lint → build → test"
+    ]
+  },
+  "persistence": {
+    "project_file": "~/Library/Application Support/Muxy/projects.json",
+    "ghostty_config": "~/.config/ghostty/config"
+  },
+  "notes": [
+    "主应用使用 SwiftUI + AppKit 的混合方式",
+    "UI 组件位于 Muxy/Views",
+    "避免在 NSViewRepresentable 的 makeNSView 中复用同一 view (见 CLAUDE.md)",
+    "遵循仓库中的 CLAUDE.md 和 Swift coding rules"
+  ],
+  "generated_at": "2026-05-15T00:00:00Z"
+}

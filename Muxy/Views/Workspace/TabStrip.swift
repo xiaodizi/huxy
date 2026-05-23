@@ -53,6 +53,10 @@ struct PaneTabStrip: View {
     @State private var tabFrames: [UUID: CGRect] = [:]
     @State private var containerFrame: CGRect = .zero
 
+    private let stripBackground = Color(white: 0.16)
+    private let stripGradientTop = Color(white: 0.19)
+    private let stripGradientBottom = Color(white: 0.14)
+
     static func snapshots(from tabs: [TerminalTab]) -> [TabSnapshot] {
         tabs.map { tab in
             TabSnapshot(
@@ -75,7 +79,23 @@ struct PaneTabStrip: View {
 
             rightToolbarButtons
         }
-        .frame(height: 28)
+        .frame(height: 32)
+        .background(
+            ZStack {
+                LinearGradient(
+                    colors: [stripGradientTop, stripGradientBottom],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                Rectangle()
+                    .fill(stripBackground)
+            }
+        )
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.white.opacity(0.03))
+                .frame(height: 1)
+        }
         .overlay {
             WindowDragRepresentable()
         }
@@ -186,8 +206,9 @@ private var capsuleContainer: some View {
                             .padding(.trailing, 8)
                         }
                     }
-                    .background(Color(white: 0.333))
+                    .background(Color(white: 0.2).opacity(0.5))
                     .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.15), radius: 0, x: 0, y: 1)
                     .background {
                         GeometryReader { geo in
                             Color.clear.preference(
@@ -217,9 +238,9 @@ private var capsuleContainer: some View {
 
                 if index < tabs.count - 1 {
                     Rectangle()
-                        .fill(Color(white: 0.2))
+                        .fill(Color.white.opacity(0.04))
                         .frame(width: 1)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                 }
             }
         }
@@ -407,9 +428,11 @@ private struct CloseButton: View {
     var body: some View {
         Image(systemName: "xmark")
             .font(.system(size: 8, weight: .medium))
-            .foregroundStyle(.white.opacity(0.5))
+            .foregroundStyle(.white.opacity(0.35))
             .opacity(hovered ? 1 : 0.5)
-            .animation(.linear(duration: 0.2), value: hovered)
+            .scaleEffect(hovered ? 1.1 : 1.0)
+            .animation(.easeOut(duration: 0.15), value: hovered)
+            .animation(.easeOut(duration: 0.15), value: hovered)
         .onHover { hovering in
             hovered = hovering
         }
