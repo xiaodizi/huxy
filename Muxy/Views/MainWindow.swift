@@ -67,11 +67,20 @@ struct MainWindow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
+            ZStack(alignment: .topLeading) {
                 // 毛玻璃背景和圆角
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(.ultraThinMaterial)
                     .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
+                    .allowsHitTesting(false)
+                
+                // 拖拽区域（整个标题栏高度）
+                WindowDragRepresentable()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .allowsHitTesting(true)
+                
+                // 内容层（标签等）
                 HStack(spacing: 0) {
                     if !isFullScreen {
                         Color.clear
@@ -87,17 +96,12 @@ struct MainWindow: View {
                 }
                 .frame(height: 36)
                 .padding(.horizontal, 8)
+                .padding(.top, 8)
+                .padding(.bottom, 2)
+                .allowsHitTesting(true)
+                .zIndex(1)
             }
-            .frame(height: 36)
-            .padding(.horizontal, 8)
-            .padding(.top, 8)
-            .padding(.bottom, 2)
-            .background(alignment: .top) {
-                WindowDragRepresentable()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)  // 包括 padding
-                    .allowsHitTesting(true)
-            }
+            .frame(height: 52)
 
             // 去除分割线，保持极简
 
