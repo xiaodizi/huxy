@@ -96,9 +96,6 @@ struct PaneTabStrip: View {
                 .fill(Color.white.opacity(0.03))
                 .frame(height: 1)
         }
-        .overlay {
-            WindowDragRepresentable()
-        }
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
             tabFrames = frames
             guard dragState.draggedID != nil else { return }
