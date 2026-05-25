@@ -770,7 +770,39 @@ struct FileTreeBlurView: View {
     var body: some View {
         ZStack {
             FileTreeBlurViewBase()
-            Color.black.opacity(0.20)
+
+            // 与全局统一的冷色玻璃语气，避免灰黑块突兀
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.15, green: 0.17, blue: 0.26, alpha: 0.30)),
+                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.22, alpha: 0.20))
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.48, green: 0.42, blue: 0.94, alpha: 0.10)),
+                    Color.clear,
+                    Color(nsColor: NSColor(srgbRed: 0.30, green: 0.54, blue: 0.95, alpha: 0.08))
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(spacing: 0) {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.white.opacity(0.20),
+                        Color.white.opacity(0.04)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 1)
+                Spacer()
+            }
         }
     }
 }
@@ -778,8 +810,8 @@ struct FileTreeBlurView: View {
 struct FileTreeBlurViewBase: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
-        view.material = .sidebar
-        view.blendingMode = .behindWindow
+        view.material = .hudWindow
+        view.blendingMode = .withinWindow
         view.state = .active
         return view
     }

@@ -22,7 +22,7 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3)
+            Color(nsColor: NSColor(srgbRed: 0.05, green: 0.06, blue: 0.10, alpha: 0.36))
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -35,12 +35,22 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
             .background(
                 ZStack {
                     PaletteBlurView()
-                    
-                    // 增强的毛玻璃效果：深灰渐变 + 品牌色边框
+
+                    // 统一为冷色玻璃，避免偏灰白块
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.3)),
-                            Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.2))
+                            Color(nsColor: NSColor(srgbRed: 0.16, green: 0.18, blue: 0.28, alpha: 0.34)),
+                            Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.23, alpha: 0.24))
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(nsColor: NSColor(srgbRed: 0.45, green: 0.50, blue: 0.92, alpha: 0.12)),
+                            Color.clear,
+                            Color(nsColor: NSColor(srgbRed: 0.50, green: 0.38, blue: 0.92, alpha: 0.08))
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -48,7 +58,20 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(MuxyTheme.border, lineWidth: 1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.white.opacity(0.18),
+                                Color(nsColor: NSColor(srgbRed: 0.80, green: 0.70, blue: 0.96, alpha: 0.26))
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
             .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
             .padding(.top, 60)
             .frame(maxHeight: .infinity, alignment: .top)
@@ -244,7 +267,7 @@ struct PaletteBlurView: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = .hudWindow
-        view.blendingMode = .behindWindow
+        view.blendingMode = .withinWindow
         view.state = .active
         return view
     }

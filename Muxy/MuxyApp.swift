@@ -371,6 +371,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 struct WindowConfigurator: NSViewRepresentable {
     let configVersion: Int
+    let windowOpacity: Double
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
@@ -384,9 +385,10 @@ struct WindowConfigurator: NSViewRepresentable {
             w.titlebarAppearsTransparent = true
             w.titleVisibility = .hidden
             w.styleMask.insert(.fullSizeContentView)
-            w.isMovable = false
-            w.isMovableByWindowBackground = false
-            Self.applyWindowBackground(w)
+            // 允许标题栏区域与空白背景触发系统拖拽行为
+            w.isMovable = true
+            w.isMovableByWindowBackground = true
+            Self.applyWindowBackground(w, opacity: windowOpacity)
             Self.repositionTrafficLights(in: w)
             Self.hideTitlebarDecorationView(in: w)
             Self.neutralizeSafeAreaInsets(in: w)
@@ -398,14 +400,18 @@ struct WindowConfigurator: NSViewRepresentable {
 
     func updateNSView(_ nsView: NSView, context: Context) {
         guard let w = nsView.window else { return }
-        Self.applyWindowBackground(w)
+        Self.applyWindowBackground(w, opacity: windowOpacity)
     }
 
-    private static func applyWindowBackground(_ window: NSWindow) {
+    private static func applyWindowBackground(_ window: NSWindow, opacity: Double) {
+        let clampedOpacity = max(0.80, min(1.0, opacity))
         window.isOpaque = false
+        // 保持整窗透明度（用户可感知的“透明窗口”）
         window.backgroundColor = .clear
+        window.alphaValue = clampedOpacity
         window.contentView?.wantsLayer = true
-        window.contentView?.layer?.backgroundColor = MuxyTheme.nsBg.cgColor
+        // 保持内容层透明，让 NSVisualEffectView 的后台模糊真正可见
+        window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
     }
 
     static func neutralizeSafeAreaInsets(in window: NSWindow) {
@@ -473,6 +479,8 @@ struct WindowConfigurator: NSViewRepresentable {
 
     final class Coordinator: NSObject {
         private var observations: [NSObjectProtocol] = []
+        private var mouseMonitor: Any?
+        private weak var observedWindow: NSWindow?
 
         @objc
         func handleCloseButton(_: Any?) {
@@ -483,6 +491,8 @@ struct WindowConfigurator: NSViewRepresentable {
 
         func observe(window: NSWindow) {
             guard observations.isEmpty else { return }
+            observedWindow = window
+            installDoubleClickMonitorIfNeeded()
 
             let names: [Notification.Name] = [
                 NSWindow.didResizeNotification,
@@ -526,6 +536,59 @@ struct WindowConfigurator: NSViewRepresentable {
 
         deinit {
             observations.forEach { NotificationCenter.default.removeObserver($0) }
+            if let mouseMonitor {
+                NSEvent.removeMonitor(mouseMonitor)
+            }
+        }
+
+        private func installDoubleClickMonitorIfNeeded() {
+            guard mouseMonitor == nil else { return }
+            mouseMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] event in
+                guard let self,
+                      let window = self.observedWindow,
+                      event.window === window,
+                      event.clickCount == 2,
+                      self.shouldHandleTitlebarDoubleClick(event: event, in: window)
+                else {
+                    return event
+                }
+
+                let action = UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick") ?? "Maximize"
+                switch action {
+                case "Minimize":
+                    window.miniaturize(nil)
+                default:
+                    window.zoom(nil)
+                }
+                return nil
+            }
+        }
+
+        private func shouldHandleTitlebarDoubleClick(event: NSEvent, in window: NSWindow) -> Bool {
+            guard let contentView = window.contentView else { return false }
+            let point = contentView.convert(event.locationInWindow, from: nil)
+
+            // 仅顶部标题栏带生效
+            guard point.y >= contentView.bounds.height - 52 else { return false }
+
+            // 仅避开红绿灯按钮本体；左侧其余区域允许双击最大化/还原
+            if isInTrafficLightButtons(point: point, in: window, contentView: contentView) {
+                return false
+            }
+
+            return true
+        }
+
+        private func isInTrafficLightButtons(point: NSPoint, in window: NSWindow, contentView: NSView) -> Bool {
+            let buttonTypes: [NSWindow.ButtonType] = [.closeButton, .miniaturizeButton, .zoomButton]
+            for type in buttonTypes {
+                guard let button = window.standardWindowButton(type) else { continue }
+                let frameInContent = contentView.convert(button.bounds, from: button)
+                if frameInContent.insetBy(dx: -4, dy: -4).contains(point) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }

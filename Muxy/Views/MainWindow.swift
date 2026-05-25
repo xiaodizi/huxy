@@ -59,7 +59,9 @@ struct MainWindow: View {
     @State private var showWorktreeSwitcher = false
     @State private var overlayAnimatingOut = false
     @State private var isFullScreen = false
+    @State private var titlebarDragTriggered = false
     @State private var sidebarExpanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
     @AppStorage("muxy.notifications.toastPosition") private var toastPositionRaw = ToastPosition.topCenter.rawValue
@@ -68,24 +70,30 @@ struct MainWindow: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack(alignment: .topLeading) {
-                // 毛玻璃背景和圆角
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(.ultraThinMaterial)
+                // 顶栏背板：真实窗口后景模糊 + 轻微染色
+                ZStack {
+                    TitlebarBackdropBlurView()
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(nsColor: NSColor(srgbRed: 0.20, green: 0.22, blue: 0.32, alpha: 0.20)),
+                            Color(nsColor: NSColor(srgbRed: 0.16, green: 0.18, blue: 0.28, alpha: 0.12))
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .shadow(color: .black.opacity(0.08), radius: 8, y: 1)
                     .allowsHitTesting(false)
-                
-                // 拖拽区域（整个标题栏高度）
-                WindowDragRepresentable()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .allowsHitTesting(true)
-                
+
                 // 内容层（标签等）
                 HStack(spacing: 0) {
                     if !isFullScreen {
                         Color.clear
                             .frame(width: topBarLeadingWidth)
                             .fixedSize(horizontal: true, vertical: false)
+                            // 左侧标题栏空白区：专门承接双击最大化/按住拖拽
+                            .background(WindowDragRepresentable(alwaysEnabled: true))
                             .overlay(alignment: .trailing) {
                                 HStack(spacing: 0) {
                                     navigationArrows
@@ -98,7 +106,20 @@ struct MainWindow: View {
                 .padding(.horizontal, 8)
                 .padding(.top, 8)
                 .padding(.bottom, 2)
+                .contentShape(Rectangle())
                 .allowsHitTesting(true)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                        .onChanged { value in
+                            handleTitlebarDrag(value)
+                        }
+                        .onEnded { _ in
+                            titlebarDragTriggered = false
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    performTitlebarDoubleClickAction()
+                }
                 .zIndex(1)
             }
             .frame(height: 52)
@@ -109,38 +130,93 @@ struct MainWindow: View {
                 HStack(spacing: 0) {
                     Sidebar()
                     if !SidebarLayout.isHidden(expanded: sidebarExpanded, collapsedStyle: sidebarCollapsedStyle) {
-                        Rectangle().fill(MuxyTheme.border.opacity(0.04)).frame(width: 1)
-                            .accessibilityHidden(true)
+                        HStack(spacing: 0) {
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color(nsColor: NSColor(srgbRed: 0.92, green: 0.84, blue: 0.99, alpha: 0.42)),
+                                            Color(nsColor: NSColor(srgbRed: 0.82, green: 0.66, blue: 0.96, alpha: 0.16))
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width: 1)
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.black.opacity(0.40),
+                                            Color.black.opacity(0.14)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width: 1)
+                        }
+                        .accessibilityHidden(true)
                     }
                 }
                 .fixedSize(horizontal: true, vertical: false)
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color(white: 0.18),
-                            Color(white: 0.14)
+                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: 0.92)),
+                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: 0.90))
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
-                .overlay(alignment: .trailing) {
+                .overlay(alignment: .top) {
                     Rectangle()
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.white.opacity(0.08),
-                                    Color.white.opacity(0.02)
+                                    Color.white.opacity(0.30),
+                                    Color.white.opacity(0.06)
                                 ]),
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
                         )
-                        .frame(width: 1)
+                        .frame(height: 1)
+                }
+                .shadow(color: Color.black.opacity(0.24), radius: 10, x: 6, y: 0)
+                .overlay(alignment: .trailing) {
+                    HStack(spacing: 0) {
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(nsColor: NSColor(srgbRed: 0.90, green: 0.78, blue: 0.98, alpha: 0.34)),
+                                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.62, blue: 0.95, alpha: 0.14))
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .frame(width: 1)
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.black.opacity(0.36),
+                                        Color.black.opacity(0.12)
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .frame(width: 1)
+                    }
                 }
 
                 ZStack {
-                    MuxyTheme.bg
+                    WindowBackdropBlurView()
+                    MuxyTheme.bg.opacity(workspaceBackgroundOpacity)
                     if let project = activeProject,
                        appState.workspaceRoot(for: project.id) == nil,
                        let worktree = resolvedActiveWorktree(for: project)
@@ -298,7 +374,7 @@ struct MainWindow: View {
             onMouseBack: { appState.goBack() },
             onMouseForward: { appState.goForward() }
         ))
-        .background(WindowConfigurator(configVersion: ghostty.configVersion))
+        .background(WindowConfigurator(configVersion: ghostty.configVersion, windowOpacity: windowOpacity))
         .background(WindowTitleUpdater(title: windowTitle))
         .ignoresSafeArea(.container, edges: .top)
         .onReceive(NotificationCenter.default.publisher(for: .quickOpen)) { _ in
@@ -672,6 +748,34 @@ struct MainWindow: View {
     }
 
     private var navigationArrowsWidth: CGFloat { 52 }
+
+    private func handleTitlebarDrag(_ value: DragGesture.Value) {
+        guard !titlebarDragTriggered else { return }
+        let dx = value.location.x - value.startLocation.x
+        let dy = value.location.y - value.startLocation.y
+        let distance = (dx * dx + dy * dy).squareRoot()
+        guard distance >= 3 else { return }
+        guard let event = NSApp.currentEvent,
+              event.type == .leftMouseDown || event.type == .leftMouseDragged
+        else { return }
+        titlebarDragTriggered = true
+        NSApp.keyWindow?.performDrag(with: event)
+    }
+
+    private func performTitlebarDoubleClickAction() {
+        let action = UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick") ?? "Maximize"
+        switch action {
+        case "Minimize":
+            NSApp.keyWindow?.miniaturize(nil)
+        default:
+            NSApp.keyWindow?.zoom(nil)
+        }
+    }
+
+    private var workspaceBackgroundOpacity: Double {
+        guard windowOpacity < 0.999 else { return 1.0 }
+        return max(0.38, min(0.62, windowOpacity - 0.34))
+    }
 
     private var devModeBadge: some View {
         DebugButton()
@@ -1247,6 +1351,30 @@ private struct OverlayExitTracker: ViewModifier {
 
 // MARK: - Toast Blur View
 struct ToastBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+struct WindowBackdropBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+struct TitlebarBackdropBlurView: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = .hudWindow

@@ -63,6 +63,19 @@ struct Sidebar: View {
         .frame(width: isHidden ? 0 : (isWide ? SidebarLayout.expandedWidth : SidebarLayout.collapsedWidth))
         .opacity(isHidden ? 0 : 1)
         .background(SidebarBlurView())
+        .shadow(color: Color.black.opacity(0.38), radius: 14, x: 8, y: 0)
+        .overlay(alignment: .trailing) {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.white.opacity(0.18),
+                    Color(nsColor: NSColor(srgbRed: 0.83, green: 0.66, blue: 0.97, alpha: 0.22)),
+                    Color.black.opacity(0.28)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(width: 2)
+        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Sidebar")
         .onReceive(NotificationCenter.default.publisher(for: .toggleSidebar)) { _ in
@@ -427,31 +440,108 @@ struct SidebarBlurView: View {
     var body: some View {
         ZStack {
             SidebarBlurViewBase()
-            
-            // 增强的毛玻璃效果：深灰渐变 + 品牌色边框
+
+            // v2: 更明显的玻璃底色（深色场景也有对比）
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.5)), // 深灰，更不透明
-                    Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.35))  // 稍浅灰
+                    Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.14, alpha: 0.80)),
+                    Color(nsColor: NSColor(srgbRed: 0.11, green: 0.12, blue: 0.18, alpha: 0.62))
                 ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            
-            // 右边界：品牌色渐变线
+
+            // 轻微品牌色染色，增强“玻璃”而非纯灰板
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.50, green: 0.42, blue: 0.92, alpha: 0.24)),
+                    Color.clear,
+                    Color(nsColor: NSColor(srgbRed: 0.28, green: 0.54, blue: 0.95, alpha: 0.14))
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            // 顶部高光：从 1px 提升到 2px
             VStack(spacing: 0) {
                 LinearGradient(
                     gradient: Gradient(colors: [
-                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.2)), // 紫色，更明显
-                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.08))   // 紫色，淡
+                        Color.white.opacity(0.44),
+                        Color.white.opacity(0.18),
+                        Color.clear
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 2)
+
+                Spacer()
+            }
+
+            // 左侧内高光，增加“玻璃边缘折射”感
+            HStack(spacing: 0) {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.white.opacity(0.20),
+                        Color.clear
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .frame(width: 10)
+
+                Spacer()
+            }
+
+            // 右侧分隔：亮边 + 暗边，增强面板与主区边界
+            HStack(spacing: 0) {
+                Spacer()
+
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(nsColor: NSColor(srgbRed: 0.94, green: 0.86, blue: 1.00, alpha: 0.56)),
+                        Color(nsColor: NSColor(srgbRed: 0.88, green: 0.70, blue: 0.98, alpha: 0.28))
                     ]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .frame(width: 1)
-                Spacer()
+
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.black.opacity(0.52),
+                        Color.black.opacity(0.24)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(width: 1)
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+
+            // 轻微暗角，避免侧栏变“糊白块”
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black.opacity(0.22),
+                    Color.clear,
+                    Color.black.opacity(0.24)
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+
+            // 底部压暗，拉开与上方高光层次
+            VStack(spacing: 0) {
+                Spacer()
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.clear,
+                        Color.black.opacity(0.18)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 44)
+            }
         }
     }
 }
@@ -459,8 +549,8 @@ struct SidebarBlurView: View {
 struct SidebarBlurViewBase: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
-        view.material = .sidebar
-        view.blendingMode = .behindWindow
+        view.material = .hudWindow
+        view.blendingMode = .withinWindow
         view.state = .active
         return view
     }

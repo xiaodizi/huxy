@@ -1789,7 +1789,26 @@ struct VCSBlurView: View {
     var body: some View {
         ZStack {
             VCSBlurViewBase()
-            Color.black.opacity(0.25)
+
+            // 统一为冷色玻璃，避免偏黄偏脏
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.14, green: 0.16, blue: 0.25, alpha: 0.30)),
+                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.22, alpha: 0.20))
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.46, green: 0.42, blue: 0.92, alpha: 0.12)),
+                    Color.clear,
+                    Color(nsColor: NSColor(srgbRed: 0.32, green: 0.54, blue: 0.95, alpha: 0.08))
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
         }
     }
 }
@@ -1798,7 +1817,7 @@ struct VCSBlurViewBase: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.material = .hudWindow
-        view.blendingMode = .behindWindow
+        view.blendingMode = .withinWindow
         view.state = .active
         return view
     }

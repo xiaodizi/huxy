@@ -11,29 +11,87 @@ enum ThemePickerMode {
 struct ThemePicker: View {
     var mode: ThemePickerMode = .currentAppearance
     @Environment(ThemeService.self) private var themeService
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
     @State private var themes: [ThemePreview] = []
     @State private var currentTheme: String?
 
     var body: some View {
-        SearchableListPicker(
-            items: themes,
-            filterKey: \.name,
-            placeholder: "Search themes",
-            emptyLabel: "No themes found",
-            onSelect: { selectTheme($0) },
-            row: { theme, isHighlighted in
-                ThemeRow(
-                    theme: theme,
-                    isActive: theme.name == currentTheme,
-                    isHighlighted: isHighlighted
-                )
-            }
-        )
-        .frame(width: 280, height: 400)
+        VStack(spacing: 0) {
+            windowOpacitySection
+            Divider().overlay(MuxyTheme.border)
+
+            SearchableListPicker(
+                items: themes,
+                filterKey: \.name,
+                placeholder: "Search themes",
+                emptyLabel: "No themes found",
+                onSelect: { selectTheme($0) },
+                row: { theme, isHighlighted in
+                    ThemeRow(
+                        theme: theme,
+                        isActive: theme.name == currentTheme,
+                        isHighlighted: isHighlighted
+                    )
+                }
+            )
+        }
+        .frame(width: 300, height: 470)
         .task {
             themes = await themeService.loadThemes()
             currentTheme = currentName()
         }
+    }
+
+    private var windowOpacitySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Window Transparency")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(MuxyTheme.fg)
+                Spacer()
+                Text("\(Int((windowOpacity * 100).rounded()))%")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(MuxyTheme.fgMuted)
+            }
+
+            Slider(
+                value: Binding(
+                    get: { max(0.80, min(1.0, windowOpacity)) },
+                    set: { windowOpacity = max(0.80, min(1.0, $0)) }
+                ),
+                in: 0.80 ... 1.0,
+                step: 0.01
+            )
+
+            HStack(spacing: 6) {
+                opacityPresetButton("85%", value: 0.85)
+                opacityPresetButton("90%", value: 0.90)
+                opacityPresetButton("95%", value: 0.95)
+                opacityPresetButton("100%", value: 1.0)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 10)
+        .background(MuxyTheme.bg)
+    }
+
+    private func opacityPresetButton(_ title: String, value: Double) -> some View {
+        Button(title) {
+            windowOpacity = value
+        }
+        .buttonStyle(.plain)
+        .font(.system(size: 10, weight: .medium))
+        .foregroundStyle(MuxyTheme.fg)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 5)
+                .fill(abs(windowOpacity - value) < 0.005 ? MuxyTheme.surface : MuxyTheme.hover)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(MuxyTheme.border, lineWidth: 0.5)
+        )
     }
 
     private func currentName() -> String? {

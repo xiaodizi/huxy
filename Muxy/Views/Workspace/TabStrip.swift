@@ -57,6 +57,32 @@ struct PaneTabStrip: View {
     private let stripGradientTop = Color(white: 0.22)
     private let stripGradientBottom = Color(white: 0.12)
 
+    private var resolvedStripGradientTop: Color {
+        isWindowTitleBar
+            ? Color(nsColor: NSColor(srgbRed: 0.24, green: 0.25, blue: 0.34, alpha: 1.0))
+            : stripGradientTop
+    }
+
+    private var resolvedStripGradientBottom: Color {
+        isWindowTitleBar
+            ? Color(nsColor: NSColor(srgbRed: 0.18, green: 0.20, blue: 0.29, alpha: 1.0))
+            : stripGradientBottom
+    }
+
+    private var resolvedStripBackground: Color {
+        isWindowTitleBar
+            ? Color(nsColor: NSColor(srgbRed: 0.19, green: 0.20, blue: 0.29, alpha: 0.92))
+            : stripBackground
+    }
+
+    private var topHairlineOpacity: Double {
+        isWindowTitleBar ? 0.04 : 0.06
+    }
+
+    private var bottomHairlineOpacity: Double {
+        isWindowTitleBar ? 0.05 : 0.08
+    }
+
     static func snapshots(from tabs: [TerminalTab]) -> [TabSnapshot] {
         tabs.map { tab in
             TabSnapshot(
@@ -83,22 +109,22 @@ struct PaneTabStrip: View {
         .background(
             ZStack {
                 LinearGradient(
-                    colors: [stripGradientTop, stripGradientBottom],
+                    colors: [resolvedStripGradientTop, resolvedStripGradientBottom],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 Rectangle()
-                    .fill(stripBackground)
+                    .fill(resolvedStripBackground)
             }
         )
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Color.white.opacity(0.08))
+                .fill(Color.white.opacity(bottomHairlineOpacity))
                 .frame(height: 1)
         }
         .overlay(alignment: .top) {
             Rectangle()
-                .fill(Color.white.opacity(0.06))
+                .fill(Color.white.opacity(topHairlineOpacity))
                 .frame(height: 1)
         }
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
@@ -129,6 +155,7 @@ private var capsuleContainer: some View {
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundStyle(.white)
                                 .lineLimit(1)
+                                .truncationMode(.tail)
 
                             // Shortcut badge on right
                             if index < 9 {
@@ -137,20 +164,68 @@ private var capsuleContainer: some View {
                                     .foregroundStyle(Color(white: 0.8))
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(Color.black.opacity(0.18))
+                                    .background(Color(nsColor: NSColor(srgbRed: 0.28, green: 0.30, blue: 0.41, alpha: 0.65)))
                                     .clipShape(RoundedRectangle(cornerRadius: 4))
                             }
                         }
                         .padding(.horizontal, 10)
                         .frame(height: 24)
-                        // Do not draw a full capsule here — MainWindow already provides the pill background.
-                        // Instead, use a subtle inner highlight and stroke for the active tab content.
-                        .background(Color.clear)
+                        .background(
+                            Group {
+                                if isWindowTitleBar {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [
+                                                    Color(nsColor: NSColor(srgbRed: 0.44, green: 0.46, blue: 0.58, alpha: 0.60)),
+                                                    Color(nsColor: NSColor(srgbRed: 0.30, green: 0.33, blue: 0.46, alpha: 0.58))
+                                                ]),
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                } else {
+                                    Color.clear
+                                }
+                            }
+                        )
+                        .overlay {
+                            if isWindowTitleBar {
+                                VStack(spacing: 0) {
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.white.opacity(0.36),
+                                            Color.white.opacity(0.09),
+                                            Color.clear
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                    .frame(height: 2)
+                                    Spacer()
+                                }
+                            }
+                        }
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white.opacity(0.06), lineWidth: 0.6)
+                                .stroke(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.white.opacity(isWindowTitleBar ? 0.20 : 0.06),
+                                            Color.white.opacity(isWindowTitleBar ? 0.072 : 0.06)
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    ),
+                                    lineWidth: isWindowTitleBar ? 1 : 0.6
+                                )
                                 .blendMode(.overlay)
                         )
+                        .shadow(color: .black.opacity(isWindowTitleBar ? 0.19 : 0), radius: 5, x: 0, y: 2)
+                        .offset(y: isWindowTitleBar ? -1 : 0)
+                    }
+                    .applyIf(isWindowTitleBar) { view in
+                        view.frame(maxWidth: .infinity)
                     }
                     .background {
                         GeometryReader { geo in
@@ -160,23 +235,25 @@ private var capsuleContainer: some View {
                             )
                         }
                     }
-                    .gesture(
-                        DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
-                            .onChanged { value in
-                                handleDragChanged(
-                                    tab: tab,
-                                    globalLocation: value.location,
-                                    dragStartGlobalLocation: value.startLocation
-                                )
-                            }
-                            .onEnded { value in
-                                handleDragEnded(
-                                    tab: tab,
-                                    globalLocation: value.location,
-                                    dragStartGlobalLocation: value.startLocation
-                                )
-                            }
-                    )
+                    .applyIf(!isWindowTitleBar) { view in
+                        view.gesture(
+                            DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
+                                .onChanged { value in
+                                    handleDragChanged(
+                                        tab: tab,
+                                        globalLocation: value.location,
+                                        dragStartGlobalLocation: value.startLocation
+                                    )
+                                }
+                                .onEnded { value in
+                                    handleDragEnded(
+                                        tab: tab,
+                                        globalLocation: value.location,
+                                        dragStartGlobalLocation: value.startLocation
+                                    )
+                                }
+                        )
+                    }
                 } else {
                     HStack(spacing: 0) {
                         TabCell(
@@ -184,6 +261,7 @@ private var capsuleContainer: some View {
                             active: false,
                             paneFocused: isFocused,
                             areaID: areaID,
+                            prefersFlatStyle: isWindowTitleBar,
                             hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
                             isAnyDragging: dragState.draggedID != nil,
                             shortcutIndex: index < 9 ? index + 1 : nil,
@@ -208,15 +286,25 @@ private var capsuleContainer: some View {
                             .padding(.trailing, 8)
                         }
                     }
+                    .applyIf(isWindowTitleBar) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
+                    .onTapGesture { onSelectTab(tab.id) }
                     .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(white: 0.25),
-                                Color(white: 0.18)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                        Group {
+                            if isWindowTitleBar {
+                                Color.white.opacity(0.02)
+                            } else {
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(white: 0.25),
+                                        Color(white: 0.18)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            }
+                        }
                     )
                     .clipShape(Capsule())
                     .overlay(
@@ -224,16 +312,16 @@ private var capsuleContainer: some View {
                             .stroke(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.white.opacity(0.15),
-                                        Color.white.opacity(0.05)
+                                        Color.white.opacity(isWindowTitleBar ? 0.08 : 0.15),
+                                        Color.white.opacity(isWindowTitleBar ? 0.03 : 0.05)
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
-                                lineWidth: 1
+                                lineWidth: isWindowTitleBar ? 0.8 : 1
                             )
                     )
-                    .shadow(color: .black.opacity(0.15), radius: 0, x: 0, y: 1)
+                    .shadow(color: .black.opacity(isWindowTitleBar ? 0.08 : 0.15), radius: 0, x: 0, y: 1)
                     .background {
                         GeometryReader { geo in
                             Color.clear.preference(
@@ -242,26 +330,28 @@ private var capsuleContainer: some View {
                             )
                         }
                     }
-                    .gesture(
-                        DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
-                            .onChanged { value in
-                                handleDragChanged(
-                                    tab: tab,
-                                    globalLocation: value.location,
-                                    dragStartGlobalLocation: value.startLocation
-                                )
-                            }
-                            .onEnded { value in
-                                handleDragEnded(
-                                    tab: tab,
-                                    globalLocation: value.location,
-                                    dragStartGlobalLocation: value.startLocation
-                                )
-                            }
-                    )
+                    .applyIf(!isWindowTitleBar) { view in
+                        view.gesture(
+                            DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
+                                .onChanged { value in
+                                    handleDragChanged(
+                                        tab: tab,
+                                        globalLocation: value.location,
+                                        dragStartGlobalLocation: value.startLocation
+                                    )
+                                }
+                                .onEnded { value in
+                                    handleDragEnded(
+                                        tab: tab,
+                                        globalLocation: value.location,
+                                        dragStartGlobalLocation: value.startLocation
+                                    )
+                                }
+                        )
+                    }
                 }
 
-                if index < tabs.count - 1 {
+                if index < tabs.count - 1, !isWindowTitleBar {
                     Rectangle()
                         .fill(Color.white.opacity(0.04))
                         .frame(width: 1)
@@ -480,6 +570,7 @@ private struct TabCell: View {
     let active: Bool
     let paneFocused: Bool
     let areaID: UUID
+    var prefersFlatStyle: Bool = false
     var hasUnread: Bool = false
     var isAnyDragging: Bool = false
     var shortcutIndex: Int?
@@ -516,10 +607,10 @@ private struct TabCell: View {
 
     private var tabBackground: Color {
         if active {
-            return Color.white.opacity(0.08)
+            return Color.white.opacity(prefersFlatStyle ? 0.06 : 0.08)
         }
         if hovered {
-            return Color.white.opacity(0.05)
+            return Color.white.opacity(prefersFlatStyle ? 0.035 : 0.05)
         }
         return .clear
     }
@@ -574,7 +665,7 @@ private struct TabCell: View {
                     .foregroundStyle(Color(white: 0.5))
                     .padding(.horizontal, 5)
                     .padding(.vertical, 2)
-                    .background(Color.black.opacity(0.2))
+                    .background(Color(nsColor: NSColor(srgbRed: 0.27, green: 0.29, blue: 0.40, alpha: 0.60)))
                     .clipShape(RoundedRectangle(cornerRadius: 3))
             }
         }
@@ -592,10 +683,10 @@ private struct TabCell: View {
                 .accessibilityHidden(true)
         }
         .background(tabBackground)
-        .background(.ultraThinMaterial)
+        .background(prefersFlatStyle ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.ultraThinMaterial))
         .overlay(
             RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+                .stroke(Color.white.opacity(prefersFlatStyle ? 0.05 : 0.08), lineWidth: 0.5)
         )
         .contentShape(Rectangle())
         .onHover { hovering in
