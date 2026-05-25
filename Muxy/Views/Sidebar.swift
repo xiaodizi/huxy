@@ -427,7 +427,31 @@ struct SidebarBlurView: View {
     var body: some View {
         ZStack {
             SidebarBlurViewBase()
-            Color.black.opacity(0.20)
+            
+            // 增强的毛玻璃效果：深灰渐变 + 品牌色边框
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.5)), // 深灰，更不透明
+                    Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.35))  // 稍浅灰
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            
+            // 右边界：品牌色渐变线
+            VStack(spacing: 0) {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.2)), // 紫色，更明显
+                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.08))   // 紫色，淡
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(width: 1)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 }

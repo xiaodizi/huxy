@@ -114,7 +114,30 @@ struct MainWindow: View {
                     }
                 }
                 .fixedSize(horizontal: true, vertical: false)
-                .background(MuxyTheme.bg)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(white: 0.18),
+                            Color(white: 0.14)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(alignment: .trailing) {
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.white.opacity(0.08),
+                                    Color.white.opacity(0.02)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(width: 1)
+                }
 
                 ZStack {
                     MuxyTheme.bg
@@ -200,8 +223,10 @@ struct MainWindow: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(MuxyTheme.bg, in: Capsule())
-                .overlay(Capsule().stroke(MuxyTheme.border, lineWidth: 1))
+                .background(ToastBlurView())
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(MuxyTheme.border.opacity(0.5), lineWidth: 1))
+                .shadow(color: .black.opacity(0.2), radius: 8, y: 2)
                 .padding(toastEdgePadding)
                 .transition(.move(edge: toastTransitionEdge).combined(with: .opacity))
                 .allowsHitTesting(false)
@@ -1218,4 +1243,17 @@ private struct OverlayExitTracker: ViewModifier {
             onAnimatingOut(false)
         }
     }
+}
+
+// MARK: - Toast Blur View
+struct ToastBlurView: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

@@ -154,12 +154,7 @@ if ! command -v create-dmg &> /dev/null; then
 fi
 
 cd "$BUILD_DIR"
-create-dmg "$APP_BUNDLE" "$BUILD_DIR" || true
-
-GENERATED_DMG=$(find "$BUILD_DIR" -maxdepth 1 -name "Muxy*.dmg" -not -name "$DMG_NAME" | head -1)
-if [[ -n "$GENERATED_DMG" ]]; then
-    mv "$GENERATED_DMG" "$BUILD_DIR/$DMG_NAME"
-fi
+create-dmg --volname "Muxy" --window-size 500 300 --icon-size 100 --app-drop-link 350 150 --sandbox-safe "$DMG_NAME" "$APP_BUNDLE"
 
 if [[ -n "$SIGN_IDENTITY" && -f "$BUILD_DIR/$DMG_NAME" ]]; then
     echo "==> Signing DMG"

@@ -32,7 +32,21 @@ struct PaletteOverlay<Item: Identifiable & Sendable>: View {
                 resultsList
             }
             .frame(width: 500, height: 380)
-            .background(PaletteBlurView())
+            .background(
+                ZStack {
+                    PaletteBlurView()
+                    
+                    // 增强的毛玻璃效果：深灰渐变 + 品牌色边框
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.3)),
+                            Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.2))
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
+            )
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(MuxyTheme.border, lineWidth: 1))
             .shadow(color: .black.opacity(0.4), radius: 20, y: 8)

@@ -41,7 +41,20 @@ struct NotificationPanel: View {
 
     var body: some View {
         ZStack {
-            NotificationPanelBlurView()
+            // 增强的毛玻璃背景
+            ZStack {
+                NotificationPanelBlurView()
+                
+                // 增强的毛玻璃效果：深灰渐变
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.3)),
+                        Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.2))
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
 
             VStack(spacing: 0) {
                 let currentItems = items

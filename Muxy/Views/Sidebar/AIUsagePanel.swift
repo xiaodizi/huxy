@@ -120,7 +120,24 @@ struct AIUsagePanel: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(MuxyTheme.surface, in: RoundedRectangle(cornerRadius: 8))
+        .background(
+            ZStack {
+                // 毛玻璃背景
+                SidebarBlurViewBase()
+                
+                // 增强的毛玻璃效果：深灰渐变
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.3)),
+                        Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.2))
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(MuxyTheme.border.opacity(0.3), lineWidth: 0.5))
     }
 }
 
@@ -403,8 +420,8 @@ struct AIUsageMetricRowView: View {
                             .foregroundStyle(MuxyTheme.fgDim)
                             .lineLimit(1)
                     }
-                }
             }
         }
     }
+}
 }

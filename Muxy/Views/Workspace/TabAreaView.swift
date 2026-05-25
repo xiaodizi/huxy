@@ -73,7 +73,10 @@ struct TabAreaView: View {
                         area.reorderTab(fromOffsets: fromOffsets, toOffset: toOffset)
                     }
                 )
-                Rectangle().fill(MuxyTheme.border).frame(height: 1)
+                HStack(spacing: 0) {
+                    Rectangle().fill(MuxyTheme.border.opacity(0.08)).frame(height: 1)
+                }
+                .background(.ultraThinMaterial)
             }
             ZStack {
                 ForEach(area.tabs) { tab in
@@ -223,8 +226,10 @@ private struct TabContentView: View {
             VCSTabView(state: vcsState, focused: focused, onFocus: onFocus)
         case let .editor(editorState):
             EditorPane(state: editorState, focused: focused, onFocus: onFocus)
+                .id(editorState.id)
         case let .diffViewer(diffState):
             DiffViewerPane(state: diffState, focused: focused, onFocus: onFocus)
+                .id(diffState.id)
         }
     }
 }

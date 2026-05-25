@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>规整有层次感的标签栏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .tab-container {
+            background: rgba(37, 37, 38, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(62, 62, 66, 0.5);
+            display: flex;
+            align-items: center;
+            height: 35px;
+            padding: 0 8px;
+            gap: 2px;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 12px;
+            height: 32px;
+            background: rgba(45, 45, 48, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px 4px 0 0;
+            color: #cccccc;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .tab:hover {
+            background: rgba(50, 50, 51, 0.5);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #e0e0e0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-color: rgba(255, 255, 255, 0.15);
+            border-bottom-color: rgba(30, 30, 30, 0.6);
+            color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2) inset, inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #007acc, #0098ff);
+            border-radius: 1px;
+        }
+
+        .tab-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .tab:hover .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            color: #ff6b6b;
+        }
+
+        /* 分隔线效果 */
+        .tab-divider {
+            width: 1px;
+            height: 16px;
+            background: #3e3e42;
+            margin: 0 2px;
+        }
+
+        /* 演示区域 */
+        .demo-section {
+            margin-top: 40px;
+        }
+
+        .demo-section h2 {
+            color: #cccccc;
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .demo-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .demo-item {
+            background: rgba(37, 37, 38, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-item h3 {
+            color: #999;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <h2>标签栏设计 - 规整有层次感</h2>
+        
+        <div class="demo-tabs">
+            <!-- 演示 1: 基础标签栏 -->
+            <div class="demo-item">
+                <h3>基础标签栏</h3>
+                <div class="tab-container">
+                    <div class="tab active">
+                        <span class="tab-icon">📄</span>
+                        <span>opencode</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">⚙️</span>
+                        <span>settings</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">🔍</span>
+                        <span>search</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 演示 2: 多标签场景 -->
+            <div class="demo-item">
+                <h3>多标签场景</h3>
+                <div class="tab-container">
+                    <div class="tab">
+                        <span class="tab-icon">📁</span>
+                        <span>project</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab active">
+                        <span class="tab-icon">💻</span>
+                        <span>main.ts</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">🎨</span>
+                        <span>styles.css</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">📝</span>
+                        <span>README.md</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 演示 3: 长标签名 -->
+            <div class="demo-item">
+                <h3>长标签名处理</h3>
+                <div class="tab-container">
+                    <div class="tab">
+                        <span class="tab-icon">📄</span>
+                        <span>component.tsx</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab active">
+                        <span class="tab-icon">🔧</span>
+                        <span>utils/helpers.ts</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                    <div class="tab">
+                        <span class="tab-icon">🧪</span>
+                        <span>__tests__/index.test.ts</span>
+                        <span class="tab-close">×</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 交互效果
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+
+            const closeBtn = tab.querySelector('.tab-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    tab.style.opacity = '0';
+                    setTimeout(() => tab.remove(), 200);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

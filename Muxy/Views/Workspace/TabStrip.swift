@@ -54,8 +54,8 @@ struct PaneTabStrip: View {
     @State private var containerFrame: CGRect = .zero
 
     private let stripBackground = Color(white: 0.16)
-    private let stripGradientTop = Color(white: 0.19)
-    private let stripGradientBottom = Color(white: 0.14)
+    private let stripGradientTop = Color(white: 0.22)
+    private let stripGradientBottom = Color(white: 0.12)
 
     static func snapshots(from tabs: [TerminalTab]) -> [TabSnapshot] {
         tabs.map { tab in
@@ -93,7 +93,12 @@ struct PaneTabStrip: View {
         )
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Color.white.opacity(0.03))
+                .fill(Color.white.opacity(0.08))
+                .frame(height: 1)
+        }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(Color.white.opacity(0.06))
                 .frame(height: 1)
         }
         .onPreferenceChange(TabFramePreferenceKey.self) { frames in
@@ -203,8 +208,31 @@ private var capsuleContainer: some View {
                             .padding(.trailing, 8)
                         }
                     }
-                    .background(Color(white: 0.2).opacity(0.5))
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(white: 0.25),
+                                Color(white: 0.18)
+                            ]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .clipShape(Capsule())
+                    .overlay(
+                        Capsule()
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.white.opacity(0.15),
+                                        Color.white.opacity(0.05)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
                     .shadow(color: .black.opacity(0.15), radius: 0, x: 0, y: 1)
                     .background {
                         GeometryReader { geo in
@@ -488,7 +516,7 @@ private struct TabCell: View {
 
     private var tabBackground: Color {
         if active {
-            return Color.white.opacity(0.1)
+            return Color.white.opacity(0.08)
         }
         if hovered {
             return Color.white.opacity(0.05)
@@ -564,6 +592,11 @@ private struct TabCell: View {
                 .accessibilityHidden(true)
         }
         .background(tabBackground)
+        .background(.ultraThinMaterial)
+        .overlay(
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+        )
         .contentShape(Rectangle())
         .onHover { hovering in
             guard !isAnyDragging else { return }
