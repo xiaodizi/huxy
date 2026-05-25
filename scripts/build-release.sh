@@ -58,6 +58,7 @@ fi
 TRIPLE="${ARCH}-apple-macosx14.0"
 BUILD_NUMBER=$(git -C "$PROJECT_ROOT" rev-list --count HEAD)
 APP_BUNDLE="$BUILD_DIR/Muxy.app"
+DMG_STAGING_DIR="$BUILD_DIR/dmg-staging"
 DMG_NAME="Muxy-${VERSION}-${ARCH}.dmg"
 
 rm -rf "$APP_BUNDLE"
@@ -154,7 +155,13 @@ if ! command -v create-dmg &> /dev/null; then
 fi
 
 cd "$BUILD_DIR"
-create-dmg --volname "Muxy" --window-size 500 300 --icon-size 100 --app-drop-link 350 150 --sandbox-safe "$DMG_NAME" "$APP_BUNDLE"
+rm -rf "$DMG_STAGING_DIR"
+mkdir -p "$DMG_STAGING_DIR"
+cp -R "$APP_BUNDLE" "$DMG_STAGING_DIR/Muxy.app"
+
+create-dmg --volname "Muxy" --window-size 500 300 --icon-size 100 --app-drop-link 350 150 --sandbox-safe "$DMG_NAME" "$DMG_STAGING_DIR"
+
+rm -rf "$DMG_STAGING_DIR"
 
 if [[ -n "$SIGN_IDENTITY" && -f "$BUILD_DIR/$DMG_NAME" ]]; then
     echo "==> Signing DMG"
