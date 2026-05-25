@@ -263,14 +263,9 @@ private final class PaletteNSTextField: NSTextField {
     }
 }
 
-struct PaletteBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .withinWindow
-        view.state = .active
-        return view
+struct PaletteBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

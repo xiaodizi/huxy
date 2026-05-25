@@ -51,25 +51,8 @@ struct SettingsView: View {
     }
 
     private var backgroundMaterial: some View {
-        VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
             .ignoresSafeArea()
-    }
-}
-
-struct VisualEffectView: NSViewRepresentable {
-    let material: NSVisualEffectView.Material
-    let blendingMode: NSVisualEffectView.BlendingMode
-
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = material
-        view.blendingMode = blendingMode
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-        nsView.material = material
-        nsView.blendingMode = blendingMode
+            .allowsHitTesting(false)
     }
 }

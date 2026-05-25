@@ -14,27 +14,17 @@ struct BackgroundEffectView<Content: View>: View {
 
     var body: some View {
         content
-            .background(VisualEffectBackground(transparent: transparencyEnabled || themeBackgroundIsTransparent))
+            .background(
+                GlassBlurView(
+                    material: (transparencyEnabled || themeBackgroundIsTransparent) ? .underWindowBackground : .hudWindow,
+                    blendingMode: .behindWindow
+                )
+                .allowsHitTesting(false)
+            )
             .overlay(
                 // subtle gradient overlay and vignette to match screenshot
                 LinearGradient(gradient: Gradient(colors: [TerminalTheme.bgTop.opacity(0.18), TerminalTheme.bgBottom.opacity(0.18)]), startPoint: .topLeading, endPoint: .bottomTrailing)
                     .blendMode(.overlay)
             )
-    }
-}
-
-private struct VisualEffectBackground: NSViewRepresentable {
-    let transparent: Bool
-
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = transparent ? .underWindowBackground : .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-        nsView.material = transparent ? .underWindowBackground : .hudWindow
     }
 }

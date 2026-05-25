@@ -81,7 +81,7 @@ struct PopoverPicker<Item: Identifiable, RowContent: View>: View {
         .background(
             ZStack {
                 // 毛玻璃背景
-                PopoverBlurView()
+                GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
                 
                 // 增强的毛玻璃效果：深灰渐变
                 LinearGradient(
@@ -94,6 +94,7 @@ struct PopoverPicker<Item: Identifiable, RowContent: View>: View {
                 )
             }
         )
+        .allowsHitTesting(true)
     }
 
     private func footerButton(
@@ -125,17 +126,4 @@ struct PopoverPicker<Item: Identifiable, RowContent: View>: View {
         .buttonStyle(.plain)
         .disabled(isBusy)
     }
-}
-
-// MARK: - PopoverBlurView
-struct PopoverBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

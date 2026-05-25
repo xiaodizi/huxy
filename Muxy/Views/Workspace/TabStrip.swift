@@ -52,6 +52,7 @@ struct PaneTabStrip: View {
     @State private var dragState = TabDragState()
     @State private var tabFrames: [UUID: CGRect] = [:]
     @State private var containerFrame: CGRect = .zero
+    @State private var hoveredTabID: UUID?
 
     private let stripBackground = Color(white: 0.16)
     private let stripGradientTop = Color(white: 0.22)
@@ -138,224 +139,106 @@ private var capsuleContainer: some View {
     ZStack {
         HStack(spacing: 0) {
             ForEach(Array(tabs.enumerated()), id: \.element.id) { index, tab in
-                if tab.id == activeTabID {
-                    // Active tab: draw capsule inside tab with close, title, badge
-                    HStack(spacing: 0) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.6))
-                                .padding(6)
-                                .background(Color.white.opacity(0.03))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.white.opacity(0.06), lineWidth: 0.5))
-                                .onTapGesture { onCloseTab(tab.id) }
-
-                            Text(tab.title)
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-
-                            // Shortcut badge on right
-                            if index < 9 {
-                                Text(KeyBindingStore.shared.combo(for: ShortcutAction.tabAction(for: index + 1) ?? .newTab).displayString)
-                                    .font(.system(size: 10, weight: .medium))
-                                    .foregroundStyle(Color(white: 0.8))
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color(nsColor: NSColor(srgbRed: 0.28, green: 0.30, blue: 0.41, alpha: 0.65)))
-                                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                            }
-                        }
-                        .padding(.horizontal, 10)
-                        .frame(height: 24)
-                        .background(
-                            Group {
-                                if isWindowTitleBar {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(
-                                            LinearGradient(
-                                                gradient: Gradient(colors: [
-                                                    Color(nsColor: NSColor(srgbRed: 0.44, green: 0.46, blue: 0.58, alpha: 0.60)),
-                                                    Color(nsColor: NSColor(srgbRed: 0.30, green: 0.33, blue: 0.46, alpha: 0.58))
-                                                ]),
-                                                startPoint: .top,
-                                                endPoint: .bottom
-                                            )
-                                        )
-                                } else {
-                                    Color.clear
-                                }
-                            }
-                        )
-                        .overlay {
-                            if isWindowTitleBar {
-                                VStack(spacing: 0) {
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.white.opacity(0.36),
-                                            Color.white.opacity(0.09),
-                                            Color.clear
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                    .frame(height: 2)
-                                    Spacer()
-                                }
-                            }
-                        }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.white.opacity(isWindowTitleBar ? 0.20 : 0.06),
-                                            Color.white.opacity(isWindowTitleBar ? 0.072 : 0.06)
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    ),
-                                    lineWidth: isWindowTitleBar ? 1 : 0.6
-                                )
-                                .blendMode(.overlay)
-                        )
-                        .shadow(color: .black.opacity(isWindowTitleBar ? 0.19 : 0), radius: 5, x: 0, y: 2)
-                        .offset(y: isWindowTitleBar ? -1 : 0)
-                    }
-                    .applyIf(isWindowTitleBar) { view in
-                        view.frame(maxWidth: .infinity)
-                    }
-                    .background {
-                        GeometryReader { geo in
-                            Color.clear.preference(
-                                key: TabFramePreferenceKey.self,
-                                value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
-                            )
-                        }
-                    }
-                    .applyIf(!isWindowTitleBar) { view in
-                        view.gesture(
-                            DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
-                                .onChanged { value in
-                                    handleDragChanged(
-                                        tab: tab,
-                                        globalLocation: value.location,
-                                        dragStartGlobalLocation: value.startLocation
-                                    )
-                                }
-                                .onEnded { value in
-                                    handleDragEnded(
-                                        tab: tab,
-                                        globalLocation: value.location,
-                                        dragStartGlobalLocation: value.startLocation
-                                    )
-                                }
-                        )
-                    }
-                } else {
-                    HStack(spacing: 0) {
-                        TabCell(
-                            tab: tab,
-                            active: false,
-                            paneFocused: isFocused,
-                            areaID: areaID,
-                            prefersFlatStyle: isWindowTitleBar,
-                            hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
-                            isAnyDragging: dragState.draggedID != nil,
-                            shortcutIndex: index < 9 ? index + 1 : nil,
-                            closableOthersCount: closableOthersCount(excluding: tab.id),
-                            closableLeftCount: closableCount(leftOf: index),
-                            closableRightCount: closableCount(rightOf: index),
-                            onSelect: { onSelectTab(tab.id) },
-                            onCloseOthers: { onCloseOtherTabs(tab.id) },
-                            onCloseLeft: { onCloseTabsToLeft(tab.id) },
-                            onCloseRight: { onCloseTabsToRight(tab.id) },
-                            onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
-                            onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
-                            onTogglePin: { onTogglePin(tab.id) },
-                            onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
-                            onSetColorID: { onSetColorID(tab.id, $0) }
-                        )
-
-                        if !tab.isPinned {
-                            CloseButton(
-                                onTap: { onCloseTab(tab.id) }
-                            )
-                            .padding(.trailing, 8)
-                        }
-                    }
-                    .applyIf(isWindowTitleBar) { view in
-                        view.frame(maxWidth: .infinity)
-                    }
-                    .onTapGesture { onSelectTab(tab.id) }
-                    .background(
-                        Group {
-                            if isWindowTitleBar {
-                                Color.white.opacity(0.02)
-                            } else {
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(white: 0.25),
-                                        Color(white: 0.18)
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            }
-                        }
+                let isActive = tab.id == activeTabID
+                HStack(spacing: 0) {
+                    TabCell(
+                        tab: tab,
+                        active: isActive,
+                        paneFocused: isFocused,
+                        areaID: areaID,
+                        prefersFlatStyle: isWindowTitleBar,
+                        hasUnread: NotificationStore.shared.hasUnread(tabID: tab.id),
+                        isAnyDragging: dragState.draggedID != nil,
+                        shortcutIndex: index < 9 ? index + 1 : nil,
+                        closableOthersCount: closableOthersCount(excluding: tab.id),
+                        closableLeftCount: closableCount(leftOf: index),
+                        closableRightCount: closableCount(rightOf: index),
+                        onSelect: { onSelectTab(tab.id) },
+                        onCloseOthers: { onCloseOtherTabs(tab.id) },
+                        onCloseLeft: { onCloseTabsToLeft(tab.id) },
+                        onCloseRight: { onCloseTabsToRight(tab.id) },
+                        onCreateLeft: { onCreateTabAdjacent(tab.id, .left) },
+                        onCreateRight: { onCreateTabAdjacent(tab.id, .right) },
+                        onTogglePin: { onTogglePin(tab.id) },
+                        onSetCustomTitle: { onSetCustomTitle(tab.id, $0) },
+                        onSetColorID: { onSetColorID(tab.id, $0) }
                     )
-                    .clipShape(Capsule())
-                    .overlay(
+
+                    if !tab.isPinned {
+                        CloseButton(
+                            onTap: { onCloseTab(tab.id) }
+                        )
+                        .opacity(isActive || hoveredTabID == tab.id ? 1 : 0)
+                        .animation(.easeOut(duration: 0.12), value: isActive || hoveredTabID == tab.id)
+                    }
+                }
+                .applyIf(isWindowTitleBar) { view in
+                    view.frame(maxWidth: .infinity)
+                }
+                .onTapGesture { onSelectTab(tab.id) }
+                .onHover { hovering in
+                    hoveredTabID = hovering ? tab.id : (hoveredTabID == tab.id ? nil : hoveredTabID)
+                }
+                .background(
+                    Group {
+                        if isWindowTitleBar {
+                            Color.white.opacity(isActive ? 0.06 : 0.02)
+                        } else {
+                            Color(white: isActive ? 0.23 : 0.20)
+                        }
+                    }
+                )
+                .clipShape(Capsule())
+                .overlay(
+                    Capsule()
+                        .stroke(
+                            Color.white.opacity(isActive ? 0.18 : (isWindowTitleBar ? 0.06 : 0.09)),
+                            lineWidth: 0.6
+                        )
+                )
+                .overlay(alignment: .bottom) {
+                    if isActive {
                         Capsule()
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color.white.opacity(isWindowTitleBar ? 0.08 : 0.15),
-                                        Color.white.opacity(isWindowTitleBar ? 0.03 : 0.05)
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: isWindowTitleBar ? 0.8 : 1
-                            )
-                    )
-                    .shadow(color: .black.opacity(isWindowTitleBar ? 0.08 : 0.15), radius: 0, x: 0, y: 1)
-                    .background {
-                        GeometryReader { geo in
-                            Color.clear.preference(
-                                key: TabFramePreferenceKey.self,
-                                value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
-                            )
-                        }
+                            .fill(MuxyTheme.accent.opacity(isFocused ? 0.7 : 0.45))
+                            .frame(height: 1.5)
+                            .padding(.horizontal, 8)
+                            .offset(y: 0.5)
                     }
-                    .applyIf(!isWindowTitleBar) { view in
-                        view.gesture(
-                            DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
-                                .onChanged { value in
-                                    handleDragChanged(
-                                        tab: tab,
-                                        globalLocation: value.location,
-                                        dragStartGlobalLocation: value.startLocation
-                                    )
-                                }
-                                .onEnded { value in
-                                    handleDragEnded(
-                                        tab: tab,
-                                        globalLocation: value.location,
-                                        dragStartGlobalLocation: value.startLocation
-                                    )
-                                }
+                }
+                .shadow(color: .black.opacity(isActive ? 0.12 : 0.06), radius: 1, x: 0, y: 0.5)
+                .background {
+                    GeometryReader { geo in
+                        Color.clear.preference(
+                            key: TabFramePreferenceKey.self,
+                            value: [tab.id: geo.frame(in: .named("TabStripCapsuleSpace"))]
                         )
                     }
+                }
+                .applyIf(!isWindowTitleBar) { view in
+                    view.gesture(
+                        DragGesture(minimumDistance: 0, coordinateSpace: .named(DragCoordinateSpace.mainWindow))
+                            .onChanged { value in
+                                handleDragChanged(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
+                            .onEnded { value in
+                                handleDragEnded(
+                                    tab: tab,
+                                    globalLocation: value.location,
+                                    dragStartGlobalLocation: value.startLocation
+                                )
+                            }
+                    )
                 }
 
                 if index < tabs.count - 1, !isWindowTitleBar {
                     Rectangle()
-                        .fill(Color.white.opacity(0.04))
+                        .fill(Color.white.opacity(0.03))
                         .frame(width: 1)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 7)
                 }
             }
         }
@@ -543,21 +426,32 @@ private struct CloseButton: View {
     var body: some View {
         Image(systemName: "xmark")
             .font(.system(size: 8, weight: .medium))
-            .foregroundStyle(.white.opacity(0.35))
-            .opacity(hovered ? 1 : 0.5)
-            .scaleEffect(hovered ? 1.1 : 1.0)
-            .animation(.easeOut(duration: 0.15), value: hovered)
-            .animation(.easeOut(duration: 0.15), value: hovered)
-        .onHover { hovering in
-            hovered = hovering
-        }
-        .onTapGesture(perform: onTap)
-        .accessibilityLabel("Close Tab")
-        .accessibilityAddTraits(.isButton)
-        .overlay {
-            MiddleClickView(action: onTap)
-                .allowsHitTesting(false)
-        }
+            .foregroundStyle(.white.opacity(hovered ? 0.72 : 0.55))
+            .frame(width: 18, height: 14)
+            .padding(.leading, 4)
+            .padding(.trailing, 8)
+            .frame(height: 22)
+            .background(
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 11,
+                    topTrailingRadius: 11
+                )
+                .fill(Color.white.opacity(hovered ? 0.14 : 0.10))
+            )
+            .animation(.easeOut(duration: 0.12), value: hovered)
+            .onHover { hovering in
+                hovered = hovering
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onTap)
+            .accessibilityLabel("Close Tab")
+            .accessibilityAddTraits(.isButton)
+            .overlay {
+                MiddleClickView(action: onTap)
+                    .allowsHitTesting(false)
+            }
     }
 }
 
@@ -607,7 +501,7 @@ private struct TabCell: View {
 
     private var tabBackground: Color {
         if active {
-            return Color.white.opacity(prefersFlatStyle ? 0.06 : 0.08)
+            return Color.white.opacity(prefersFlatStyle ? 0.08 : 0.12)
         }
         if hovered {
             return Color.white.opacity(prefersFlatStyle ? 0.035 : 0.05)
@@ -671,7 +565,7 @@ private struct TabCell: View {
         }
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, alignment: .center)
-        .frame(height: 24)
+        .frame(height: 22)
         .background {
             GeometryReader { geo in
                 Color.clear.preference(key: TabWidthPreferenceKey.self, value: geo.size.width)
@@ -685,8 +579,8 @@ private struct TabCell: View {
         .background(tabBackground)
         .background(prefersFlatStyle ? AnyShapeStyle(Color.clear) : AnyShapeStyle(.ultraThinMaterial))
         .overlay(
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.white.opacity(prefersFlatStyle ? 0.05 : 0.08), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(Color.white.opacity(prefersFlatStyle ? 0.04 : 0.06), lineWidth: 0.4)
         )
         .contentShape(Rectangle())
         .onHover { hovering in

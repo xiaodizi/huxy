@@ -347,74 +347,36 @@ struct TerminalBridge: NSViewRepresentable {
     }
 }
 
-struct TerminalPaneBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView {
-        let container = NSView()
-        
-        // 创建毛玻璃背景
-        let blurView = NSVisualEffectView()
-        blurView.material = .underWindowBackground
-        blurView.blendingMode = .behindWindow
-        blurView.state = .active
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(blurView)
-        
-        // 添加渐变覆盖层（玻璃态效果）
-        let gradientView = GradientOverlayView()
-        gradientView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(gradientView)
-        
-        // 约束
-        NSLayoutConstraint.activate([
-            blurView.topAnchor.constraint(equalTo: container.topAnchor),
-            blurView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            blurView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            blurView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            
-            gradientView.topAnchor.constraint(equalTo: container.topAnchor),
-            gradientView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            gradientView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            gradientView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        ])
-        
-        return container
-    }
+struct TerminalPaneBlurView: View {
+    @AppStorage("muxy.blurEnabled") private var blurEnabled = true
 
-    func updateNSView(_ nsView: NSView, context: Context) {}
+    var body: some View {
+        ZStack {
+            if blurEnabled {
+                GlassBlurView(material: .underWindowBackground, blendingMode: .behindWindow)
+            }
+            GradientOverlayView()
+        }
+        .allowsHitTesting(false)
+    }
 }
 
 // 渐变覆盖层：实现玻璃态效果
-private class GradientOverlayView: NSView {
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-        
-        guard let context = NSGraphicsContext.current?.cgContext else { return }
-        
-        // 深灰渐变 + 品牌色点缀
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let colors: [CGColor] = [
-            CGColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.25),  // 深灰，左上
-            CGColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.15)   // 稍浅灰，右下
-        ]
-        let locations: [CGFloat] = [0, 1]
-        
-        if let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations) {
-            context.drawLinearGradient(
-                gradient,
-                start: CGPoint(x: 0, y: bounds.height),
-                end: CGPoint(x: bounds.width, y: 0),
-                options: []
-            )
+private struct GradientOverlayView: View {
+    var body: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color(nsColor: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.16, alpha: 0.25)),
+                Color(nsColor: NSColor(srgbRed: 0.15, green: 0.15, blue: 0.20, alpha: 0.15))
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(Color(nsColor: NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.1)))
+                .frame(width: 1)
         }
-        
-        // 左边界：品牌色渐变线（紫色）
-        let borderPath = NSBezierPath()
-        borderPath.move(to: NSPoint(x: 0, y: bounds.height))
-        borderPath.line(to: NSPoint(x: 0, y: 0))
-        
-        let borderColor = NSColor(srgbRed: 0.80, green: 0.50, blue: 0.95, alpha: 0.1)
-        borderColor.setStroke()
-        borderPath.lineWidth = 1
-        borderPath.stroke()
+        .allowsHitTesting(false)
     }
 }

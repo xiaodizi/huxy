@@ -237,20 +237,9 @@ private struct TabContentView: View {
 struct TabAreaBlurView: View {
     var body: some View {
         ZStack {
-            TabAreaBlurViewBase()
+            GlassBlurView(material: .contentBackground, blendingMode: .behindWindow)
             Color.black.opacity(0.15)
         }
+        .allowsHitTesting(false)
     }
-}
-
-struct TabAreaBlurViewBase: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .contentBackground
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

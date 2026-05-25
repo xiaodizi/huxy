@@ -8,8 +8,9 @@ struct TerminalBottomBar: View {
     var body: some View {
         ZStack {
             // translucent blurred background
-            VisualEffectView(material: .hudWindow, blendingMode: .withinWindow)
+            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
                 .cornerRadius(6)
+                .allowsHitTesting(false)
 
             HStack(alignment: .center, spacing: 12) {
                 HStack(spacing: 8) {

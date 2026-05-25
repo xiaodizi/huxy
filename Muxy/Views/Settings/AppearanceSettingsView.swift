@@ -6,12 +6,20 @@ struct AppearanceSettingsView: View {
     @State private var showDarkThemePicker = false
     @State private var currentLightTheme: String?
     @State private var currentDarkTheme: String?
+    @AppStorage("muxy.blurEnabled") private var blurEnabled = true
     @AppStorage("muxy.vcsDisplayMode") private var vcsDisplayMode = VCSDisplayMode.attached.rawValue
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyle = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyle = SidebarExpandedStyle.defaultValue.rawValue
 
     var body: some View {
         SettingsContainer {
+            SettingsSection("Window") {
+                SettingsRow("透明模糊背景") {
+                    Toggle("", isOn: $blurEnabled)
+                        .labelsHidden()
+                }
+            }
+
             SettingsSection("Terminal") {
                 SettingsRow("Light Theme") {
                     themeButton(

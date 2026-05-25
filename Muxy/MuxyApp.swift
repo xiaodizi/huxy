@@ -387,7 +387,7 @@ struct WindowConfigurator: NSViewRepresentable {
             w.styleMask.insert(.fullSizeContentView)
             // 允许标题栏区域与空白背景触发系统拖拽行为
             w.isMovable = true
-            w.isMovableByWindowBackground = true
+            w.isMovableByWindowBackground = false
             Self.applyWindowBackground(w, opacity: windowOpacity)
             Self.repositionTrafficLights(in: w)
             Self.hideTitlebarDecorationView(in: w)

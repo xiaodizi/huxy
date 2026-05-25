@@ -62,6 +62,7 @@ struct MainWindow: View {
     @State private var titlebarDragTriggered = false
     @State private var sidebarExpanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
     @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
+    @AppStorage("muxy.blurEnabled") private var blurEnabled = true
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
     @AppStorage("muxy.notifications.toastPosition") private var toastPositionRaw = ToastPosition.topCenter.rawValue
@@ -773,6 +774,9 @@ struct MainWindow: View {
     }
 
     private var workspaceBackgroundOpacity: Double {
+        if blurEnabled {
+            return 0.22
+        }
         guard windowOpacity < 0.999 else { return 1.0 }
         return max(0.38, min(0.62, windowOpacity - 0.34))
     }
@@ -1350,38 +1354,23 @@ private struct OverlayExitTracker: ViewModifier {
 }
 
 // MARK: - Toast Blur View
-struct ToastBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
+struct ToastBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
-struct WindowBackdropBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
+struct WindowBackdropBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
-struct TitlebarBackdropBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
+struct TitlebarBackdropBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

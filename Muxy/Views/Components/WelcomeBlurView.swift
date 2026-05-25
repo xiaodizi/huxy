@@ -1,15 +1,10 @@
 import SwiftUI
 
-struct WelcomeBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
+struct WelcomeBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 struct WelcomeBlurView_Previews: PreviewProvider {

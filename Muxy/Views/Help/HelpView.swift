@@ -52,16 +52,11 @@ struct HelpView: View {
     }
 }
 
-struct HelpBlurView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .behindWindow
-        view.state = .active
-        return view
+struct HelpBlurView: View {
+    var body: some View {
+        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+            .allowsHitTesting(false)
     }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 private struct HelpWelcomeView: View {

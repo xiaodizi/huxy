@@ -769,7 +769,7 @@ private final class FileTreeKeyCaptureView: NSView {
 struct FileTreeBlurView: View {
     var body: some View {
         ZStack {
-            FileTreeBlurViewBase()
+            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
             // 与全局统一的冷色玻璃语气，避免灰黑块突兀
             LinearGradient(
@@ -804,17 +804,6 @@ struct FileTreeBlurView: View {
                 Spacer()
             }
         }
+        .allowsHitTesting(false)
     }
-}
-
-struct FileTreeBlurViewBase: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .withinWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

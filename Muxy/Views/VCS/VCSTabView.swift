@@ -1788,7 +1788,7 @@ private struct FolderRow: View {
 struct VCSBlurView: View {
     var body: some View {
         ZStack {
-            VCSBlurViewBase()
+            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
             // 统一为冷色玻璃，避免偏黄偏脏
             LinearGradient(
@@ -1810,17 +1810,6 @@ struct VCSBlurView: View {
                 endPoint: .bottom
             )
         }
+        .allowsHitTesting(false)
     }
-}
-
-struct VCSBlurViewBase: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .hudWindow
-        view.blendingMode = .withinWindow
-        view.state = .active
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }

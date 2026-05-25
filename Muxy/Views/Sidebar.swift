@@ -439,7 +439,7 @@ struct SidebarFooter: View {
 struct SidebarBlurView: View {
     var body: some View {
         ZStack {
-            SidebarBlurViewBase()
+            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
             // v2: 更明显的玻璃底色（深色场景也有对比）
             LinearGradient(
@@ -543,6 +543,7 @@ struct SidebarBlurView: View {
                 .frame(height: 44)
             }
         }
+        .allowsHitTesting(false)
     }
 }
 
