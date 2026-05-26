@@ -11,12 +11,6 @@ struct SkullIcon: View {
 
             context.scaleBy(x: scale, y: scale)
 
-            // 骷髅主体
-            let path = Path { p in
-                p.addPath(Path(CGRect(x: 20, y: 15, width: 60, height: 60))) // 简化主体逻辑，使用原始设计感
-                // 实际上我们可以通过 SwiftUI Path 绘制出精确的 SVG 线条
-            }
-
             // 重新绘制精确路径
             var skullPath = Path()
             // 顶部圆弧
