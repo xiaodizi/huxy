@@ -1786,6 +1786,8 @@ private struct FolderRow: View {
 }
 
 struct VCSBlurView: View {
+    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
+
     var body: some View {
         ZStack {
             GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
@@ -1793,8 +1795,8 @@ struct VCSBlurView: View {
             // 统一为冷色玻璃，避免偏黄偏脏
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.14, green: 0.16, blue: 0.25, alpha: 0.30)),
-                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.22, alpha: 0.20))
+                    Color(nsColor: NSColor(srgbRed: 0.14, green: 0.16, blue: 0.25, alpha: 0.30 * sidebarGradientOpacity)),
+                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.22, alpha: 0.20 * sidebarGradientOpacity))
                 ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -1802,9 +1804,9 @@ struct VCSBlurView: View {
 
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.46, green: 0.42, blue: 0.92, alpha: 0.12)),
+                    Color(nsColor: NSColor(srgbRed: 0.46, green: 0.42, blue: 0.92, alpha: 0.12 * sidebarGradientOpacity)),
                     Color.clear,
-                    Color(nsColor: NSColor(srgbRed: 0.32, green: 0.54, blue: 0.95, alpha: 0.08))
+                    Color(nsColor: NSColor(srgbRed: 0.32, green: 0.54, blue: 0.95, alpha: 0.08 * sidebarGradientOpacity))
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
