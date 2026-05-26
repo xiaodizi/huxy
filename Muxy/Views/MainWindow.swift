@@ -238,7 +238,7 @@ struct MainWindow: View {
                     }
                 }
                 .overlay {
-                    MuxyTheme.bg.opacity(windowOpacity)
+                    Color.black.opacity(windowOpacity * 0.3)
                 }
 
                 if vcsPanelVisible, VCSDisplayMode.current == .attached, let state = activeVCSState {
