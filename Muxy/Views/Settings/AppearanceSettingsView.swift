@@ -159,7 +159,7 @@ struct AppearanceSettingsView: View {
     private func syncTerminalBackgroundSettings() {
         guard !isUpdatingTerminalBackground else { return }
         isUpdatingTerminalBackground = true
-        let opacityValue = max(0, min(1, windowOpacity))
+        let opacityValue = max(0, min(1, 1 - windowOpacity))
         let blurEnabled = blurStrength > 0.01
         let opacityString = String(format: "%.2f", opacityValue)
         MuxyConfig.shared.updateConfigValue("background-opacity", value: opacityString)
