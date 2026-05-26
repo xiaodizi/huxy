@@ -359,7 +359,7 @@ struct TerminalPaneBlurView: View {
                     .opacity(blurStrength)
             }
             GradientOverlayView()
-                .opacity(max(0, min(1, windowOpacity)))
+                .opacity(max(0, min(1, 1 - windowOpacity)))
         }
         .allowsHitTesting(false)
     }
