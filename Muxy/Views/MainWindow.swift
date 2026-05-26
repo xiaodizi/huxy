@@ -1363,14 +1363,14 @@ struct ToastBlurView: View {
 
 struct WindowBackdropBlurView: View {
     var body: some View {
-        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+        GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
             .allowsHitTesting(false)
     }
 }
 
 struct TitlebarBackdropBlurView: View {
     var body: some View {
-        GlassBlurView(material: .hudWindow, blendingMode: .behindWindow)
+        GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
             .allowsHitTesting(false)
     }
 }

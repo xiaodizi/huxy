@@ -404,13 +404,10 @@ struct WindowConfigurator: NSViewRepresentable {
     }
 
     private static func applyWindowBackground(_ window: NSWindow, opacity: Double) {
-        let clampedOpacity = max(0.80, min(1.0, opacity))
         window.isOpaque = false
-        // 保持整窗透明度（用户可感知的“透明窗口”）
         window.backgroundColor = .clear
-        window.alphaValue = clampedOpacity
+        window.alphaValue = 1.0
         window.contentView?.wantsLayer = true
-        // 保持内容层透明，让 NSVisualEffectView 的后台模糊真正可见
         window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
     }
 
@@ -564,6 +561,7 @@ struct WindowConfigurator: NSViewRepresentable {
             }
         }
 
+        @MainActor
         private func shouldHandleTitlebarDoubleClick(event: NSEvent, in window: NSWindow) -> Bool {
             guard let contentView = window.contentView else { return false }
             let point = contentView.convert(event.locationInWindow, from: nil)
@@ -579,6 +577,7 @@ struct WindowConfigurator: NSViewRepresentable {
             return true
         }
 
+        @MainActor
         private func isInTrafficLightButtons(point: NSPoint, in window: NSWindow, contentView: NSView) -> Bool {
             let buttonTypes: [NSWindow.ButtonType] = [.closeButton, .miniaturizeButton, .zoomButton]
             for type in buttonTypes {
