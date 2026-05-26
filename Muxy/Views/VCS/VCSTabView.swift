@@ -1787,10 +1787,12 @@ private struct FolderRow: View {
 
 struct VCSBlurView: View {
     @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
+    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
 
     var body: some View {
         ZStack {
             GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
+                .opacity(blurStrength)
 
             LinearGradient(
                 gradient: Gradient(colors: MuxyTheme.glassSidebarBaseGradient(opacity: sidebarGradientOpacity)),
