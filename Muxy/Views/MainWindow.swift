@@ -77,8 +77,8 @@ struct MainWindow: View {
                     TitlebarBackdropBlurView()
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color(nsColor: NSColor(srgbRed: 0.20, green: 0.22, blue: 0.32, alpha: 0.20)),
-                            Color(nsColor: NSColor(srgbRed: 0.16, green: 0.18, blue: 0.28, alpha: 0.12))
+                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: sidebarGradientOpacity)),
+                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: sidebarGradientOpacity * 0.98))
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
