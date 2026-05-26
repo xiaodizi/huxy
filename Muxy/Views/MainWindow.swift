@@ -213,7 +213,6 @@ struct MainWindow: View {
 
                 ZStack {
                     WindowBackdropBlurView()
-                    MuxyTheme.bg.opacity(windowOpacity)
                     if let project = activeProject,
                        appState.workspaceRoot(for: project.id) == nil,
                        let worktree = resolvedActiveWorktree(for: project)
@@ -237,6 +236,9 @@ struct MainWindow: View {
                             .zIndex(key == activeKey ? 1 : 0)
                         }
                     }
+                }
+                .overlay {
+                    MuxyTheme.bg.opacity(windowOpacity)
                 }
 
                 if vcsPanelVisible, VCSDisplayMode.current == .attached, let state = activeVCSState {
