@@ -6,6 +6,7 @@ struct AppearanceSettingsView: View {
     @State private var showDarkThemePicker = false
     @State private var currentLightTheme: String?
     @State private var currentDarkTheme: String?
+    @State private var isUpdatingTerminalBackground = false
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
     @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
     @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
@@ -111,9 +112,16 @@ struct AppearanceSettingsView: View {
         }
         .task {
             refreshThemeNames()
+            syncTerminalBackgroundSettings()
         }
         .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in
             refreshThemeNames()
+        }
+        .onChange(of: windowOpacity) {
+            syncTerminalBackgroundSettings()
+        }
+        .onChange(of: blurStrength) {
+            syncTerminalBackgroundSettings()
         }
     }
 
@@ -146,5 +154,19 @@ struct AppearanceSettingsView: View {
     private func refreshThemeNames() {
         currentLightTheme = themeService.currentLightThemeName()
         currentDarkTheme = themeService.currentDarkThemeName()
+    }
+
+    private func syncTerminalBackgroundSettings() {
+        guard !isUpdatingTerminalBackground else { return }
+        isUpdatingTerminalBackground = true
+        let opacityValue = max(0, min(1, windowOpacity))
+        let blurEnabled = blurStrength > 0.01
+        let opacityString = String(format: "%.2f", opacityValue)
+        MuxyConfig.shared.updateConfigValue("background-opacity", value: opacityString)
+        MuxyConfig.shared.updateConfigValue("background-blur", value: blurEnabled ? "true" : "false")
+        GhosttyService.shared.reloadConfig()
+        DispatchQueue.main.async {
+            isUpdatingTerminalBackground = false
+        }
     }
 }
