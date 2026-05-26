@@ -212,6 +212,9 @@ struct MainWindow: View {
                 }
 
                 ZStack {
+                    // 背景：浅灰，让 Ghostty 透明时有内容可显示
+                    Color(nsColor: NSColor(srgbRed: 0.11, green: 0.11, blue: 0.13, alpha: 1))
+
                     WindowBackdropBlurView()
                     if let project = activeProject,
                        appState.workspaceRoot(for: project.id) == nil,
