@@ -23,7 +23,7 @@ struct GlassBlurView: View {
 
     var body: some View {
         Group {
-            if blurEnabled {
+            if blurEnabled && blurStrength > 0 {
                 GlassBlurBase(material: resolvedMaterial, blendingMode: blendingMode)
             } else {
                 fallbackColor
