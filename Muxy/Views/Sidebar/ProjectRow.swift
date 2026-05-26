@@ -27,9 +27,8 @@ struct ProjectRow: View {
                         .frame(width: 28, height: 28)
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 } else {
-                    Text(displayLetter)
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(letterForeground)
+                    SkullIcon(color: letterForeground)
+                        .frame(width: 18, height: 18)
                 }
             }
             .frame(width: 28, height: 28)
