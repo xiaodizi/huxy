@@ -349,13 +349,17 @@ struct TerminalBridge: NSViewRepresentable {
 
 struct TerminalPaneBlurView: View {
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
+    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
 
     var body: some View {
         ZStack {
             if blurEnabled {
                 GlassBlurView(material: .underWindowBackground, blendingMode: .behindWindow)
+                    .opacity(blurStrength)
             }
             GradientOverlayView()
+                .opacity(max(0, min(1, windowOpacity)))
         }
         .allowsHitTesting(false)
     }
