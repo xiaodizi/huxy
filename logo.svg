@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="grad-skull-dark" x1="0.1" y1="0.1" x2="0.9" y2="0.9">
+      <stop offset="0" stop-color="#1a1a2e"/>
+      <stop offset="0.5" stop-color="#0f3460"/>
+      <stop offset="1" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="grad-skull-edge" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+      <stop offset="0" stop-color="#00ff88"/>
+      <stop offset="1" stop-color="#00cc66"/>
+    </linearGradient>
+    <linearGradient id="grad-eyes-neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00ffff"/>
+      <stop offset="1" stop-color="#00ff88"/>
+    </linearGradient>
+    <linearGradient id="grad-bones-metal" x1="0.1" y1="0.1" x2="0.9" y2="0.9">
+      <stop offset="0" stop-color="#ff0080"/>
+      <stop offset="0.5" stop-color="#ff1493"/>
+      <stop offset="1" stop-color="#c41e3a"/>
+    </linearGradient>
+    <filter id="glow-neon" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="12" result="coloredBlur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.8"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow-deep">
+      <feGaussianBlur stdDeviation="4"/>
+      <feOffset dx="0" dy="4"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+    </filter>
+    <clipPath id="clip-container">
+      <rect x="0" y="0" width="1024" height="1024"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#clip-container)">
+    <!-- Pure black background -->
+    <rect width="1024" height="1024" fill="#000000"/>
+
+    <!-- Left crossbone - thick and prominent -->
+    <g transform="translate(120, 380) rotate(-35)">
+      <!-- Bone shadow -->
+      <rect x="0" y="-22" width="340" height="44" rx="22" fill="#000000" filter="url(#shadow-deep)"/>
+      <!-- Main bone -->
+      <rect x="0" y="-20" width="340" height="40" rx="20" fill="url(#grad-bones-metal)"/>
+      <!-- Bone edge highlight -->
+      <rect x="0" y="-20" width="340" height="8" rx="4" fill="#ff4444" opacity="0.6"/>
+      <!-- Knob left -->
+      <circle cx="18" cy="0" r="32" fill="url(#grad-bones-metal)"/>
+      <circle cx="18" cy="0" r="32" fill="#ff4444" opacity="0.3"/>
+      <!-- Knob right -->
+      <circle cx="322" cy="0" r="32" fill="url(#grad-bones-metal)"/>
+      <circle cx="322" cy="0" r="32" fill="#ff4444" opacity="0.3"/>
+    </g>
+
+    <!-- Right crossbone - thick and prominent -->
+    <g transform="translate(724, 380) rotate(35)">
+      <!-- Bone shadow -->
+      <rect x="0" y="-22" width="340" height="44" rx="22" fill="#000000" filter="url(#shadow-deep)"/>
+      <!-- Main bone -->
+      <rect x="0" y="-20" width="340" height="40" rx="20" fill="url(#grad-bones-metal)"/>
+      <!-- Bone edge highlight -->
+      <rect x="0" y="-20" width="340" height="8" rx="4" fill="#ff4444" opacity="0.6"/>
+      <!-- Knob left -->
+      <circle cx="18" cy="0" r="32" fill="url(#grad-bones-metal)"/>
+      <circle cx="18" cy="0" r="32" fill="#ff4444" opacity="0.3"/>
+      <!-- Knob right -->
+      <circle cx="322" cy="0" r="32" fill="url(#grad-bones-metal)"/>
+      <circle cx="322" cy="0" r="32" fill="#ff4444" opacity="0.3"/>
+    </g>
+
+    <!-- Main skull cranium -->
+    <circle cx="512" cy="450" r="200" fill="url(#grad-skull-dark)"/>
+    <!-- Skull edge neon glow -->
+    <circle cx="512" cy="450" r="205" fill="none" stroke="url(#grad-skull-edge)" stroke-width="3" opacity="0.7"/>
+
+    <!-- Left eye socket (deep and menacing) -->
+    <ellipse cx="385" cy="380" rx="70" ry="80" fill="#000000" opacity="0.95"/>
+    <!-- Left eye - neon cyan glow -->
+    <ellipse cx="385" cy="380" rx="50" ry="65" fill="url(#grad-eyes-neon)" filter="url(#glow-neon)"/>
+    <ellipse cx="385" cy="380" rx="35" ry="50" fill="#00ffff" opacity="0.9"/>
+    <!-- Eye pupil (black) -->
+    <circle cx="385" cy="390" r="18" fill="#000000"/>
+
+    <!-- Right eye socket (deep and menacing) -->
+    <ellipse cx="639" cy="380" rx="70" ry="80" fill="#000000" opacity="0.95"/>
+    <!-- Right eye - neon cyan glow -->
+    <ellipse cx="639" cy="380" rx="50" ry="65" fill="url(#grad-eyes-neon)" filter="url(#glow-neon)"/>
+    <ellipse cx="639" cy="380" rx="35" ry="50" fill="#00ffff" opacity="0.9"/>
+    <!-- Eye pupil (black) -->
+    <circle cx="639" cy="390" r="18" fill="#000000"/>
+
+    <!-- Nasal cavity - jagged and aggressive -->
+    <path d="M 512 430 L 480 500 L 512 510 L 544 500 Z" fill="#000000"/>
+    <!-- Nasal edge glow -->
+    <path d="M 512 430 L 480 500 L 512 510 L 544 500 Z" fill="none" stroke="url(#grad-skull-edge)" stroke-width="2" opacity="0.5"/>
+
+    <!-- Upper teeth - sharp lines -->
+    <g stroke="url(#grad-skull-edge)" stroke-width="3" opacity="0.6" stroke-linecap="round">
+      <line x1="350" y1="540" x2="370" y2="545"/>
+      <line x1="390" y1="548" x2="410" y2="548"/>
+      <line x1="430" y1="548" x2="450" y2="548"/>
+      <line x1="470" y1="548" x2="490" y2="548"/>
+      <line x1="510" y1="550" x2="530" y2="548"/>
+      <line x1="550" y1="548" x2="570" y2="548"/>
+      <line x1="590" y1="548" x2="610" y2="548"/>
+      <line x1="630" y1="548" x2="650" y2="545"/>
+      <line x1="670" y1="540" x2="674" y2="545"/>
+    </g>
+
+    <!-- Lower jaw definition - aggressive -->
+    <path d="M 330 540 Q 512 610 694 540" stroke="url(#grad-skull-edge)" stroke-width="4" fill="none" opacity="0.7"/>
+
+    <!-- Skull shadow depth -->
+    <ellipse cx="512" cy="680" rx="180" ry="60" fill="#000000" opacity="0.4"/>
+
+    <!-- Additional menacing details - cracks/scars -->
+    <g stroke="url(#grad-skull-edge)" stroke-width="1.5" opacity="0.4" fill="none">
+      <path d="M 350 320 Q 360 350 355 380"/>
+      <path d="M 670 320 Q 660 350 665 380"/>
+      <path d="M 400 280 Q 412 310 408 340"/>
+      <path d="M 620 280 Q 608 310 612 340"/>
+    </g>
+  </g>
+</svg>
