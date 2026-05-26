@@ -212,6 +212,7 @@ struct MainWindow: View {
 
                 ZStack {
                     WindowBackdropBlurView()
+                    MuxyTheme.bg.opacity(windowOpacity * 0.15)
                     if let project = activeProject,
                        appState.workspaceRoot(for: project.id) == nil,
                        let worktree = resolvedActiveWorktree(for: project)
