@@ -237,9 +237,6 @@ struct MainWindow: View {
                         }
                     }
                 }
-                .overlay {
-                    Color.black.opacity(windowOpacity * 0.3)
-                }
 
                 if vcsPanelVisible, VCSDisplayMode.current == .attached, let state = activeVCSState {
                     HStack(spacing: 0) {
