@@ -542,20 +542,55 @@ struct WindowConfigurator: NSViewRepresentable {
             guard mouseMonitor == nil else { return }
             mouseMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] event in
                 guard let self,
-                      let window = self.observedWindow,
-                      event.window === window,
                       event.clickCount == 2,
-                      self.shouldHandleTitlebarDoubleClick(event: event, in: window)
+                      let window = event.window,
+                      window === self.observedWindow
                 else {
                     return event
                 }
 
+                // Extract data on main thread before the closure
+                let titlebarHeight = MainActor.assumeIsolated {
+                    guard let contentView = window.contentView else { return 0.0 }
+                    return contentView.bounds.height
+                }
+
+                guard titlebarHeight > 0 else { return event }
+
+                let eventLocation = event.locationInWindow
+                let isInTitlebar = eventLocation.y >= titlebarHeight - 52
+
+                guard isInTitlebar else { return event }
+
+                // Check traffic light buttons on main thread
+                let shouldHandle = MainActor.assumeIsolated {
+                    guard let contentView = window.contentView else { return false }
+                    let point = contentView.convert(eventLocation, from: nil)
+
+                    let buttonTypes: [NSWindow.ButtonType] = [.closeButton, .miniaturizeButton, .zoomButton]
+                    for type in buttonTypes {
+                        guard let button = window.standardWindowButton(type) else { continue }
+                        let buttonFrame = contentView.convert(button.frame, from: button.superview)
+                        if buttonFrame.contains(point) {
+                            return false
+                        }
+                    }
+                    return true
+                }
+
+                guard shouldHandle else { return event }
+
+                // Get action value before dispatching
                 let action = UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick") ?? "Maximize"
-                switch action {
-                case "Minimize":
-                    window.miniaturize(nil)
-                default:
-                    window.zoom(nil)
+
+                // Schedule window action on main thread, passing only sendable data
+                DispatchQueue.main.async {
+                    switch action {
+                    case "Minimize":
+                        window.miniaturize(nil)
+                    default:
+                        window.zoom(nil)
+                    }
                 }
                 return nil
             }

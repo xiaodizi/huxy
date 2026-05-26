@@ -82,7 +82,7 @@ struct WorkspaceBlurView: View {
     var body: some View {
         ZStack {
             GlassBlurView(material: .contentBackground, blendingMode: .behindWindow)
-            Color.black.opacity(0.15)
+            Color.black.opacity(0.0)
         }
         .allowsHitTesting(false)
     }

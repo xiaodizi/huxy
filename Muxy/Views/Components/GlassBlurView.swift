@@ -5,16 +5,19 @@ struct GlassBlurView: View {
     let blendingMode: NSVisualEffectView.BlendingMode
     var fallbackColor: Color = .clear
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
-    @AppStorage("muxy.blurStrength") private var blurStrength = "medium"
+    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
 
     private var resolvedMaterial: NSVisualEffectView.Material {
-        switch blurStrength {
-        case "light":
+        // blurStrength 范围 0.0-1.0
+        // 0.0-0.33: hudWindow (最亮)
+        // 0.34-0.66: fullScreenUI (中等)
+        // 0.67-1.0: menu (最暗)
+        if blurStrength < 0.33 {
             return .hudWindow
-        case "strong":
-            return .menu
-        default:
+        } else if blurStrength < 0.67 {
             return .fullScreenUI
+        } else {
+            return .menu
         }
     }
 
