@@ -63,6 +63,7 @@ struct MainWindow: View {
     @State private var sidebarExpanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
     @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
+    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
     @AppStorage("muxy.notifications.toastPosition") private var toastPositionRaw = ToastPosition.topCenter.rawValue
@@ -164,8 +165,8 @@ struct MainWindow: View {
                 .background(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: 0.92)),
-                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: 0.90))
+                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: sidebarGradientOpacity)),
+                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: sidebarGradientOpacity * 0.98))
                         ]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -774,11 +775,7 @@ struct MainWindow: View {
     }
 
     private var workspaceBackgroundOpacity: Double {
-        if blurEnabled {
-            return 0.22
-        }
-        guard windowOpacity < 0.999 else { return 1.0 }
-        return max(0.38, min(0.62, windowOpacity - 0.34))
+        windowOpacity
     }
 
     private var devModeBadge: some View {

@@ -7,7 +7,9 @@ struct AppearanceSettingsView: View {
     @State private var currentLightTheme: String?
     @State private var currentDarkTheme: String?
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
-    @AppStorage("muxy.blurStrength") private var blurStrength = "medium"
+    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
+    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
     @AppStorage("muxy.vcsDisplayMode") private var vcsDisplayMode = VCSDisplayMode.attached.rawValue
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyle = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyle = SidebarExpandedStyle.defaultValue.rawValue
@@ -19,15 +21,29 @@ struct AppearanceSettingsView: View {
                     Toggle("", isOn: $blurEnabled)
                         .labelsHidden()
                 }
-                SettingsRow("模糊强度") {
-                    Picker("", selection: $blurStrength) {
-                        Text("轻").tag("light")
-                        Text("中").tag("medium")
-                        Text("强").tag("strong")
+                SettingsRow("窗口透明度") {
+                    HStack(spacing: 12) {
+                        Slider(value: $windowOpacity, in: 0.0...1.0, step: 0.01)
+                        Text("\(Int(windowOpacity * 100))%")
+                            .font(.system(.body, design: .monospaced))
+                            .frame(width: 40)
                     }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                    .fixedSize()
+                }
+                SettingsRow("模糊强度") {
+                    HStack(spacing: 12) {
+                        Slider(value: $blurStrength, in: 0.0...1.0, step: 0.01)
+                        Text("\(Int(blurStrength * 100))%")
+                            .font(.system(.body, design: .monospaced))
+                            .frame(width: 40)
+                    }
+                }
+                SettingsRow("侧边栏透明度") {
+                    HStack(spacing: 12) {
+                        Slider(value: $sidebarGradientOpacity, in: 0.0...1.0, step: 0.01)
+                        Text("\(Int(sidebarGradientOpacity * 100))%")
+                            .font(.system(.body, design: .monospaced))
+                            .frame(width: 40)
+                    }
                 }
             }
 
