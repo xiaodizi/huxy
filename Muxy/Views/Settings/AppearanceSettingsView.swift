@@ -7,6 +7,7 @@ struct AppearanceSettingsView: View {
     @State private var currentLightTheme: String?
     @State private var currentDarkTheme: String?
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
+    @AppStorage("muxy.blurStrength") private var blurStrength = "medium"
     @AppStorage("muxy.vcsDisplayMode") private var vcsDisplayMode = VCSDisplayMode.attached.rawValue
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyle = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyle = SidebarExpandedStyle.defaultValue.rawValue
@@ -17,6 +18,16 @@ struct AppearanceSettingsView: View {
                 SettingsRow("透明模糊背景") {
                     Toggle("", isOn: $blurEnabled)
                         .labelsHidden()
+                }
+                SettingsRow("模糊强度") {
+                    Picker("", selection: $blurStrength) {
+                        Text("轻").tag("light")
+                        Text("中").tag("medium")
+                        Text("强").tag("strong")
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                    .fixedSize()
                 }
             }
 

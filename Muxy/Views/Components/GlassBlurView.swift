@@ -5,11 +5,23 @@ struct GlassBlurView: View {
     let blendingMode: NSVisualEffectView.BlendingMode
     var fallbackColor: Color = .clear
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
+    @AppStorage("muxy.blurStrength") private var blurStrength = "medium"
+
+    private var resolvedMaterial: NSVisualEffectView.Material {
+        switch blurStrength {
+        case "light":
+            return .hudWindow
+        case "strong":
+            return .menu
+        default:
+            return .fullScreenUI
+        }
+    }
 
     var body: some View {
         Group {
             if blurEnabled {
-                GlassBlurBase(material: material, blendingMode: blendingMode)
+                GlassBlurBase(material: resolvedMaterial, blendingMode: blendingMode)
             } else {
                 fallbackColor
             }
@@ -26,6 +38,7 @@ struct GlassBlurBase: NSViewRepresentable {
         view.material = material
         view.blendingMode = blendingMode
         view.state = .active
+        view.isEmphasized = true
         return view
     }
 

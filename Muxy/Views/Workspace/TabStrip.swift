@@ -108,15 +108,7 @@ struct PaneTabStrip: View {
         }
         .frame(height: 32)
         .background(
-            ZStack {
-                LinearGradient(
-                    colors: [resolvedStripGradientTop, resolvedStripGradientBottom],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                Rectangle()
-                    .fill(resolvedStripBackground)
-            }
+            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
         )
         .overlay(alignment: .bottom) {
             Rectangle()
