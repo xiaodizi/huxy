@@ -773,36 +773,25 @@ struct FileTreeBlurView: View {
         ZStack {
             GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
-            // 与全局统一的冷色玻璃语气，避免灰黑块突兀
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.15, green: 0.17, blue: 0.26, alpha: 0.30 * sidebarGradientOpacity)),
-                    Color(nsColor: NSColor(srgbRed: 0.12, green: 0.14, blue: 0.22, alpha: 0.20 * sidebarGradientOpacity))
-                ]),
+                gradient: Gradient(colors: MuxyTheme.glassSidebarBaseGradient(opacity: sidebarGradientOpacity)),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.48, green: 0.42, blue: 0.94, alpha: 0.10 * sidebarGradientOpacity)),
-                    Color.clear,
-                    Color(nsColor: NSColor(srgbRed: 0.30, green: 0.54, blue: 0.95, alpha: 0.08 * sidebarGradientOpacity))
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
+                gradient: Gradient(colors: MuxyTheme.glassSidebarAccentGradient(opacity: sidebarGradientOpacity)),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
 
             VStack(spacing: 0) {
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.white.opacity(0.20 * sidebarGradientOpacity),
-                        Color.white.opacity(0.04 * sidebarGradientOpacity)
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassHighlightGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 1)
+                .frame(height: 2)
                 Spacer()
             }
         }
