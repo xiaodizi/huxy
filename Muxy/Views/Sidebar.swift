@@ -33,7 +33,7 @@ struct Sidebar: View {
     @State private var expanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
     @AppStorage(SidebarCollapsedStyle.storageKey) private var collapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var expandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
-    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
+    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
 
     private var collapsedStyle: SidebarCollapsedStyle {
         SidebarCollapsedStyle(rawValue: collapsedStyleRaw) ?? .defaultValue
@@ -68,9 +68,9 @@ struct Sidebar: View {
         .overlay(alignment: .trailing) {
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color.white.opacity(windowOpacity * 0.18),
-                    Color(nsColor: NSColor(srgbRed: 0.83, green: 0.66, blue: 0.97, alpha: windowOpacity * 0.22)),
-                    Color.black.opacity(windowOpacity * 0.28)
+                    Color.white.opacity(sidebarGradientOpacity * 0.18),
+                    Color(nsColor: NSColor(srgbRed: 0.83, green: 0.66, blue: 0.97, alpha: sidebarGradientOpacity * 0.22)),
+                    Color.black.opacity(sidebarGradientOpacity * 0.28)
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
@@ -438,7 +438,7 @@ struct SidebarFooter: View {
 }
 
 struct SidebarBlurView: View {
-    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
+    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
 
     var body: some View {
         ZStack {
@@ -447,7 +447,7 @@ struct SidebarBlurView: View {
             // 顶部高光：从 1px 提升到 2px
             VStack(spacing: 0) {
                 LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassHighlightGradient(opacity: windowOpacity)),
+                    gradient: Gradient(colors: MuxyTheme.glassHighlightGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -459,7 +459,7 @@ struct SidebarBlurView: View {
             // 左侧内高光，增加”玻璃边缘折射”感
             HStack(spacing: 0) {
                 LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassLeftEdgeGradient(opacity: windowOpacity)),
+                    gradient: Gradient(colors: MuxyTheme.glassLeftEdgeGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -473,14 +473,14 @@ struct SidebarBlurView: View {
                 Spacer()
 
                 LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeBrightGradient(opacity: windowOpacity)),
+                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeBrightGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .frame(width: 1)
 
                 LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeDarkGradient(opacity: windowOpacity)),
+                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeDarkGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -489,7 +489,7 @@ struct SidebarBlurView: View {
 
             // 轻微暗角，避免侧栏变”糊白块”
             LinearGradient(
-                gradient: Gradient(colors: MuxyTheme.glassVignetteGradient(opacity: windowOpacity)),
+                gradient: Gradient(colors: MuxyTheme.glassVignetteGradient(opacity: sidebarGradientOpacity)),
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -498,7 +498,7 @@ struct SidebarBlurView: View {
             VStack(spacing: 0) {
                 Spacer()
                 LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassShadowGradient(opacity: windowOpacity)),
+                    gradient: Gradient(colors: MuxyTheme.glassShadowGradient(opacity: sidebarGradientOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )

@@ -63,6 +63,7 @@ struct MainWindow: View {
     @State private var sidebarExpanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
     @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
+    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
     @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
     @AppStorage(SidebarCollapsedStyle.storageKey) private var sidebarCollapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var sidebarExpandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
@@ -76,7 +77,7 @@ struct MainWindow: View {
                 ZStack {
                     TitlebarBackdropBlurView()
                     LinearGradient(
-                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: windowOpacity)),
+                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: sidebarGradientOpacity)),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -161,7 +162,7 @@ struct MainWindow: View {
                 .fixedSize(horizontal: true, vertical: false)
                 .background(
                     LinearGradient(
-                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: windowOpacity)),
+                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: sidebarGradientOpacity)),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
