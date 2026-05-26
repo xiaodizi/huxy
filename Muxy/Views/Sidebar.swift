@@ -33,6 +33,7 @@ struct Sidebar: View {
     @State private var expanded = UserDefaults.standard.bool(forKey: "muxy.sidebarExpanded")
     @AppStorage(SidebarCollapsedStyle.storageKey) private var collapsedStyleRaw = SidebarCollapsedStyle.defaultValue.rawValue
     @AppStorage(SidebarExpandedStyle.storageKey) private var expandedStyleRaw = SidebarExpandedStyle.defaultValue.rawValue
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
 
     private var collapsedStyle: SidebarCollapsedStyle {
         SidebarCollapsedStyle(rawValue: collapsedStyleRaw) ?? .defaultValue
@@ -67,9 +68,9 @@ struct Sidebar: View {
         .overlay(alignment: .trailing) {
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color.white.opacity(0.18),
-                    Color(nsColor: NSColor(srgbRed: 0.83, green: 0.66, blue: 0.97, alpha: 0.22)),
-                    Color.black.opacity(0.28)
+                    Color.white.opacity(windowOpacity * 0.18),
+                    Color(nsColor: NSColor(srgbRed: 0.83, green: 0.66, blue: 0.97, alpha: windowOpacity * 0.22)),
+                    Color.black.opacity(windowOpacity * 0.28)
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
@@ -437,39 +438,16 @@ struct SidebarFooter: View {
 }
 
 struct SidebarBlurView: View {
+    @AppStorage("muxy.windowOpacity") private var windowOpacity: Double = 0.92
+
     var body: some View {
         ZStack {
             GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
-            // v2: 更明显的玻璃底色（深色场景也有对比）
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.14, alpha: 0.80)),
-                    Color(nsColor: NSColor(srgbRed: 0.11, green: 0.12, blue: 0.18, alpha: 0.62))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            // 轻微品牌色染色，增强“玻璃”而非纯灰板
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(nsColor: NSColor(srgbRed: 0.50, green: 0.42, blue: 0.92, alpha: 0.24)),
-                    Color.clear,
-                    Color(nsColor: NSColor(srgbRed: 0.28, green: 0.54, blue: 0.95, alpha: 0.14))
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
             // 顶部高光：从 1px 提升到 2px
             VStack(spacing: 0) {
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.white.opacity(0.44),
-                        Color.white.opacity(0.18),
-                        Color.clear
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassHighlightGradient(opacity: windowOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -478,13 +456,10 @@ struct SidebarBlurView: View {
                 Spacer()
             }
 
-            // 左侧内高光，增加“玻璃边缘折射”感
+            // 左侧内高光，增加”玻璃边缘折射”感
             HStack(spacing: 0) {
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.white.opacity(0.20),
-                        Color.clear
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassLeftEdgeGradient(opacity: windowOpacity)),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -498,33 +473,23 @@ struct SidebarBlurView: View {
                 Spacer()
 
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(nsColor: NSColor(srgbRed: 0.94, green: 0.86, blue: 1.00, alpha: 0.56)),
-                        Color(nsColor: NSColor(srgbRed: 0.88, green: 0.70, blue: 0.98, alpha: 0.28))
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeBrightGradient(opacity: windowOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .frame(width: 1)
 
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.black.opacity(0.52),
-                        Color.black.opacity(0.24)
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassRightEdgeDarkGradient(opacity: windowOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .frame(width: 1)
             }
 
-            // 轻微暗角，避免侧栏变“糊白块”
+            // 轻微暗角，避免侧栏变”糊白块”
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.black.opacity(0.22),
-                    Color.clear,
-                    Color.black.opacity(0.24)
-                ]),
+                gradient: Gradient(colors: MuxyTheme.glassVignetteGradient(opacity: windowOpacity)),
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -533,10 +498,7 @@ struct SidebarBlurView: View {
             VStack(spacing: 0) {
                 Spacer()
                 LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.clear,
-                        Color.black.opacity(0.18)
-                    ]),
+                    gradient: Gradient(colors: MuxyTheme.glassShadowGradient(opacity: windowOpacity)),
                     startPoint: .top,
                     endPoint: .bottom
                 )

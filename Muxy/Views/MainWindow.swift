@@ -76,10 +76,7 @@ struct MainWindow: View {
                 ZStack {
                     TitlebarBackdropBlurView()
                     LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: sidebarGradientOpacity)),
-                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: sidebarGradientOpacity * 0.98))
-                        ]),
+                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: windowOpacity)),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -137,8 +134,8 @@ struct MainWindow: View {
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            Color(nsColor: NSColor(srgbRed: 0.92, green: 0.84, blue: 0.99, alpha: 0.42)),
-                                            Color(nsColor: NSColor(srgbRed: 0.82, green: 0.66, blue: 0.96, alpha: 0.16))
+                                            Color(nsColor: NSColor(srgbRed: 0.92, green: 0.84, blue: 0.99, alpha: windowOpacity * 0.42)),
+                                            Color(nsColor: NSColor(srgbRed: 0.82, green: 0.66, blue: 0.96, alpha: windowOpacity * 0.16))
                                         ]),
                                         startPoint: .top,
                                         endPoint: .bottom
@@ -149,8 +146,8 @@ struct MainWindow: View {
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            Color.black.opacity(0.40),
-                                            Color.black.opacity(0.14)
+                                            Color.black.opacity(windowOpacity * 0.40),
+                                            Color.black.opacity(windowOpacity * 0.14)
                                         ]),
                                         startPoint: .top,
                                         endPoint: .bottom
@@ -164,10 +161,7 @@ struct MainWindow: View {
                 .fixedSize(horizontal: true, vertical: false)
                 .background(
                     LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: sidebarGradientOpacity)),
-                            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: sidebarGradientOpacity * 0.98))
-                        ]),
+                        gradient: Gradient(colors: MuxyTheme.glassTitlebarGradient(opacity: windowOpacity)),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -177,8 +171,8 @@ struct MainWindow: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.white.opacity(0.30),
-                                    Color.white.opacity(0.06)
+                                    Color.white.opacity(windowOpacity * 0.30),
+                                    Color.white.opacity(windowOpacity * 0.06)
                                 ]),
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -186,15 +180,15 @@ struct MainWindow: View {
                         )
                         .frame(height: 1)
                 }
-                .shadow(color: Color.black.opacity(0.24), radius: 10, x: 6, y: 0)
+                .shadow(color: Color.black.opacity(windowOpacity * 0.24), radius: 10, x: 6, y: 0)
                 .overlay(alignment: .trailing) {
                     HStack(spacing: 0) {
                         Rectangle()
                             .fill(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color(nsColor: NSColor(srgbRed: 0.90, green: 0.78, blue: 0.98, alpha: 0.34)),
-                                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.62, blue: 0.95, alpha: 0.14))
+                                        Color(nsColor: NSColor(srgbRed: 0.90, green: 0.78, blue: 0.98, alpha: windowOpacity * 0.34)),
+                                        Color(nsColor: NSColor(srgbRed: 0.80, green: 0.62, blue: 0.95, alpha: windowOpacity * 0.14))
                                     ]),
                                     startPoint: .top,
                                     endPoint: .bottom
@@ -205,8 +199,8 @@ struct MainWindow: View {
                             .fill(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color.black.opacity(0.36),
-                                        Color.black.opacity(0.12)
+                                        Color.black.opacity(windowOpacity * 0.36),
+                                        Color.black.opacity(windowOpacity * 0.12)
                                     ]),
                                     startPoint: .top,
                                     endPoint: .bottom
@@ -218,7 +212,6 @@ struct MainWindow: View {
 
                 ZStack {
                     WindowBackdropBlurView()
-                    MuxyTheme.bg.opacity(workspaceBackgroundOpacity)
                     if let project = activeProject,
                        appState.workspaceRoot(for: project.id) == nil,
                        let worktree = resolvedActiveWorktree(for: project)

@@ -116,3 +116,81 @@ extension MuxyTheme {
         }
     }
 }
+
+// MARK: - Glass Background Colors
+extension MuxyTheme {
+    @MainActor
+    static func glassTitlebarGradient(opacity: Double) -> [Color] {
+        [
+            Color(nsColor: NSColor(srgbRed: 0.13, green: 0.14, blue: 0.20, alpha: opacity)),
+            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.15, alpha: opacity * 0.98))
+        ]
+    }
+
+    @MainActor
+    static func glassSidebarBaseGradient(opacity: Double) -> [Color] {
+        [
+            Color(nsColor: NSColor(srgbRed: 0.09, green: 0.10, blue: 0.14, alpha: opacity * 0.80)),
+            Color(nsColor: NSColor(srgbRed: 0.11, green: 0.12, blue: 0.18, alpha: opacity * 0.62))
+        ]
+    }
+
+    @MainActor
+    static func glassSidebarAccentGradient(opacity: Double) -> [Color] {
+        [
+            Color(nsColor: NSColor(srgbRed: 0.50, green: 0.42, blue: 0.92, alpha: opacity * 0.24)),
+            Color.clear,
+            Color(nsColor: NSColor(srgbRed: 0.28, green: 0.54, blue: 0.95, alpha: opacity * 0.14))
+        ]
+    }
+
+    @MainActor
+    static func glassHighlightGradient(opacity: Double) -> [Color] {
+        [
+            Color.white.opacity(opacity * 0.44),
+            Color.white.opacity(opacity * 0.18),
+            Color.clear
+        ]
+    }
+
+    @MainActor
+    static func glassLeftEdgeGradient(opacity: Double) -> [Color] {
+        [
+            Color.white.opacity(opacity * 0.20),
+            Color.clear
+        ]
+    }
+
+    @MainActor
+    static func glassRightEdgeBrightGradient(opacity: Double) -> [Color] {
+        [
+            Color(nsColor: NSColor(srgbRed: 0.94, green: 0.86, blue: 1.00, alpha: opacity * 0.56)),
+            Color(nsColor: NSColor(srgbRed: 0.88, green: 0.70, blue: 0.98, alpha: opacity * 0.28))
+        ]
+    }
+
+    @MainActor
+    static func glassRightEdgeDarkGradient(opacity: Double) -> [Color] {
+        [
+            Color.black.opacity(opacity * 0.52),
+            Color.black.opacity(opacity * 0.24)
+        ]
+    }
+
+    @MainActor
+    static func glassVignetteGradient(opacity: Double) -> [Color] {
+        [
+            Color.black.opacity(opacity * 0.22),
+            Color.clear,
+            Color.black.opacity(opacity * 0.24)
+        ]
+    }
+
+    @MainActor
+    static func glassShadowGradient(opacity: Double) -> [Color] {
+        [
+            Color.clear,
+            Color.black.opacity(opacity * 0.18)
+        ]
+    }
+}
