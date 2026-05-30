@@ -23,16 +23,51 @@ struct EditorThemePalette {
         12: NSColor(srgbRed: 0.19, green: 0.19, blue: 0.25, alpha: 1), // surface0
     ]
 
+    @MainActor
     static var active: EditorThemePalette {
-        EditorThemePalette(
-            background: NSColor(srgbRed: 0.12, green: 0.12, blue: 0.18, alpha: 1), // #1e1e2e
-            foreground: NSColor(srgbRed: 0.80, green: 0.84, blue: 0.96, alpha: 1), // #cdd6f4
-            accent: NSColor(srgbRed: 0.54, green: 0.71, blue: 0.98, alpha: 1), // #89b4fa
-            paletteColors: catppuccinMochaColors
+        let ghostty = GhosttyService.shared
+        let preview = ThemeService.shared.activeThemePreview()
+        return resolve(
+            preview: preview,
+            fallbackBackground: ghostty.backgroundColor,
+            fallbackForeground: ghostty.foregroundColor,
+            fallbackAccent: ghostty.accentColor,
+            fallbackPaletteColor: { index in
+                ghostty.paletteColor(at: index) ?? catppuccinMochaColors[index]
+            }
         )
     }
 
     func paletteColor(at index: Int) -> NSColor? {
         paletteColors[index]
+    }
+
+    static func resolve(
+        preview: ThemePreview?,
+        fallbackBackground: NSColor,
+        fallbackForeground: NSColor,
+        fallbackAccent: NSColor,
+        fallbackPaletteColor: (Int) -> NSColor?
+    ) -> EditorThemePalette {
+        let palette = preview?.palette ?? []
+        var colors: [Int: NSColor] = [:]
+        for index in 0 ..< 16 {
+            if index < palette.count {
+                colors[index] = palette[index]
+            } else if let fallback = fallbackPaletteColor(index) {
+                colors[index] = fallback
+            }
+        }
+
+        let accent = palette.count > 4
+            ? palette[4]
+            : (fallbackPaletteColor(4) ?? fallbackAccent)
+
+        return EditorThemePalette(
+            background: preview?.background ?? fallbackBackground,
+            foreground: preview?.foreground ?? fallbackForeground,
+            accent: accent,
+            paletteColors: colors
+        )
     }
 }

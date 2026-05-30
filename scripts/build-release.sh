@@ -159,6 +159,11 @@ rm -rf "$DMG_STAGING_DIR"
 mkdir -p "$DMG_STAGING_DIR"
 cp -R "$APP_BUNDLE" "$DMG_STAGING_DIR/Muxy.app"
 
+if [[ -f "$DMG_NAME" ]]; then
+    rm -f "$DMG_NAME"
+fi
+rm -f "rw."*".$DMG_NAME"
+
 create-dmg --volname "Muxy" --window-size 500 300 --icon-size 100 --app-drop-link 350 150 --sandbox-safe "$DMG_NAME" "$DMG_STAGING_DIR"
 
 rm -rf "$DMG_STAGING_DIR"

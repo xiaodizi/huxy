@@ -444,6 +444,8 @@ struct SidebarBlurView: View {
         ZStack {
             GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
 
+            MuxyTheme.bg.opacity(0.55 * sidebarGradientOpacity)
+
             // 顶部高光：从 1px 提升到 2px
             VStack(spacing: 0) {
                 LinearGradient(

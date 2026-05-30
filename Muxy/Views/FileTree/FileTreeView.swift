@@ -767,36 +767,7 @@ private final class FileTreeKeyCaptureView: NSView {
 }
 
 struct FileTreeBlurView: View {
-    @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
-    @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
-
     var body: some View {
-        ZStack {
-            GlassBlurView(material: .hudWindow, blendingMode: .withinWindow)
-                .opacity(blurStrength)
-
-            LinearGradient(
-                gradient: Gradient(colors: MuxyTheme.glassSidebarBaseGradient(opacity: sidebarGradientOpacity)),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            LinearGradient(
-                gradient: Gradient(colors: MuxyTheme.glassSidebarAccentGradient(opacity: sidebarGradientOpacity)),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            VStack(spacing: 0) {
-                LinearGradient(
-                    gradient: Gradient(colors: MuxyTheme.glassHighlightGradient(opacity: sidebarGradientOpacity)),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 2)
-                Spacer()
-            }
-        }
-        .allowsHitTesting(false)
+        SidebarBlurView()
     }
 }

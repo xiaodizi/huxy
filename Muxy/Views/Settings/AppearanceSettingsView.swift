@@ -6,7 +6,12 @@ struct AppearanceSettingsView: View {
     @State private var showDarkThemePicker = false
     @State private var currentLightTheme: String?
     @State private var currentDarkTheme: String?
-    @State private var isUpdatingTerminalBackground = false
+    @State private var draftWindowOpacity: Double = 0.92
+    @State private var isAdjustingWindowOpacity = false
+    @State private var pendingWindowOpacityCommitTask: Task<Void, Never>?
+    @State private var pendingTerminalBackgroundSyncTask: Task<Void, Never>?
+    @State private var lastAppliedBackgroundOpacity: String?
+    @State private var lastAppliedBackgroundBlur: String?
     @AppStorage("muxy.blurEnabled") private var blurEnabled = true
     @AppStorage("muxy.blurStrength") private var blurStrength: Double = 0.5
     @AppStorage("muxy.sidebarGradientOpacity") private var sidebarGradientOpacity: Double = 0.92
@@ -24,8 +29,23 @@ struct AppearanceSettingsView: View {
                 }
                 SettingsRow("窗口透明度") {
                     HStack(spacing: 12) {
-                        Slider(value: $windowOpacity, in: 0.0...1.0, step: 0.01)
-                        Text("\(Int(windowOpacity * 100))%")
+                        Slider(
+                            value: Binding(
+                                get: { draftWindowOpacity },
+                                set: { draftWindowOpacity = $0 }
+                            ),
+                            in: 0.0...1.0,
+                            step: 0.01,
+                            onEditingChanged: { editing in
+                                isAdjustingWindowOpacity = editing
+                                if editing {
+                                    pendingWindowOpacityCommitTask?.cancel()
+                                    return
+                                }
+                                scheduleWindowOpacityCommit()
+                            }
+                        )
+                        Text("\(Int(draftWindowOpacity * 100))%")
                             .font(.system(.body, design: .monospaced))
                             .frame(width: 40)
                     }
@@ -112,16 +132,29 @@ struct AppearanceSettingsView: View {
         }
         .task {
             refreshThemeNames()
-            syncTerminalBackgroundSettings()
+            draftWindowOpacity = windowOpacity
+            scheduleTerminalBackgroundSync(immediate: true)
         }
         .onReceive(NotificationCenter.default.publisher(for: .themeDidChange)) { _ in
             refreshThemeNames()
         }
         .onChange(of: windowOpacity) {
-            syncTerminalBackgroundSettings()
+            if !isAdjustingWindowOpacity {
+                draftWindowOpacity = windowOpacity
+            }
+            scheduleTerminalBackgroundSync(immediate: true)
         }
         .onChange(of: blurStrength) {
-            syncTerminalBackgroundSettings()
+            scheduleTerminalBackgroundSync()
+        }
+        .onChange(of: blurEnabled) {
+            scheduleTerminalBackgroundSync()
+        }
+        .onDisappear {
+            pendingWindowOpacityCommitTask?.cancel()
+            pendingWindowOpacityCommitTask = nil
+            pendingTerminalBackgroundSyncTask?.cancel()
+            pendingTerminalBackgroundSyncTask = nil
         }
     }
 
@@ -156,17 +189,42 @@ struct AppearanceSettingsView: View {
         currentDarkTheme = themeService.currentDarkThemeName()
     }
 
-    private func syncTerminalBackgroundSettings() {
-        guard !isUpdatingTerminalBackground else { return }
-        isUpdatingTerminalBackground = true
-        let opacityValue = max(0, min(1, 1 - windowOpacity))
-        let blurEnabled = blurStrength > 0.01
-        let opacityString = String(format: "%.2f", opacityValue)
-        MuxyConfig.shared.updateConfigValue("background-opacity", value: opacityString)
-        MuxyConfig.shared.updateConfigValue("background-blur", value: blurEnabled ? "true" : "false")
-        GhosttyService.shared.reloadConfig()
-        DispatchQueue.main.async {
-            isUpdatingTerminalBackground = false
+    private func scheduleWindowOpacityCommit() {
+        pendingWindowOpacityCommitTask?.cancel()
+        pendingWindowOpacityCommitTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            windowOpacity = draftWindowOpacity
         }
+    }
+
+    private func scheduleTerminalBackgroundSync(immediate: Bool = false) {
+        pendingTerminalBackgroundSyncTask?.cancel()
+        pendingTerminalBackgroundSyncTask = Task { @MainActor in
+            if !immediate {
+                try? await Task.sleep(nanoseconds: 220_000_000)
+            }
+            applyTerminalBackgroundSettingsIfNeeded()
+        }
+    }
+
+    private func applyTerminalBackgroundSettingsIfNeeded() {
+        let opacityValue = max(0, min(1, 1 - windowOpacity))
+        let blurActive = blurEnabled && blurStrength > 0.01
+        let opacityString = String(format: "%.2f", opacityValue)
+
+        let backgroundBlurString = blurActive ? "true" : "false"
+        let shouldUpdateOpacity = lastAppliedBackgroundOpacity != opacityString
+        let shouldUpdateBlur = lastAppliedBackgroundBlur != backgroundBlurString
+        guard shouldUpdateOpacity || shouldUpdateBlur else { return }
+
+        if shouldUpdateOpacity {
+            MuxyConfig.shared.updateConfigValue("background-opacity", value: opacityString)
+            lastAppliedBackgroundOpacity = opacityString
+        }
+        if shouldUpdateBlur {
+            MuxyConfig.shared.updateConfigValue("background-blur", value: backgroundBlurString)
+            lastAppliedBackgroundBlur = backgroundBlurString
+        }
+        GhosttyService.shared.reloadConfig()
     }
 }

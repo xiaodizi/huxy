@@ -562,11 +562,11 @@ private struct ExpandedNewWorktreeButton: View {
             HStack(spacing: 6) {
                 Image(systemName: "plus")
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgDim)
+                    .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fg.opacity(0.9))
                     .frame(width: 12, height: 12)
                 Text("New Worktree")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgDim)
+                    .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fg.opacity(0.9))
                 Spacer()
             }
             .padding(.horizontal, 8)

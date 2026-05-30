@@ -284,13 +284,21 @@ final class ThemeService {
 
     nonisolated private static func themeDirectories() -> [String] {
         var dirs: [String] = []
-        if let bundled = Bundle.appResources.resourceURL?.appendingPathComponent("ghostty/themes").path {
-            dirs.append(bundled)
+
+        func appendDirIfExists(_ path: String?) {
+            guard let path else { return }
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue else { return }
+            dirs.append(path)
         }
-        dirs.append(NSHomeDirectory() + "/.config/ghostty/themes")
-        if let extraThemes = Bundle.appResources.resourceURL?.appendingPathComponent("themes").path {
-            dirs.append(extraThemes)
+
+        if let resourceURL = Bundle.appResources.resourceURL {
+            appendDirIfExists(resourceURL.appendingPathComponent("ghostty/themes").path)
+            appendDirIfExists(resourceURL.appendingPathComponent("themes").path)
+            appendDirIfExists(resourceURL.path)
         }
+
+        appendDirIfExists(NSHomeDirectory() + "/.config/ghostty/themes")
         return dirs
     }
 

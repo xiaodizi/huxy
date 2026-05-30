@@ -79,31 +79,31 @@ extension MuxyTheme {
 
         @MainActor
         init(from _service: Any, appearance: Any) {
-            // 直接使用 Catppuccin Mocha 主题色
             let palette = EditorThemePalette.active
             self.palette = palette
             self.nsBg = palette.background
             self.bg = Color(nsColor: palette.background)
             self.fg = Color(nsColor: palette.foreground)
-            self.fgMuted = Color(nsColor: NSColor(srgbRed: 0.73, green: 0.76, blue: 0.87, alpha: 1)) // #bac2de
-            self.fgDim = Color(nsColor: NSColor(srgbRed: 0.36, green: 0.36, blue: 0.44, alpha: 1)) // #585b70
-            self.surface = Color(nsColor: NSColor(srgbRed: 0.19, green: 0.19, blue: 0.25, alpha: 1)) // #313244
-            self.border = Color(nsColor: NSColor(srgbRed: 0.36, green: 0.36, blue: 0.44, alpha: 1)) // #585b70
-            self.hover = Color(nsColor: NSColor(srgbRed: 0.22, green: 0.22, blue: 0.29, alpha: 1)) // #45475a
+
+            self.fgMuted = Color(nsColor: palette.foreground.withAlphaComponent(0.72))
+            self.fgDim = Color(nsColor: palette.foreground.withAlphaComponent(0.55))
+            self.surface = Color(nsColor: palette.background.withAlphaComponent(0.88))
+            self.border = Color(nsColor: palette.foreground.withAlphaComponent(0.18))
+            self.hover = Color(nsColor: palette.background.withAlphaComponent(0.70))
             self.accent = Color(nsColor: palette.accent)
             self.accentSoft = Color(nsColor: palette.accent.withAlphaComponent(0.1))
-            self.warning = Color(nsColor: NSColor(srgbRed: 0.98, green: 0.89, blue: 0.69, alpha: 1)) // #f9e2af
+            self.warning = Color(nsColor: palette.paletteColor(at: 3) ?? palette.accent)
 
-            let addColor = NSColor(srgbRed: 0.65, green: 0.89, blue: 0.63, alpha: 1) // #a6e3a1
-            let removeColor = NSColor(srgbRed: 0.95, green: 0.55, blue: 0.66, alpha: 1) // #f38ba8
-            let hunkColor = NSColor(srgbRed: 0.80, green: 0.76, blue: 0.97, alpha: 1) // #cba6f7
+            let addColor = palette.paletteColor(at: 2) ?? palette.accent
+            let removeColor = palette.paletteColor(at: 1) ?? palette.accent
+            let hunkColor = palette.paletteColor(at: 6) ?? palette.accent
 
             self.nsDiffAdd = addColor
             self.nsDiffRemove = removeColor
             self.nsDiffHunk = hunkColor
             self.nsDiffString = addColor
-            self.nsDiffNumber = NSColor(srgbRed: 0.98, green: 0.89, blue: 0.69, alpha: 1) // #f9e2af
-            self.nsDiffComment = NSColor(srgbRed: 0.73, green: 0.76, blue: 0.87, alpha: 1) // #bac2de
+            self.nsDiffNumber = palette.paletteColor(at: 3) ?? palette.foreground
+            self.nsDiffComment = palette.paletteColor(at: 8) ?? palette.foreground.withAlphaComponent(0.72)
 
             self.diffAddFg = Color(nsColor: addColor)
             self.diffRemoveFg = Color(nsColor: removeColor)
@@ -112,7 +112,7 @@ extension MuxyTheme {
             self.diffRemoveBg = Color(nsColor: removeColor.withAlphaComponent(0.16))
             self.diffHunkBg = Color(nsColor: hunkColor.withAlphaComponent(0.1))
 
-            self.colorScheme = .dark
+            self.colorScheme = ThemeService.shared.activeAppearance() == .dark ? .dark : .light
         }
     }
 }

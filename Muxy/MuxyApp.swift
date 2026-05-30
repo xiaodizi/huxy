@@ -404,9 +404,10 @@ struct WindowConfigurator: NSViewRepresentable {
     }
 
     private static func applyWindowBackground(_ window: NSWindow, opacity: Double) {
+        let resolvedOpacity = max(0, min(1, opacity))
         window.isOpaque = false
         window.backgroundColor = .clear
-        window.alphaValue = 1.0
+        window.alphaValue = resolvedOpacity
         window.contentView?.wantsLayer = true
         window.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
     }
