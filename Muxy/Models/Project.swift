@@ -10,6 +10,8 @@ struct Project: Identifiable, Codable, Hashable {
     var logo: String?
     var iconColor: String?
     var preferredWorktreeParentPath: String?
+    var sourceRepositoryURL: String?
+    var sourceAuthMethod: String?
 
     init(name: String, path: String, sortOrder: Int = 0) {
         self.id = UUID()
@@ -21,6 +23,8 @@ struct Project: Identifiable, Codable, Hashable {
         self.logo = nil
         self.iconColor = nil
         self.preferredWorktreeParentPath = nil
+        self.sourceRepositoryURL = nil
+        self.sourceAuthMethod = nil
     }
 
     var pathExists: Bool {

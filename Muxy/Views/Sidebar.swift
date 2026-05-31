@@ -91,15 +91,25 @@ struct Sidebar: View {
         UserDefaults.standard.set(expanded, forKey: "muxy.sidebarExpanded")
     }
 
+    @Environment(AppState.self) private var appStateEnv
+
     private var addButton: some View {
-        AddProjectButton(expanded: isWide) {
-            ProjectOpenService.openProject(
-                appState: appState,
-                projectStore: projectStore,
-                worktreeStore: worktreeStore
-            )
+        VStack(spacing: 0) {
+            AddProjectButton(expanded: isWide) {
+                ProjectOpenService.openProject(
+                    appState: appState,
+                    projectStore: projectStore,
+                    worktreeStore: worktreeStore
+                )
+            }
+            .help(shortcutTooltip("Add Project", for: .openProject))
+
+            if isWide {
+                CloneProjectButton(expanded: true) {
+                    appState.showCloneSheet = true
+                }
+            }
         }
-        .help(shortcutTooltip("Add Project", for: .openProject))
     }
 
     private var projectList: some View {
@@ -275,6 +285,58 @@ private struct AddProjectButton: View {
             .frame(width: 28, height: 28)
 
             Text("Add Project")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
+                .lineLimit(1)
+            Spacer()
+        }
+        .padding(4)
+        .background(hovered ? MuxyTheme.hover : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct CloneProjectButton: View {
+    var expanded: Bool = false
+    let action: () -> Void
+    @State private var hovered = false
+
+    var body: some View {
+        Button(action: action) {
+            if expanded {
+                expandedLayout
+            } else {
+                collapsedLayout
+            }
+        }
+        .buttonStyle(.plain)
+        .onHover { hovered = $0 }
+        .accessibilityLabel("Clone Repository")
+    }
+
+    private var collapsedLayout: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(MuxyTheme.hover)
+            Image(systemName: "arrow.down.doc")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
+        }
+        .frame(width: 28, height: 28)
+        .padding(3)
+    }
+
+    private var expandedLayout: some View {
+        HStack(spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(MuxyTheme.surface)
+                Image(systemName: "arrow.down.doc")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
+            }
+            .frame(width: 28, height: 28)
+
+            Text("Clone Repo")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(hovered ? MuxyTheme.accent : MuxyTheme.fgMuted)
                 .lineLimit(1)

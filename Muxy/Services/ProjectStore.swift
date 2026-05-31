@@ -54,6 +54,19 @@ final class ProjectStore {
         save()
     }
 
+    func createFromClone(
+        name: String,
+        path: String,
+        repositoryURL: String,
+        authMethod: String
+    ) -> Project {
+        var project = Project(name: name, path: path)
+        project.sourceRepositoryURL = repositoryURL
+        project.sourceAuthMethod = authMethod
+        add(project)
+        return project
+    }
+
     func reorder(fromOffsets source: IndexSet, toOffset destination: Int) {
         projects.move(fromOffsets: source, toOffset: destination)
         for index in projects.indices {

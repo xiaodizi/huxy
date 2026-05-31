@@ -43,6 +43,15 @@ struct MuxyApp: App {
                 .environment(MuxyConfig.shared)
                 .environment(ThemeService.shared)
                 .preferredColorScheme(MuxyTheme.colorScheme)
+                .sheet(isPresented: Binding(
+                    get: { appState.showCloneSheet },
+                    set: { appState.showCloneSheet = $0 }
+                )) {
+                    CloneRepositorySheet()
+                        .environment(appState)
+                        .environment(projectStore)
+                        .environment(worktreeStore)
+                }
                 .onAppear {
                     NotificationStore.shared.appState = appState
                     NotificationStore.shared.worktreeStore = worktreeStore

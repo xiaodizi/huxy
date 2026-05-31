@@ -87,6 +87,9 @@ final class AppState {
     let navigation = NavigationHistory()
     private var focusHistory: [WorktreeKey: [UUID]] = [:]
 
+    var showCloneSheet = false
+    var cloneState = GitCloneState.idle
+
     init(
         selectionStore: any ActiveProjectSelectionStoring,
         terminalViews: any TerminalViewRemoving,
